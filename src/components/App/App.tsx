@@ -10,8 +10,10 @@ import { ProtectedRoute } from "../ProtectedRoute/ProtectedRoute";
 export const App: FC = () => {
   return (
     <Routes>
-      <Route element={<ProtectedRoute path="/" element={<Layout /> } />}>
-        <Route path="/" element={<ProtectedRoute path="/" element={<Home /> } />} />
+      <Route element={<ProtectedRoute />}>
+        <Route element={<Layout />}>
+          <Route element={<Home />} path="/" />
+        </Route>
       </Route>
       <Route path="/login" element={<LogIn />} />
       <Route path="/create_account" element={<CreateAccount />} />

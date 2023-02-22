@@ -1,12 +1,12 @@
 import { FC } from "react";
 import { Outlet } from "react-router-dom";
-import { Nav } from "../Nav/Nav";
+import { Navigation } from "../Navigation/Navigation";
 import { Footer } from "../Footer/Footer";
 
 export const Layout: FC = () => {
   return (
     <div className="flex flex-col h-screen">
-      <Nav />
+      <Navigation />
       <div className="grow">
         <Outlet />
       </div>

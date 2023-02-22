@@ -1,10 +1,13 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Link } from "react-router-dom";
 import { GoogleLoginButton } from "../ButtonComponents/GoogleLoginButton/GoogleLoginButton";
 import { AppleLoginButton } from "../ButtonComponents/AppleLoginButton/AppleLoginButton";
 import { AppLoginButton } from "../ButtonComponents/AppLoginButton/AppLoginButton";
 
 export const LogIn: FC = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
   return (
     <div className="flex flex-row h-screen">
       <div className="desktop:w-1/2 tablet:w-full flex flex-col justify-center items-center">
@@ -18,7 +21,9 @@ export const LogIn: FC = () => {
           </label>
           <input
             type="email"
-            defaultValue="Enter email"
+            name="email"
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter email"
             className="pl-4 py-3 text-xs text-gray-400 border border-gray-100 rounded font-normal"
           />
 
@@ -29,8 +34,10 @@ export const LogIn: FC = () => {
             Password
           </label>
           <input
-            type="password"
-            defaultValue="Enter password"
+            type="text"
+            name="password"
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter password"
             className="pl-4 py-3 text-xs text-gray-400 border border-gray-100 rounded font-normal"
           />
 
@@ -41,7 +48,7 @@ export const LogIn: FC = () => {
             Forgot Password?
           </Link>
           <div className="pb-8"></div>
-          <AppLoginButton />
+          <AppLoginButton email={email} password={password} />
           <div className="pb-8"></div>
 
           <div className="flex item-center">

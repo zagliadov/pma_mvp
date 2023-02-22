@@ -1,14 +1,20 @@
 import { FC } from "react";
-import { ILogInProps } from "../../../redux/authSlice/authSlice";
+import { ICreateAccountProps } from "../../../redux/authSlice/authSlice";
 import { useAppDispatch } from "../../../redux/hooks";
-import { logIn, login } from "../../../redux/authSlice/authSlice";
+import { createAccount, login } from "../../../redux/authSlice/authSlice";
 import { useNavigate } from "react-router-dom";
 
-export const AppLoginButton: FC<ILogInProps> = ({ email, password }) => {
+export const AppCreateAccountButton: FC<ICreateAccountProps> = ({
+  id,
+  name,
+  email,
+  password,
+}) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
   const handleClick = () => {
-    dispatch(logIn({ email, password }));
+    dispatch(createAccount({ id: name, name, email, password }));
     dispatch(login());
     navigate("/");
   };
@@ -17,7 +23,7 @@ export const AppLoginButton: FC<ILogInProps> = ({ email, password }) => {
       onClick={handleClick}
       className="bg-primary-500 text-white font-medium text-base py-2.5 rounded"
     >
-      Log in
+      Create account
     </button>
   );
 };

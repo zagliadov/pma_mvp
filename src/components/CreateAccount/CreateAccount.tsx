@@ -1,10 +1,14 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Link } from "react-router-dom";
 import { GoogleLoginButton } from "../ButtonComponents/GoogleLoginButton/GoogleLoginButton";
 import { AppleLoginButton } from "../ButtonComponents/AppleLoginButton/AppleLoginButton";
-import { AppLoginButton } from "../ButtonComponents/AppLoginButton/AppLoginButton";
+import { AppCreateAccountButton } from "../ButtonComponents/AppCreateAccountButton/AppCreateAccountButton";
 
 export const CreateAccount: FC = () => {
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
   return (
     <div className="flex flex-row h-screen">
       <div className="desktop:w-1/2 tablet:w-full flex flex-col justify-center items-center">
@@ -19,19 +23,23 @@ export const CreateAccount: FC = () => {
           </label>
           <input
             type="text"
-            defaultValue="Enter your name"
+            name="name"
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter your name"
             className="pl-4 py-3 text-xs text-gray-400 border border-gray-100 rounded font-normal"
           />
 
           <label
             htmlFor="email"
-            className="text-xs font-normal text-gray-600 pb-1"
+            className="text-xs font-normal text-gray-600 pb-1 pt-4"
           >
             Email
           </label>
           <input
             type="email"
-            defaultValue="Enter email"
+            name="email"
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Enter email"
             className="pl-4 py-3 text-xs text-gray-400 border border-gray-100 rounded font-normal"
           />
 
@@ -42,13 +50,20 @@ export const CreateAccount: FC = () => {
             Password
           </label>
           <input
-            type="password"
-            defaultValue="Enter password"
+            type="text"
+            name="password"
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter Password"
             className="pl-4 py-3 text-xs text-gray-400 border border-gray-100 rounded font-normal"
           />
 
           <div className="pb-8"></div>
-          <AppLoginButton />
+          <AppCreateAccountButton
+            id={name}
+            name={name}
+            email={email}
+            password={password}
+          />
           <div className="pb-8"></div>
 
           <div className="flex item-center">
