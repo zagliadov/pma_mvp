@@ -7,7 +7,7 @@ import { AppLoginButton } from "../ButtonComponents/AppLoginButton/AppLoginButto
 export const LogIn: FC = () => {
   return (
     <div className="flex flex-row h-screen">
-      <div className="w-1/2 flex flex-col justify-center items-center">
+      <div className="desktop:w-1/2 tablet:w-full flex flex-col justify-center items-center">
         <div className="w-[464px] h-[512px] flex flex-col">
           <p className="text-2xl pb-8">Log in</p>
           <label
@@ -18,7 +18,7 @@ export const LogIn: FC = () => {
           </label>
           <input
             type="email"
-            value="Enter email"
+            defaultValue="Enter email"
             className="pl-4 py-3 text-xs text-gray-400 border border-gray-100 rounded font-normal"
           />
 
@@ -30,7 +30,7 @@ export const LogIn: FC = () => {
           </label>
           <input
             type="password"
-            value="Enter password"
+            defaultValue="Enter password"
             className="pl-4 py-3 text-xs text-gray-400 border border-gray-100 rounded font-normal"
           />
 
@@ -70,7 +70,7 @@ export const LogIn: FC = () => {
           </div>
         </div>
       </div>
-      <div className="w-1/2 border"></div>
+      <div className="desktop:w-1/2 bg-no-repeat bg-cover bg-[url('/home/developer/Desktop/pma_mvp/src/assets/rect.png')]"></div>
     </div>
   );
 };
