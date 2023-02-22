@@ -1,12 +1,19 @@
-import React, { FC } from 'react';
+import { FC } from "react";
+import { Routes, Route } from "react-router-dom";
+import { LogIn } from "../LogIn/LogIn";
+import { CreateAccount } from "../CreateAccount/CreateAccount";
+import { Home } from "../Home/Home";
+import { Layout } from "../Layout/Layout";
+import { ProtectedRoute } from "../ProtectedRoute/ProtectedRoute";
 
 export const App: FC = () => {
-
   return (
-    <div>
-      <h1 className="text-4xl underline border">
-        Hello world!
-      </h1>
-    </div>
-  )
-}
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/" element={<ProtectedRoute path="/" element={<Home /> } />} />
+      </Route>
+      <Route path="/login" element={<LogIn />} />
+      <Route path="/create_account" element={<CreateAccount />} />
+    </Routes>
+  );
+};

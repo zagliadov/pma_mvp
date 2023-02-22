@@ -2,22 +2,27 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState, AppThunk } from "../store";
 
 export interface AuthState {
-  value: number;
-  status: "idle" | "loading" | "failed";
+  isAuthenticated: boolean;
 }
 
 const initialState: AuthState = {
-  value: 0,
-  status: "idle",
+  isAuthenticated: false,
 };
 
 export const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    login: (state) => {
+      state.isAuthenticated = true;
+    },
+    logout: (state) => {
+      state.isAuthenticated = false;
+    }
+  },
   extraReducers: (builder) => { },
 });
 
-export const { } = authSlice.actions;
+export const { login, logout } = authSlice.actions;
 
 export default authSlice.reducer;
