@@ -47,7 +47,7 @@ export const ForgotPassword: FC = () => {
           </div>
         </div>
       </div>
-      <div className="desktop:w-1/2 bg-no-repeat bg-cover bg-[url('/assets/rect.png')]"></div>
+      <div className="desktop:w-1/2 bg-no-repeat bg-cover bg-gray-50"></div>
     </div>
   );
 };
