@@ -1,16 +1,24 @@
 import { FC } from "react";
 import { ILogInProps } from "../../../redux/authSlice/authSlice";
-import { useAppDispatch } from "../../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { logIn, login } from "../../../redux/authSlice/authSlice";
 import { useNavigate } from "react-router-dom";
+import { RootState } from "../../../redux/store";
 
 export const AppLoginButton: FC<ILogInProps> = ({ email, password }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const isEmptyState = useAppSelector(
+    (state: RootState) => state.project.isEmptyState
+  );
   const handleClick = () => {
     dispatch(logIn({ email, password }));
     dispatch(login());
-    navigate("/");
+    if (isEmptyState) {
+      navigate("/empty_state");
+    } else {
+      navigate("/");
+    }
   };
   return (
     <button

@@ -3,7 +3,7 @@ import { FaSearch } from "../../icons/icons";
 
 export const SearchInput: FC = () => {
   return (
-    <div className="flex w-3/5 justify-end items-center">
+    <div className="flex w-10/12 justify-end items-center">
       <button
         type="submit"
         disabled

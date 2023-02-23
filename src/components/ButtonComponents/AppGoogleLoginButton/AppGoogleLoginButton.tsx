@@ -1,12 +1,12 @@
 import { FC } from "react";
-import { FaGoogle } from "../../icons/icons";
+import { FaApple } from "../../icons/icons";
 
-export const AppleLoginButton: FC = () => {
+export const AppGoogleLoginButton: FC = () => {
   return (
     <button className="flex justify-center items-center py-2.5 border border-gray-100 rounded">
-      <FaGoogle />
+      <FaApple />
       <span className="font-medium text-base text-gray-600 pl-2">
-        Log in with Google
+        Log in with Apple
       </span>
     </button>
   );

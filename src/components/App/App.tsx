@@ -6,6 +6,8 @@ import { Home } from "../Home/Home";
 import { Layout } from "../Layout/Layout";
 import { ForgotPassword } from "../ForgotPassword/ForgotPassword";
 import { ProtectedRoute } from "../ProtectedRoute/ProtectedRoute";
+import { CreateProjectPage } from "../Home/CreateProjectPage/CreateProjectPage";
+import { EmptyStatePage } from "../Home/EmptyStatePage/EmptyStatePage";
 
 export const App: FC = () => {
   return (
@@ -13,6 +15,8 @@ export const App: FC = () => {
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           <Route element={<Home />} path="/" />
+          <Route element={<EmptyStatePage />} path="/empty_state" />
+          <Route element={<CreateProjectPage />} path="/create_project" />
         </Route>
       </Route>
       <Route path="/login" element={<LogIn />} />

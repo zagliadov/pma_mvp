@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { Link } from "react-router-dom";
-import { GoogleLoginButton } from "../ButtonComponents/GoogleLoginButton/GoogleLoginButton";
-import { AppleLoginButton } from "../ButtonComponents/AppleLoginButton/AppleLoginButton";
+import { AppGoogleLoginButton } from "../ButtonComponents/AppGoogleLoginButton/AppGoogleLoginButton";
+import { AppAppleLoginButton } from "../ButtonComponents/AppAppleLoginButton/AppAppleLoginButton";
 import { AppCreateAccountButton } from "../ButtonComponents/AppCreateAccountButton/AppCreateAccountButton";
 
 export const CreateAccount: FC = () => {
@@ -73,10 +73,10 @@ export const CreateAccount: FC = () => {
           </div>
 
           <div className="pb-8"></div>
-          <AppleLoginButton />
+          <AppAppleLoginButton />
 
           <div className="pb-4"></div>
-          <GoogleLoginButton />
+          <AppGoogleLoginButton />
 
           <div className="pt-[72px]"></div>
           <div>

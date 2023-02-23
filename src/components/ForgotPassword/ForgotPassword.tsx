@@ -1,5 +1,5 @@
 import { ChangeEvent, FC, useState } from "react";
-import { ResetPassword } from "../ButtonComponents/ResetPassword/ResetPassword";
+import { AppResetPasswordButton } from "../ButtonComponents/AppResetPasswordButton/AppResetPasswordButton";
 import { FaArrow } from "../icons/icons";
 import { Link } from "react-router-dom";
 
@@ -43,7 +43,7 @@ export const ForgotPassword: FC = () => {
               create a new password
             </p>
 
-            <ResetPassword email={email} />
+            <AppResetPasswordButton email={email} />
           </div>
         </div>
       </div>

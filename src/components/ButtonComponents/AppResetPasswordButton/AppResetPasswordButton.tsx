@@ -5,7 +5,7 @@ interface IResetPasswordProps {
   email: string;
 }
 
-export const ResetPassword: FC<IResetPasswordProps> = ({ email }) => {
+export const AppResetPasswordButton: FC<IResetPasswordProps> = ({ email }) => {
   const dispatch = useAppDispatch();
 
   const handleClick = () => {
