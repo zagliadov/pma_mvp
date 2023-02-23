@@ -92,7 +92,7 @@ export const CreateAccount: FC = () => {
           </div>
         </div>
       </div>
-      <div className="desktop:w-1/2 bg-no-repeat bg-cover bg-[url('/home/developer/Desktop/pma_mvp/src/assets/rect.png')]"></div>
+      <div className="desktop:w-1/2 bg-no-repeat bg-cover bg-[url('/assets/rect.png')]"></div>
     </div>
   );
 };
