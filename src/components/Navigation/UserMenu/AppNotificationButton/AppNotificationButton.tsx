@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { FaBell } from "../../icons/icons";
+import { FaBell } from "../../../icons/icons";
 
 export const AppNotificationButton: FC = () => {
   return (

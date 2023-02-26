@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { FaHelpCircle } from "../../icons/icons";
+import { FaHelpCircle } from "../../../icons/icons";
 
 export const AppHelpButton: FC = () => {
   return (

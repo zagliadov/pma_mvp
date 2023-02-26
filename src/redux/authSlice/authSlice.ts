@@ -2,16 +2,16 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState, AppThunk } from "../store";
 import axios from "axios";
 
-
 export interface IUsers {
-  id: string,
-  name: string,
-  email: string,
-  password: string,
+  id: string;
+  name: string;
+  email: string;
+  password: string;
 }
 export interface AuthState {
   isAuthenticated: boolean;
-  users: IUsers[];
+  user: IUsers;
+  members: IUsers[];
 }
 
 export interface ICreateAccountProps {
@@ -28,7 +28,8 @@ export interface ILogInProps {
 
 const initialState: AuthState = {
   isAuthenticated: false,
-  users: [],
+  user: { id: "test", name: "test", email: "test@test.com", password: "test" },
+  members: [],
 };
 
 export const createAccount = createAsyncThunk(
@@ -83,14 +84,21 @@ export const authSlice = createSlice({
     builder
       .addCase(logIn.pending, (state) => {})
       .addCase(logIn.fulfilled, (state, action) => {
-        
+        if (!action.payload) return;
+        if (
+          action.payload.email === state.user.email &&
+          action.payload.password === state.user.password
+        ) {
+          state.isAuthenticated = true;
+        }
+        console.log(state.isAuthenticated);
       })
       .addCase(logIn.rejected, (state) => {});
     builder
       .addCase(createAccount.pending, (state) => {})
       .addCase(createAccount.fulfilled, (state, action) => {
         if (!action.payload) return;
-        state.users.push(action.payload);
+        state.user = action.payload;
       })
       .addCase(createAccount.rejected, (state) => {});
   },

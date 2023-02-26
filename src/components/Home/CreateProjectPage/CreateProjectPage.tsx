@@ -4,20 +4,22 @@ import { AutoResizeTextarea } from "./AutoResizeTextarea/AutoResizeTextarea";
 import { ProjectMembers } from "./ProjectMembers/ProjectMembers";
 import { ProjectName } from "./ProjectName/ProjectName";
 import { ProjectTasks } from "./ProjectTasks/ProjectTasks";
+import { ProjectDialogWithCancelCreate } from "./ProjectDialogWithCancelCreate/ProjectDialogWithCancelCreate";
+import { useAppSelector } from "../../../redux/hooks";
+import { RootState } from "../../../redux/store";
 
 export const CreateProjectPage: FC = () => {
+  const user = useAppSelector((state: RootState) => state.auth.user);
   const [projectName, setProjectName] = useState<string>("");
   const [members, setMembers] = useState<string[]>([]);
   const [projectDescription, setProjectDescription] = useState<string>("");
+  const [tasks, setTasks] = useState<string[]>([]);
 
-  const handleClick = () => {
-    console.log(projectName, "projectName");
-    console.log(members, "members");
-    console.log(projectDescription, "projectDescription");
-  };
+
+  console.log(user)
 
   return (
-    <div className="flex flex-col justify-center items-center h-full bg-gray-150">
+    <div className="flex flex-col justify-center items-center h-full bg-gray-150 py-4">
       <div className="w-[70%] bg-white rounded-lg">
         <div className="border-b border-gray-50 flex justify-between items-center h-14">
           <span className="pl-4 text-lg font-medium">Create project</span>
@@ -39,8 +41,17 @@ export const CreateProjectPage: FC = () => {
           </div>
 
           <div className="pt-4">
-            <ProjectTasks />
+            <ProjectTasks setTasks={setTasks} tasks={tasks} />
           </div>
+        </div>
+
+        <div className="border-t border-gray-10 flex justify-end pr-4 py-2">
+          <ProjectDialogWithCancelCreate
+            projectName={projectName}
+            members={members}
+            projectDescription={projectDescription}
+            tasks={tasks}
+          />
         </div>
       </div>
     </div>
