@@ -7,16 +7,19 @@ import { Layout } from "../Layout/Layout";
 import { ForgotPassword } from "../ForgotPassword/ForgotPassword";
 import { ProtectedRoute } from "../ProtectedRoute/ProtectedRoute";
 import { CreateProjectPage } from "../Home/CreateProjectPage/CreateProjectPage";
-import { EmptyStatePage } from "../Home/EmptyStatePage/EmptyStatePage";
+import { EmptyStateProject } from "../Home/EmptyStateProject/EmptyStateProject";
+import { EmptyStateTask } from "../Home/EmptyStateTask/EmptyStateTask";
 
 export const App: FC = () => {
+
   return (
     <Routes>
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
           <Route element={<Home />} path="/" />
-          <Route element={<EmptyStatePage />} path="/empty_state" />
           <Route element={<CreateProjectPage />} path="/create_project" />
+          <Route element={<EmptyStateProject />} path="/empty_state_project" />
+          <Route element={<EmptyStateTask />} path="/empty_state_task" />
         </Route>
       </Route>
       <Route path="/login" element={<LogIn />} />

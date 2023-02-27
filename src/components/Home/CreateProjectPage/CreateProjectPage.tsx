@@ -13,7 +13,7 @@ export const CreateProjectPage: FC = () => {
   const [tasks, setTasks] = useState<string[]>([]);
 
   return (
-    <div className="flex flex-col justify-center items-center h-full bg-gray-150 py-4">
+    <div className="flex flex-col justify-center items-center h-full bg-gray-200 py-4">
       <div className="w-[70%] bg-white rounded-lg">
         <div className="border-b border-gray-50 flex justify-between items-center h-14">
           <span className="pl-4 text-lg font-medium">Create project</span>

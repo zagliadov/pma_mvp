@@ -1,7 +1,16 @@
 import { FC } from "react";
 import { FaSearch } from "../../icons/icons";
+import { useLocation } from "react-router-dom";
+import { useAppSelector } from "../../../redux/hooks";
+import { RootState } from "../../../redux/store";
 
 export const SearchInput: FC = () => {
+  const { pathname } = useLocation();
+  const toggleIsActiveSidebar = useAppSelector(
+    (state: RootState) => state.diff.isActiveSidebar
+  );
+  const exceptRoute =
+    pathname === "/create_project" || pathname === "/empty_state_project";
   return (
     <div className="flex w-10/12 justify-end items-center">
       <button
@@ -13,7 +22,9 @@ export const SearchInput: FC = () => {
       </button>
       <input
         type="search"
-        className="py-2 border border-gray-100 focus:w-full text-gray-600 text-sm rounded pl-8 focus:outline-none"
+        className={`py-2 border border-gray-100 focus:w-full text-gray-600 text-sm rounded pl-8 focus:outline-none ${
+          exceptRoute && "bg-gray-150 border-gray-300"
+        } ${!toggleIsActiveSidebar && "bg-white"}`}
         placeholder="Search..."
       />
     </div>

@@ -1,5 +1,5 @@
-import { FC, useState, useRef, useEffect } from "react";
-import { AppNotificationDropdown } from "../AppNotificationDropdown/AppNotificationDropdown";
+import { FC, useState, useRef } from "react";
+import { AppNotificationDropdown } from "./AppNotificationDropdown/AppNotificationDropdown";
 import { FaNotification } from "../../../icons/icons";
 import { useClickOutside } from "../../../../hooks/useClickOutside";
 

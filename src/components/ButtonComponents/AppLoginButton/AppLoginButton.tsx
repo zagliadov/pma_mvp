@@ -8,22 +8,28 @@ import { RootState } from "../../../redux/store";
 export const AppLoginButton: FC<ILogInProps> = ({ email, password }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const isEmptyState = useAppSelector(
-    (state: RootState) => state.project.isEmptyState
+  const isEmptyStateProject = useAppSelector(
+    (state: RootState) => state.project.isEmptyStateProject
+  );
+  const isEmptyStateTask = useAppSelector(
+    (state: RootState) => state.project.isEmptyStateTask
   );
   const isAuthenticated = useAppSelector(
     (state: RootState) => state.auth.isAuthenticated
   );
 
   useEffect(() => {
-    if (isAuthenticated) {
-      if (isEmptyState) {
-        navigate("/empty_state");
-      } else {
-        navigate("/");
-      }
-    }
-  }, [dispatch, isAuthenticated, isEmptyState, navigate]);
+    if (!isAuthenticated) return;
+    if (isEmptyStateProject) navigate("/empty_state_project");
+    if (!isEmptyStateProject && isEmptyStateTask) navigate("/empty_state_task");
+    if (!isEmptyStateProject && !isEmptyStateTask) navigate("/");
+  }, [
+    dispatch,
+    isAuthenticated,
+    isEmptyStateProject,
+    navigate,
+    isEmptyStateTask,
+  ]);
 
   const handleClick = () => {
     dispatch(logIn({ email, password }));

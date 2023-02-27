@@ -1,12 +1,12 @@
 import { FC } from "react";
 
-export const Home: FC = () => {
+export const EmptyStateTask: FC = () => {
 
   return (
     <div>
       <div>
-        <h2>Main Table</h2>
+        <h2>Empty State Task</h2>
       </div>
     </div>
-  );
-};
+  )
+}

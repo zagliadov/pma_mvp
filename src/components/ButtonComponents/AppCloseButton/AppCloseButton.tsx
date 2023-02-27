@@ -6,12 +6,12 @@ import { FaCloseButton } from "../../icons/icons";
 
 export const AppCloseButton: FC = () => {
   const navigate = useNavigate();
-  const isEmptyState = useAppSelector(
-    (state: RootState) => state.project.isEmptyState
+  const isEmptyStateProject = useAppSelector(
+    (state: RootState) => state.project.isEmptyStateProject
   );
   const handleClick = () => {
-    if (isEmptyState) {
-      navigate("/empty_state");
+    if (isEmptyStateProject) {
+      navigate("/empty_state_project");
     } else {
       navigate("/");
     }

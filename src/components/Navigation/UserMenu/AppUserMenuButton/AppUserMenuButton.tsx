@@ -1,5 +1,5 @@
 import { FC, useState, useRef } from "react";
-import { AvatarDropdownUserMenu } from "../AvatarDropdownUserMenu/AvatarDropdownUserMenu";
+import { AvatarDropdownUserMenu } from "./AvatarDropdownUserMenu/AvatarDropdownUserMenu";
 import { useClickOutside } from "../../../../hooks/useClickOutside";
 export const AppUserMenuButton: FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);

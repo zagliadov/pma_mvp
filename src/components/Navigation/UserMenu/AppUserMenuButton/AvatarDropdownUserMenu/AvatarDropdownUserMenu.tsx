@@ -1,14 +1,14 @@
 import { FC } from "react";
-import { useAppSelector, useAppDispatch } from "../../../../redux/hooks";
-import { logout } from "../../../../redux/authSlice/authSlice";
-import { RootState } from "../../../../redux/store";
+import { useAppSelector, useAppDispatch } from "../../../../../redux/hooks";
+import { logout } from "../../../../../redux/authSlice/authSlice";
+import { RootState } from "../../../../../redux/store";
 import {
   FaBellNotification,
   FaDropdownInformation,
   FaDropdownLogout,
   FaDropdownSettings,
   FaProfile,
-} from "../../../icons/icons";
+} from "../../../../icons/icons";
 
 interface IProps {
   isOpen: boolean;

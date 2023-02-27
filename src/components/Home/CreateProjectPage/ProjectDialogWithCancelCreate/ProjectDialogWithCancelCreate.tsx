@@ -1,6 +1,10 @@
 import { FC } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAppSelector } from "../../../../redux/hooks";
+import { useAppSelector, useAppDispatch } from "../../../../redux/hooks";
+import {
+  toggleIsEmptyStateProject,
+  addProject,
+} from "../../../../redux/projectSlice/projectSlice";
 import { RootState } from "../../../../redux/store";
 
 interface IProps {
@@ -17,21 +21,26 @@ export const ProjectDialogWithCancelCreate: FC<IProps> = ({
   tasks,
 }) => {
   const navigate = useNavigate();
-  const isEmptyState = useAppSelector(
-    (state: RootState) => state.project.isEmptyState
+  const dispatch = useAppDispatch();
+  const isEmptyStateProject = useAppSelector(
+    (state: RootState) => state.project.isEmptyStateProject
   );
 
   const handleCancel = () => {
-    if (isEmptyState) {
-      navigate("/empty_state");
+    if (isEmptyStateProject) {
+      navigate("/empty_state_project");
     } else {
       navigate("/");
     }
   };
 
   const handleCreateProject = () => {
-    if (members.length && tasks.length && projectName && projectDescription) {
-      console.log(projectName, projectDescription, members, tasks);
+    if (members.length && projectName && projectDescription) {
+      dispatch(
+        addProject({ projectName, projectDescription, projectMembers: members })
+      );
+      dispatch(toggleIsEmptyStateProject(false));
+      navigate("/empty_state_task");
     }
   };
 
@@ -47,7 +56,7 @@ export const ProjectDialogWithCancelCreate: FC<IProps> = ({
         onClick={handleCreateProject}
         className="bg-primary-500 rounded py-2.5 px-6 text-white text-base font-medium"
       >
-        Create first task
+        Create project
       </button>
     </>
   );
