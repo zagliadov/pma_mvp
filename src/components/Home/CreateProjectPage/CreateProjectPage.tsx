@@ -5,18 +5,12 @@ import { ProjectMembers } from "./ProjectMembers/ProjectMembers";
 import { ProjectName } from "./ProjectName/ProjectName";
 import { ProjectTasks } from "./ProjectTasks/ProjectTasks";
 import { ProjectDialogWithCancelCreate } from "./ProjectDialogWithCancelCreate/ProjectDialogWithCancelCreate";
-import { useAppSelector } from "../../../redux/hooks";
-import { RootState } from "../../../redux/store";
 
 export const CreateProjectPage: FC = () => {
-  const user = useAppSelector((state: RootState) => state.auth.user);
   const [projectName, setProjectName] = useState<string>("");
   const [members, setMembers] = useState<string[]>([]);
   const [projectDescription, setProjectDescription] = useState<string>("");
   const [tasks, setTasks] = useState<string[]>([]);
-
-
-  console.log(user)
 
   return (
     <div className="flex flex-col justify-center items-center h-full bg-gray-150 py-4">

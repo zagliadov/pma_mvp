@@ -28,7 +28,7 @@ export interface ILogInProps {
 
 const initialState: AuthState = {
   isAuthenticated: false,
-  user: { id: "test", name: "test", email: "test@test.com", password: "test" },
+  user: { id: "test", name: "Test Test", email: "test@test.com", password: "test" },
   members: [],
 };
 

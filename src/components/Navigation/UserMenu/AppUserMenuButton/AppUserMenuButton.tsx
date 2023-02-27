@@ -1,22 +1,19 @@
-import { FC } from "react";
+import { FC, useState, useRef } from "react";
+import { AvatarDropdownUserMenu } from "../AvatarDropdownUserMenu/AvatarDropdownUserMenu";
+import { useClickOutside } from "../../../../hooks/useClickOutside";
+export const AppUserMenuButton: FC = () => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  useClickOutside(dropdownRef, () => setIsOpen(false));
 
-interface IProps {
-  menuAvatarToggle: boolean;
-  setMenuAvatarToggle: Function;
-}
-export const AppUserMenuButton: FC<IProps> = ({
-  menuAvatarToggle,
-  setMenuAvatarToggle,
-}) => {
   return (
-    <button
-      onClick={() => setMenuAvatarToggle(!menuAvatarToggle)}
-      type="button"
-      className="w-10 h-10 ml-4 bg-[url('assets/avatar-header.svg')] rounded-full"
-      id="user-menu-button"
-      aria-expanded="false"
-      data-dropdown-toggle="user-dropdown"
-      data-dropdown-placement="bottom"
-    ></button>
+    <div className="flex" ref={dropdownRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        type="button"
+        className="w-10 h-10 ml-4 bg-[url('assets/avatar-header.svg')] rounded-full"
+      ></button>
+      <AvatarDropdownUserMenu isOpen={isOpen} />
+    </div>
   );
 };
