@@ -9,10 +9,13 @@ export const SearchInput: FC = () => {
   const toggleIsActiveSidebar = useAppSelector(
     (state: RootState) => state.diff.isActiveSidebar
   );
+  // w-10/12
   const exceptRoute =
     pathname === "/create_project" || pathname === "/empty_state_project";
+  const shutdownEffect = exceptRoute && toggleIsActiveSidebar;
+  console.log(shutdownEffect);
   return (
-    <div className="flex w-10/12 justify-end items-center">
+    <div className="flex w-full justify-end items-center">
       <button
         type="submit"
         disabled
@@ -23,8 +26,8 @@ export const SearchInput: FC = () => {
       <input
         type="search"
         className={`py-2 border border-gray-100 focus:w-full text-gray-600 text-sm rounded pl-8 focus:outline-none ${
-          exceptRoute && "bg-gray-150 border-gray-300"
-        } ${!toggleIsActiveSidebar && "bg-white"}`}
+          shutdownEffect ? "bg-gray-150 border-gray-300" : "bg-white"
+        }`}
         placeholder="Search..."
       />
     </div>

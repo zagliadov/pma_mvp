@@ -37,13 +37,14 @@ export const MenuToggle: FC = () => {
               saas-mvp
             </span>
           </div>
-
-          <button onClick={() => handleToggle()}>
-            <FaCloseMenu />
-          </button>
+          <div className="flex items-center justify-between box-border pl-4">
+            <button onClick={() => handleToggle()} className="pl-4">
+              <FaCloseMenu />
+            </button>
+          </div>
         </div>
       ) : (
-        <div>
+        <div className="flex items-center justify-between box-border px-4">
           <button onClick={() => handleToggle()} className="pl-4 flex">
             <FaOpenMenu />
           </button>
