@@ -7,7 +7,7 @@ export const MainTableSubNavigation: FC = () => {
   const { pathname } = useLocation();
   const isTimelineRoute = pathname === "/timeline";
   return (
-    <div className="border py-2 px-4 flex items-center justify-between">
+    <div className="py-2 px-4 flex items-center justify-between">
       <div className="flex">
         <button className="flex items-center rounded bg-primary-500 py-2 px-4">
           <FaButtonPlus />
