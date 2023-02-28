@@ -1,5 +1,5 @@
 import { FC, useRef, useState, useEffect } from "react";
-import { FaOpenMenu, FaCloseMenu, FaCheckCircle } from "../../icons/icons";
+import { FaOpenMenu } from "../../icons/icons";
 import { MenuToggleDropdown } from "./MenuToggleDropdown/MenuToggleDropdown";
 import { useClickOutside } from "../../../hooks/useClickOutside";
 import { useAppSelector, useAppDispatch } from "../../../redux/hooks";
@@ -28,30 +28,12 @@ export const MenuToggle: FC = () => {
   };
 
   return (
-    <div className={`flex flex-col`} ref={dropdownRef}>
-      {isOpen ? (
-        <div className="flex items-center justify-between box-border px-4 w-80 z-[100]">
-          <div className="flex items-center">
-            <FaCheckCircle />
-            <span className="text-sm font-bold pl-1 uppercase tracking-[0.08em]">
-              saas-mvp
-            </span>
-          </div>
-          <div className="flex items-center justify-between box-border pl-4">
-            <button onClick={() => handleToggle()} className="pl-4">
-              <FaCloseMenu />
-            </button>
-          </div>
-        </div>
-      ) : (
-        <div className="flex items-center justify-between box-border px-4">
-          <button onClick={() => handleToggle()} className="pl-4 flex">
-            <FaOpenMenu />
-          </button>
-        </div>
-      )}
+    <div className={`flex z-[101]`} ref={dropdownRef}>
+      <button onClick={() => handleToggle()} className="pl-4 flex items-center">
+        <FaOpenMenu />
+      </button>
 
-      <MenuToggleDropdown isOpen={isOpen} />
+      <MenuToggleDropdown isOpen={isOpen} handleToggle={handleToggle} />
     </div>
   );
 };

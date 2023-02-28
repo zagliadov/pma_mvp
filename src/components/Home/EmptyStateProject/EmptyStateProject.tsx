@@ -17,7 +17,7 @@ export const EmptyStateProject: FC = () => {
   );
 
   useEffect(() => {
-    if (!isEmptyStateProject && isEmptyStateTask) navigate("/empty_state_task");
+    if (!isEmptyStateProject) navigate("/main_table");
     if (!isEmptyStateProject && !isEmptyStateTask) navigate("/");
   }, [isEmptyStateProject, isEmptyStateTask, navigate]);
 

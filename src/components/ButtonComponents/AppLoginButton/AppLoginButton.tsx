@@ -21,7 +21,7 @@ export const AppLoginButton: FC<ILogInProps> = ({ email, password }) => {
   useEffect(() => {
     if (!isAuthenticated) return;
     if (isEmptyStateProject) navigate("/empty_state_project");
-    if (!isEmptyStateProject && isEmptyStateTask) navigate("/empty_state_task");
+    if (!isEmptyStateProject ) navigate("/main_table");
     if (!isEmptyStateProject && !isEmptyStateTask) navigate("/");
   }, [
     dispatch,

@@ -40,7 +40,7 @@ export const ProjectDialogWithCancelCreate: FC<IProps> = ({
         addProject({ projectName, projectDescription, projectMembers: members })
       );
       dispatch(toggleIsEmptyStateProject(false));
-      navigate("/empty_state_task");
+      navigate("/main_table");
     }
   };
 

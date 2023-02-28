@@ -8,10 +8,10 @@ import { ForgotPassword } from "../ForgotPassword/ForgotPassword";
 import { ProtectedRoute } from "../ProtectedRoute/ProtectedRoute";
 import { CreateProjectPage } from "../Home/CreateProjectPage/CreateProjectPage";
 import { EmptyStateProject } from "../Home/EmptyStateProject/EmptyStateProject";
-import { EmptyStateTask } from "../Home/EmptyStateTask/EmptyStateTask";
+import { MainTable } from "../Home/MainTable/MainTable";
+import { Timeline } from "../Home/Timeline/Timeline";
 
 export const App: FC = () => {
-
   return (
     <Routes>
       <Route element={<ProtectedRoute />}>
@@ -19,7 +19,8 @@ export const App: FC = () => {
           <Route element={<Home />} path="/" />
           <Route element={<CreateProjectPage />} path="/create_project" />
           <Route element={<EmptyStateProject />} path="/empty_state_project" />
-          <Route element={<EmptyStateTask />} path="/empty_state_task" />
+          <Route element={<MainTable />} path="/main_table" />
+          <Route element={<Timeline />} path="/timeline" />
         </Route>
       </Route>
       <Route path="/login" element={<LogIn />} />
