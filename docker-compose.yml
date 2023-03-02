@@ -1,0 +1,35 @@
+version: '3'
+services:
+  client:
+    image: node:latest
+    container_name: client
+    working_dir: /app
+    ports:
+      - '3000:3000'
+    depends_on:
+      - server
+      - PMADB
+    command: npm start
+    volumes:
+      - ./client:/app
+  server:
+    image: node:latest
+    container_name: server
+    ports:
+      - '9000:9000'
+    depends_on:
+      - PMADB
+    working_dir: /app
+    volumes:
+      - ./server:/app
+    command: npm run start:dev
+  PMADB:
+    image: postgres:latest
+    environment: 
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=PMADB
+    ports:
+      - "5432:5432" 
+    volumes: 
+      - ./data/database-data:/var/lib/postgresql/data/
