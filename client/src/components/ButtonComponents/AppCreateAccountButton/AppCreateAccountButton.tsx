@@ -1,8 +1,7 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { ICreateAccountProps } from "../../../redux/authSlice/authSlice";
-import { useAppDispatch } from "../../../redux/hooks";
-import { createAccount, login } from "../../../redux/authSlice/authSlice";
-import { useNavigate } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
+import { createAccount } from "../../../redux/authSlice/authSlice";
 
 export const AppCreateAccountButton: FC<ICreateAccountProps> = ({
   username,
@@ -10,14 +9,13 @@ export const AppCreateAccountButton: FC<ICreateAccountProps> = ({
   email,
   password,
 }) => {
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const handleClick = () => {
+    if (username === "" && workspace === "" && email === "" && password === "") return;
     dispatch(createAccount({ username, workspace, email, password }));
-    // dispatch(login());
-    // navigate("/");
   };
+
   return (
     <button
       onClick={handleClick}

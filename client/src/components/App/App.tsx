@@ -14,8 +14,8 @@ import { Timeline } from "../Home/Timeline/Timeline";
 export const App: FC = () => {
   return (
     <Routes>
-      <Route element={<ProtectedRoute />}>
-        <Route element={<Layout />}>
+      <Route element={<Layout />}>
+        <Route element={<ProtectedRoute />}>
           <Route element={<Home />} path="/" />
           <Route element={<CreateProjectPage />} path="/create_project" />
           <Route element={<EmptyStateProject />} path="/empty_state_project" />

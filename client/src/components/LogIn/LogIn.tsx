@@ -1,12 +1,18 @@
-import { FC, useState } from "react";
+import { FC, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AppGoogleLoginButton } from "../ButtonComponents/AppGoogleLoginButton/AppGoogleLoginButton";
 import { AppAppleLoginButton } from "../ButtonComponents/AppAppleLoginButton/AppAppleLoginButton";
 import { AppLoginButton } from "../ButtonComponents/AppLoginButton/AppLoginButton";
+import { useAppSelector } from "../../redux/hooks";
+import { RootState } from "../../redux/store";
 
 export const LogIn: FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const message = useAppSelector((state: RootState) => state.auth.message);
+  useEffect(() => {
+    localStorage.removeItem("token");
+  }, []);
 
   return (
     <div className="flex flex-row h-screen">
@@ -40,6 +46,11 @@ export const LogIn: FC = () => {
             placeholder="Enter password"
             className="pl-4 py-3 text-xs text-gray-400 border border-gray-100 rounded font-normal"
           />
+          <div className="relative">
+            <span className="absolute text-red-500 text-xs left-[35%]">
+              {message}
+            </span>
+          </div>
 
           <Link
             to="/forgot_password"

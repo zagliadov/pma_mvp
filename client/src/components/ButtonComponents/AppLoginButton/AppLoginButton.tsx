@@ -14,24 +14,17 @@ export const AppLoginButton: FC<ILogInProps> = ({ email, password }) => {
   const isEmptyStateTask = useAppSelector(
     (state: RootState) => state.project.isEmptyStateTask
   );
-  const isAuthenticated = useAppSelector(
-    (state: RootState) => state.auth.isAuthenticated
-  );
+  const token = useAppSelector((state: RootState) => state.auth.token);
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (token === "") return;
     if (isEmptyStateProject) navigate("/empty_state_project");
-    if (!isEmptyStateProject ) navigate("/main_table");
+    if (!isEmptyStateProject) navigate("/main_table");
     if (!isEmptyStateProject && !isEmptyStateTask) navigate("/");
-  }, [
-    dispatch,
-    isAuthenticated,
-    isEmptyStateProject,
-    navigate,
-    isEmptyStateTask,
-  ]);
+  }, [isEmptyStateProject, isEmptyStateTask, navigate, token]);
 
   const handleClick = () => {
+    if (email === "" && password === "") return;
     dispatch(logIn({ email, password }));
   };
   return (

@@ -1,11 +1,12 @@
 import { FC, useEffect } from "react";
 import { AppCreateProjectButton } from "../../ButtonComponents/AppCreateProjectButton/AppCreateProjectButton";
-import { useAppSelector } from "../../../redux/hooks";
+import { useAppSelector, useAppDispatch } from "../../../redux/hooks";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../../../redux/store";
 
 export const EmptyStateProject: FC = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const isEmptyStateProject = useAppSelector(
     (state: RootState) => state.project.isEmptyStateProject
   );
@@ -19,10 +20,14 @@ export const EmptyStateProject: FC = () => {
   useEffect(() => {
     if (!isEmptyStateProject) navigate("/main_table");
     if (!isEmptyStateProject && !isEmptyStateTask) navigate("/");
-  }, [isEmptyStateProject, isEmptyStateTask, navigate]);
+  }, [dispatch, isEmptyStateProject, isEmptyStateTask, navigate]);
 
   return (
-    <div className={`flex flex-col justify-center items-center h-full ${toggleIsActiveSidebar && "bg-gray-200"}`}>
+    <div
+      className={`flex flex-col justify-center items-center h-full ${
+        toggleIsActiveSidebar && "bg-gray-200"
+      }`}
+    >
       <div className="w-32 h-28 bg-[url('assets/CProject.svg')]"></div>
       <div className="flex flex-col justify-center items-center w-[460px] pt-8 pb-4">
         <p className="text-2xl font-medium text-gray-900 pb-4">

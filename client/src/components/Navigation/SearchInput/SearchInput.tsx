@@ -13,7 +13,6 @@ export const SearchInput: FC = () => {
   const exceptRoute =
     pathname === "/create_project" || pathname === "/empty_state_project";
   const shutdownEffect = exceptRoute && toggleIsActiveSidebar;
-  console.log(shutdownEffect);
   return (
     <div className="flex w-full justify-end items-center">
       <button

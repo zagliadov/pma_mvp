@@ -3,15 +3,21 @@ import { RootState, AppThunk } from "../store";
 import axios from "axios";
 
 export interface IUsers {
+  userId: number;
   username: string;
-  workspace: string
   email: string;
   password: string;
+  exp: number;
+  iat: number;
 }
 export interface AuthState {
+  status: number;
+  message: string;
   isAuthenticated: boolean;
   user: IUsers[];
   members: IUsers[];
+  token: string;
+  isLoading: boolean;
 }
 
 export interface ICreateAccountProps {
@@ -27,28 +33,77 @@ export interface ILogInProps {
 }
 
 const initialState: AuthState = {
+  status: 0,
+  message: "",
   isAuthenticated: false,
   user: [],
   members: [],
+  token: "",
+  isLoading: false,
 };
 
 export const createAccount = createAsyncThunk(
   "auth/createAccount",
   async (user: ICreateAccountProps) => {
     try {
-      const data = axios.post("http://localhost:9000/api/auth/registration", user);
-      return data
+      const data = await axios.post(
+        "http://localhost:9000/api/auth/registration",
+        user
+      );
+      return { status: data.status, message: data.data.message };
     } catch (error) {
-      console.log(error);
+      if (
+        error.response &&
+        error.response.data.message &&
+        error.response.status
+      ) {
+        return {
+          status: error.response.status,
+          message: error.response.data.message,
+        };
+      }
     }
   }
 );
 
 export const logIn = createAsyncThunk(
   "auth/login",
-  async (data: ILogInProps) => {
+  async (user: ILogInProps) => {
     try {
-      return data;
+      const data = await axios.post(
+        "http://localhost:9000/api/auth/login",
+        user
+      );
+      return data.data;
+    } catch (error) {
+      if (
+        error.response &&
+        error.response.data.message &&
+        error.response.status
+      ) {
+        return {
+          status: error.response.status,
+          message: error.response.data.message,
+        };
+      }
+    }
+  }
+);
+
+export const verifyToken = createAsyncThunk(
+  "auth/verifyToken",
+  async (token: string) => {
+    try {
+      const data = await axios.post(
+        "http://localhost:9000/api/auth/verifytoken",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return data.data;
     } catch (error) {
       console.log(error);
     }
@@ -70,6 +125,12 @@ export const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
+    setMessage: (state, action) => {
+      state.message = action.payload;
+    },
+    setStatus: (state, action) => {
+      state.status = action.payload;
+    },
     login: (state) => {
       state.isAuthenticated = true;
     },
@@ -85,26 +146,37 @@ export const authSlice = createSlice({
     builder
       .addCase(logIn.pending, (state) => {})
       .addCase(logIn.fulfilled, (state, action) => {
-        // if (!action.payload) return;
-        // if (
-        //   action.payload.email === state.user.email &&
-        //   action.payload.password === state.user.password
-        // ) {
-        //   state.isAuthenticated = true;
-        // }
-        // console.log(state.isAuthenticated);
+        if (!action.payload) return;
+        if (action.payload.status && action.payload.message) {
+          state.message = action.payload.message;
+          state.status = action.payload.status;
+        }
+        if (action.payload.token) {
+          localStorage.setItem("token", action.payload.token);
+          state.token = action.payload.token;
+        }
       })
       .addCase(logIn.rejected, (state) => {});
     builder
       .addCase(createAccount.pending, (state) => {})
       .addCase(createAccount.fulfilled, (state, action) => {
         if (!action.payload) return;
-        console.log(action.payload)
+        state.status = action.payload.status;
+        state.message = action.payload.message;
       })
       .addCase(createAccount.rejected, (state) => {});
+    builder
+      .addCase(verifyToken.pending, (state) => {})
+      .addCase(verifyToken.fulfilled, (state, action) => {
+        if (!action.payload) return;
+        state.user = action.payload;
+        // state.isAuthenticated = true;
+        state.isLoading = true;
+      })
+      .addCase(verifyToken.rejected, (state) => {});
   },
 });
 
-export const { login, logout } = authSlice.actions;
+export const { login, logout, setMessage, setStatus } = authSlice.actions;
 
 export default authSlice.reducer;

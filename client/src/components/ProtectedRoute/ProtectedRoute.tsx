@@ -1,18 +1,35 @@
-import { FC } from "react";
-import { useAppSelector } from "../../redux/hooks";
+import { FC, useEffect, useMemo, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { verifyToken } from "../../redux/authSlice/authSlice";
 import { RootState } from "../../redux/store";
 
 export const ProtectedRoute: FC = () => {
-  const isAuthenticated: boolean = useAppSelector(
-    (state: RootState) => state.auth.isAuthenticated
+  const dispatch = useAppDispatch();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const token: string = useMemo(
+    () => (localStorage.getItem("token") as string) || "",
+    []
   );
+  const user = useAppSelector((state: RootState) => state.auth.user)
+  useEffect(() => {
+    if (!token) return;
+    if (isOpen) {
+      console.log(token);
+      dispatch(verifyToken(token));
+      setIsOpen(false);
+    }
+    setIsOpen(true);
+    return () => {
+      setIsOpen(true);
+    };
+  }, [dispatch, isOpen, token]);
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
+  useEffect(() => {
+    console.log(user)
+  }, [user])
 
-  return <Outlet />;
+  return !token ? <Navigate to="/login" /> : <Outlet />;
 };
 
 export default ProtectedRoute;

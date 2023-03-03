@@ -1,14 +1,29 @@
-import { FC, useState } from "react";
-import { Link } from "react-router-dom";
+import { FC, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { AppGoogleLoginButton } from "../ButtonComponents/AppGoogleLoginButton/AppGoogleLoginButton";
 import { AppAppleLoginButton } from "../ButtonComponents/AppAppleLoginButton/AppAppleLoginButton";
 import { AppCreateAccountButton } from "../ButtonComponents/AppCreateAccountButton/AppCreateAccountButton";
+import { RootState } from "../../redux/store";
+import { useAppSelector, useAppDispatch } from "../../redux/hooks";
+import { setMessage, setStatus } from "../../redux/authSlice/authSlice";
 
 export const CreateAccount: FC = () => {
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [workspace, setWorkspace] = useState<string>("");
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const status = useAppSelector((state: RootState) => state.auth.status);
+  const message = useAppSelector((state: RootState) => state.auth.message);
+
+  useEffect(() => {
+    if (status === 201) {
+      navigate("/login");
+      dispatch(setStatus(0));
+      dispatch(setMessage(""));
+    }
+  }, [dispatch, navigate, status]);
 
   return (
     <div className="flex flex-row h-screen">
@@ -48,7 +63,7 @@ export const CreateAccount: FC = () => {
             htmlFor="email"
             className="text-xs font-normal text-gray-600 pb-1 pt-4"
           >
-            Email
+            Email <span className="text-red-500 pl-4">{message}</span>
           </label>
           <input
             type="email"

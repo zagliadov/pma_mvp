@@ -1,7 +1,6 @@
 import { FC } from "react";
-import { useAppSelector, useAppDispatch } from "../../../../../redux/hooks";
+import { useAppDispatch } from "../../../../../redux/hooks";
 import { logout } from "../../../../../redux/authSlice/authSlice";
-import { RootState } from "../../../../../redux/store";
 import {
   FaBellNotification,
   FaDropdownInformation,
@@ -9,6 +8,7 @@ import {
   FaDropdownSettings,
   FaProfile,
 } from "../../../../icons/icons";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {
   isOpen: boolean;
@@ -16,9 +16,11 @@ interface IProps {
 
 export const AvatarDropdownUserMenu: FC<IProps> = ({ isOpen }) => {
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state: RootState) => state.auth.user);
+  const navigate = useNavigate();
   const handleLogout = () => {
+    localStorage.removeItem("token");
     dispatch(logout());
+    navigate("/login");
   };
 
   return (
@@ -39,9 +41,7 @@ export const AvatarDropdownUserMenu: FC<IProps> = ({ isOpen }) => {
 
         <div className="flex flex-col pl-4">
           <span className="text-base font-medium">username</span>
-          <span className="text-gray-400 text-sm font-normal">
-            username
-          </span>
+          <span className="text-gray-400 text-sm font-normal">username</span>
         </div>
       </div>
 
