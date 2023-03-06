@@ -1,7 +1,6 @@
 import { FC, useRef, useState, useEffect } from "react";
 import { FaOpenMenu } from "../../icons/icons";
 import { MenuToggleDropdown } from "./MenuToggleDropdown/MenuToggleDropdown";
-import { useClickOutside } from "../../../hooks/useClickOutside";
 import { useAppSelector, useAppDispatch } from "../../../redux/hooks";
 import { RootState } from "../../../redux/store";
 import { toggleIsActiveSidebar } from "../../../redux/diffSlice/diffSlice";
@@ -13,8 +12,6 @@ export const MenuToggle: FC = () => {
   const isActiveSidebar = useAppSelector(
     (state: RootState) => state.diff.isActiveSidebar
   );
-
-  useClickOutside(dropdownRef, () => setIsOpen(false));
 
   useEffect(() => {
     if (!isOpen) {
@@ -33,7 +30,7 @@ export const MenuToggle: FC = () => {
         <FaOpenMenu />
       </button>
 
-      <MenuToggleDropdown isOpen={isOpen} handleToggle={handleToggle} />
+      <MenuToggleDropdown isOpen={isOpen} handleToggle={handleToggle} setParentMenuIsOpen={setIsOpen} />
     </div>
   );
 };

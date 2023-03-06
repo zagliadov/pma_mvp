@@ -57,7 +57,7 @@ export const login = async (req: any, res: any) => {
   const { email, password } = req.body;
   try {
     const { rows } = await query(
-      `SELECT id, email, username, password FROM users WHERE email = '${email}'`
+      `SELECT id, email, username, password FROM users WHERE email = $1`, [email]
     );
     if (!rows) {
       return res.status(401).json({ message: "Invalid email or password" });
@@ -73,18 +73,23 @@ export const login = async (req: any, res: any) => {
   }
 };
 
-export const verifyToken = async (req: any, res: any) => {
+export const verifyToken = async (req: any, res: any, next: any) => {
   const authHeader = req.headers["authorization"];
   const token: string = authHeader && authHeader.split(" ")[1];
   try {
     if (!token) return;
-    const decodedToken: any = await jwt.verify(token, process.env.JWT_SECRET as string);
+    const decodedToken: any = await jwt.verify(
+      token,
+      process.env.JWT_SECRET as string
+    );
     const expirationTime = decodedToken.exp;
     const currentTime = Date.now() / 1000;
     if (expirationTime < currentTime) {
       console.log("Token is not valid");
+      return res.status(401).json({ message: "Authentication failed" });
     } else {
-      res.status(200).json(decodedToken);
+      req.userData = decodedToken;
+      next();
     }
   } catch (error) {
     console.log(error);

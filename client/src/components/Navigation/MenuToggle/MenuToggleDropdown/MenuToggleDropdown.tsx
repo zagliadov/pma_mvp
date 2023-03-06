@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, KeyboardEvent, useEffect, useRef, useState } from "react";
 import {
   FaCheckCircle,
   FaChevronDown,
@@ -7,19 +7,49 @@ import {
   FaPlusSpace,
   FaYourSpace,
 } from "../../../icons/icons";
-import { MyFirstSpaceOption } from "./MyFirstSpaceOption/MyFirstSpaceOption";
-import { useAppSelector } from "../../../../redux/hooks";
+import { useAppSelector, useAppDispatch } from "../../../../redux/hooks";
 import { RootState } from "../../../../redux/store";
+import {
+  IWorkspaces,
+  addNewWorkspace,
+  getWorkspaces,
+} from "../../../../redux/workspacesSlice/workspacesSlice";
+import { WorkspacesOption } from "./WorkspacesOption/WorkspacesOption";
 
 interface IProps {
   isOpen: boolean;
   handleToggle: Function;
+  setParentMenuIsOpen: Function;
 }
-export const MenuToggleDropdown: FC<IProps> = ({ isOpen, handleToggle }) => {
+export const MenuToggleDropdown: FC<IProps> = ({ isOpen, handleToggle, setParentMenuIsOpen }) => {
   const [isDisclosed, setIsDisclosed] = useState<boolean>(false);
-  const projects = useAppSelector((state: RootState) => state.project.projects);
-  const handleAddSpace = async () => {
+  const [newWorkspaceName, setNewWorkspaceName] = useState<string>("");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [newWorkspaceInput, setNewWorkspaceInput] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
+  const token = localStorage && localStorage.getItem("token");
+  const workspaces: IWorkspaces[] = useAppSelector(
+    (state: RootState) => state.workspaces.workspaces
+  );
+  const handleOpenInput = () => {
+    setNewWorkspaceInput(!newWorkspaceInput);
+  };
 
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      if (newWorkspaceName === "") return;
+      if (!inputRef.current) return;
+      if (!token) return;
+      dispatch(addNewWorkspace({ token, workspace_name: newWorkspaceName }));
+      inputRef.current.value = "";
+    }
+  };
+  const handleOpen = () => {
+    setIsDisclosed(!isDisclosed);
+    if (!token) return;
+    if (!isDisclosed) {
+      dispatch(getWorkspaces(token));
+    }
   };
   return (
     <div
@@ -41,7 +71,7 @@ export const MenuToggleDropdown: FC<IProps> = ({ isOpen, handleToggle }) => {
 
       <div className="pt-4">
         <button
-          onClick={() => setIsDisclosed(!isDisclosed)}
+          onClick={() => handleOpen()}
           className="flex items-center justify-between w-full px-4"
         >
           <div className="flex items-center">
@@ -52,16 +82,35 @@ export const MenuToggleDropdown: FC<IProps> = ({ isOpen, handleToggle }) => {
         </button>
         {isDisclosed && (
           <div className="">
-            <button
-              className="flex items-center pl-10 pt-4"
-              onClick={() => handleAddSpace()}
-            >
-              <FaPlusSpace />
-              <span className="pl-2 text-primary-500 font-medium text-sm">
-                New space
-              </span>
-            </button>
-            <MyFirstSpaceOption />
+            <div>
+              <button
+                className="flex items-center pl-10 pt-4"
+                onClick={() => handleOpenInput()}
+              >
+                <FaPlusSpace />
+                <span className="pl-2 text-primary-500 font-medium text-sm">
+                  New space
+                </span>
+              </button>
+              {newWorkspaceInput && (
+                <div className="flex justify-center">
+                  <input
+                    type="text"
+                    ref={inputRef}
+                    className="focus:outline-none"
+                    onChange={(e) => setNewWorkspaceName(e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(e)}
+                    placeholder="Press enter to create workspace..."
+                  />
+                </div>
+              )}
+            </div>
+
+            <WorkspacesOption
+              workspaces={workspaces}
+              parentMenuIsOpen={isOpen}
+              setParentMenuIsOpen={setParentMenuIsOpen}
+            />
           </div>
         )}
       </div>

@@ -10,7 +10,8 @@ export const pool = new Pool({
 
 export const query = async (
   text: string,
+  params?: any,
 ): Promise<{ rows: QueryResultRow[]; rowCount: number }> => {
-  const { rows, rowCount } = await pool.query(text);
+  const { rows, rowCount } = await pool.query(text, params);
   return { rows, rowCount };
 };

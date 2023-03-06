@@ -51,7 +51,7 @@ export const createAccount = createAsyncThunk(
         user
       );
       return { status: data.status, message: data.data.message };
-    } catch (error) {
+    } catch (error: any) {
       if (
         error.response &&
         error.response.data.message &&
@@ -75,7 +75,7 @@ export const logIn = createAsyncThunk(
         user
       );
       return data.data;
-    } catch (error) {
+    } catch (error: any) {
       if (
         error.response &&
         error.response.data.message &&
@@ -131,7 +131,7 @@ export const authSlice = createSlice({
     setStatus: (state, action) => {
       state.status = action.payload;
     },
-    login: (state) => {
+    isAuth: (state) => {
       state.isAuthenticated = true;
     },
     logout: (state) => {
@@ -170,13 +170,11 @@ export const authSlice = createSlice({
       .addCase(verifyToken.fulfilled, (state, action) => {
         if (!action.payload) return;
         state.user = action.payload;
-        // state.isAuthenticated = true;
-        state.isLoading = true;
       })
       .addCase(verifyToken.rejected, (state) => {});
   },
 });
 
-export const { login, logout, setMessage, setStatus } = authSlice.actions;
+export const { isAuth, logout, setMessage, setStatus } = authSlice.actions;
 
 export default authSlice.reducer;

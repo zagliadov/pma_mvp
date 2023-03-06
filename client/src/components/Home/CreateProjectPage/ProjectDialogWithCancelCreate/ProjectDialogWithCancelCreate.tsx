@@ -2,26 +2,26 @@ import { FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../../../redux/hooks";
 import {
+  addNewProject,
   toggleIsEmptyStateProject,
-  addProject,
 } from "../../../../redux/projectSlice/projectSlice";
 import { RootState } from "../../../../redux/store";
-
+import { useLocation } from "react-router-dom";
 interface IProps {
   projectName: string;
   members: string[];
   projectDescription: string;
-  tasks: string[];
 }
 
 export const ProjectDialogWithCancelCreate: FC<IProps> = ({
   projectName,
   members,
   projectDescription,
-  tasks,
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useAppDispatch();
+  const token: string | null = localStorage && localStorage.getItem("token");
   const isEmptyStateProject = useAppSelector(
     (state: RootState) => state.project.isEmptyStateProject
   );
@@ -35,12 +35,19 @@ export const ProjectDialogWithCancelCreate: FC<IProps> = ({
   };
 
   const handleCreateProject = () => {
-    if (members.length && projectName && projectDescription) {
+    if (!token) return;
+    if (members.length && projectName && projectDescription && location.state) {
       dispatch(
-        addProject({ projectName, projectDescription, projectMembers: members })
+        addNewProject({
+          workspace_id: Number(location.state),
+          token,
+          name: projectName,
+          members,
+          description: projectDescription,
+        })
       );
-      dispatch(toggleIsEmptyStateProject(false));
-      navigate("/main_table");
+      // dispatch(toggleIsEmptyStateProject(false));
+      // navigate("/main_table");
     }
   };
 

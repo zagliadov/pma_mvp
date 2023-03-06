@@ -3,14 +3,12 @@ import { AppCloseButton } from "../../ButtonComponents/AppCloseButton/AppCloseBu
 import { AutoResizeTextarea } from "./AutoResizeTextarea/AutoResizeTextarea";
 import { ProjectMembers } from "./ProjectMembers/ProjectMembers";
 import { ProjectName } from "./ProjectName/ProjectName";
-import { ProjectTasks } from "./ProjectTasks/ProjectTasks";
 import { ProjectDialogWithCancelCreate } from "./ProjectDialogWithCancelCreate/ProjectDialogWithCancelCreate";
 
 export const CreateProjectPage: FC = () => {
   const [projectName, setProjectName] = useState<string>("");
   const [members, setMembers] = useState<string[]>([]);
   const [projectDescription, setProjectDescription] = useState<string>("");
-  const [tasks, setTasks] = useState<string[]>([]);
 
   return (
     <div className="flex flex-col justify-center items-center h-full bg-gray-200 py-4">
@@ -22,7 +20,7 @@ export const CreateProjectPage: FC = () => {
           </div>
         </div>
 
-        <div className="pt-8 px-8">
+        <div className="py-8 px-8">
           <ProjectName setProjectName={setProjectName} />
           <div className="pt-4">
             <ProjectMembers members={members} setMembers={setMembers} />
@@ -33,10 +31,6 @@ export const CreateProjectPage: FC = () => {
               projectDescription={projectDescription}
             />
           </div>
-
-          <div className="pt-4">
-            <ProjectTasks setTasks={setTasks} tasks={tasks} />
-          </div>
         </div>
 
         <div className="border-t border-gray-10 flex justify-end pr-4 py-2">
@@ -44,7 +38,6 @@ export const CreateProjectPage: FC = () => {
             projectName={projectName}
             members={members}
             projectDescription={projectDescription}
-            tasks={tasks}
           />
         </div>
       </div>
