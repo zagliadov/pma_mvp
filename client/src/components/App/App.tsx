@@ -19,8 +19,8 @@ export const App: FC = () => {
           <Route element={<Home />} path="/" />
           <Route element={<CreateProjectPage />} path="/create_project" />
           <Route element={<EmptyStateProject />} path="/empty_state_project" />
-          <Route element={<MainTable />} path="/main_table" />
-          <Route element={<Timeline />} path="/timeline" />
+          <Route element={<MainTable />} path="/main_table/:project_id" />
+          <Route element={<Timeline />} path="/timeline/:project_id" />
         </Route>
       </Route>
       <Route path="/login" element={<LogIn />} />

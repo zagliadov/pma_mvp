@@ -3,6 +3,8 @@ import authReducer from "./authSlice/authSlice";
 import projectReducer from "./projectSlice/projectSlice";
 import diffReducer from "./diffSlice/diffSlice";
 import workspacesReducer from "./workspacesSlice/workspacesSlice";
+import tasksReducer from "./tasksSlice/tasksSlice";
+import statusReducer from "./statusSlice/statusSlice";
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +12,8 @@ export const store = configureStore({
     project: projectReducer,
     diff: diffReducer,
     workspaces: workspacesReducer,
+    tasks: tasksReducer,
+    status: statusReducer,
   },
 });
 

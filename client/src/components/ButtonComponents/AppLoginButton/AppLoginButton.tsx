@@ -6,24 +6,27 @@ import { useNavigate } from "react-router-dom";
 import { RootState } from "../../../redux/store";
 import { getWorkspaces } from "../../../redux/workspacesSlice/workspacesSlice";
 
-export const AppLoginButton: FC<ILogInProps> = ({ email, password }) => {
+interface IProps {
+  email: string;
+  password: string;
+  status: number | null;
+}
+export const AppLoginButton: FC<IProps> = ({ email, password, status }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const isEmptyStateProject = useAppSelector(
-    (state: RootState) => state.workspaces.isEmptyStateProject
-  );
-  const isEmptyStateTask = useAppSelector(
-    (state: RootState) => state.project.isEmptyStateTask
-  );
+
   const token = useAppSelector((state: RootState) => state.auth.token);
 
- 
+  useEffect(() => {
+    if (token) {
+      dispatch(isAuth());
+      navigate("/empty_state_project");
+    }
+  }, [dispatch, navigate, token]);
 
   const handleClick = () => {
     if (email === "" && password === "") return;
     dispatch(logIn({ email, password }));
-    dispatch(isAuth());
-    navigate("/empty_state_project");
   };
   return (
     <button

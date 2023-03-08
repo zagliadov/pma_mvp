@@ -1,7 +1,7 @@
 import { FC } from "react";
 import { SearchInput } from "./SearchInput/SearchInput";
 import { MenuToggle } from "./MenuToggle/MenuToggle";
-import { useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { UserMenu } from "./UserMenu/UserMenu";
 import { useAppSelector } from "../../redux/hooks";
 import { RootState } from "../../redux/store";
@@ -10,14 +10,12 @@ import { MainTableSubNavigation } from "./MainTableSubNavigation/MainTableSubNav
 
 export const Navigation: FC = () => {
   const { pathname } = useLocation();
+  const params = useParams();
   const toggleIsActiveSidebar = useAppSelector(
     (state: RootState) => state.diff.isActiveSidebar
   );
-  const exceptRoute =
-    pathname === "/create_project" || pathname === "/empty_state_project";
-  const shutdownEffect = exceptRoute && toggleIsActiveSidebar;
-  const isMainRoute = pathname === "/main_table" || pathname === "/timeline";
-
+  const shutdownEffect = toggleIsActiveSidebar;
+  const isMainRoute = pathname === `/main_table/${params.project_id}` || pathname === `/timeline/${params.project_id}`;
   return (
     <div className="flex flex-col">
       <div
@@ -29,7 +27,7 @@ export const Navigation: FC = () => {
         <MenuToggle />
 
         {isMainRoute && <MainTableNavigation />}
-
+        
         <div className="flex w-full justify-end">
           <SearchInput />
           <UserMenu />

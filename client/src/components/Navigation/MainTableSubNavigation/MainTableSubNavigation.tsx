@@ -1,13 +1,18 @@
 import { FC } from "react";
 import { FaButtonPlus, FaEye, FaFilter, FaUsers } from "../../icons/icons";
 import { UsersListButton } from "./UsersListButton/UsersListButton";
-import { useLocation } from "react-router-dom";
+import { useAppSelector } from "../../../redux/hooks";
+import { RootState } from "../../../redux/store";
 
 export const MainTableSubNavigation: FC = () => {
-  const { pathname } = useLocation();
-  const isTimelineRoute = pathname === "/timeline";
+  const toggleIsActiveSidebar = useAppSelector(
+    (state: RootState) => state.diff.isActiveSidebar
+  );
+  const shutdownEffect = toggleIsActiveSidebar;
   return (
-    <div className="py-2 px-4 flex items-center justify-between">
+    <div className={`py-2 px-4 flex items-center justify-between ${
+      shutdownEffect ? "bg-gray-150 border-gray-300" : "bg-white"
+    }`}>
       <div className="flex">
         <button className="flex items-center rounded bg-primary-500 py-2 px-4">
           <FaButtonPlus />

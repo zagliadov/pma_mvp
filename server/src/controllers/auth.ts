@@ -6,30 +6,38 @@ import bcrypt from "bcrypt";
 
 export const registration = async (req: any, res: any) => {
   const { username, workspace, email, password } = req.body;
-  const bcrypt_password = await bcrypt.hash(password, 10);
+  const bcrypt_password = await bcrypt.hash(password, Number(process.env.SALT));
   try {
     const { rows } = await query(
-      `SELECT EXISTS(SELECT 1 FROM users WHERE email = '${email}')`
+      `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1 OR username = $2)`,
+      [email, username]
     );
     if (rows[0].exists) {
       return res.status(400).json({
-        message: "User with this email address already exists",
+        message: "User with this email address or username already exists",
       });
     } else {
-      await query(`
+      await query(
+        `
        INSERT INTO Users(username, email, password)
-            VALUES('${username}', '${email}', '${bcrypt_password}')`);
-
-      const { rows } = await query(
-        `SELECT id FROM users WHERE email = '${email}'`
+            VALUES($1, $2, $3)`,
+        [username, email, bcrypt_password]
       );
-      await query(`
+
+      const { rows } = await query(`SELECT id FROM users WHERE email = $1`, [
+        email,
+      ]);
+      await query(
+        `
       INSERT INTO workspaces(user_id, name)
-        VALUES(${rows[0].id}, '${workspace}')`);
+        VALUES($1, $2)`,
+        [rows[0].id, workspace]
+      );
       return res.status(201).json({ message: "User create" });
     }
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -39,7 +47,7 @@ interface IPayload {
   email: string;
 }
 const createJwtToken = (userId: string, username: string, email: string) => {
-  const expiresIn = Math.floor(Date.now() / 1000) + 60 * 60;
+  const expiresIn = Math.floor(Date.now() / 1000) + 60 * 60 * 24;
   const payload: IPayload = {
     userId,
     username,
@@ -57,9 +65,10 @@ export const login = async (req: any, res: any) => {
   const { email, password } = req.body;
   try {
     const { rows } = await query(
-      `SELECT id, email, username, password FROM users WHERE email = $1`, [email]
+      `SELECT id, email, username, password FROM users WHERE email = $1`,
+      [email]
     );
-    if (!rows) {
+    if (!rows || rows.length === 0) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
     const validPassword = await bcrypt.compare(password, rows[0].password);
@@ -77,7 +86,7 @@ export const verifyToken = async (req: any, res: any, next: any) => {
   const authHeader = req.headers["authorization"];
   const token: string = authHeader && authHeader.split(" ")[1];
   try {
-    if (!token) return;
+    if (!token) return res.status(401).json({ message: "Authentication failed" });
     const decodedToken: any = await jwt.verify(
       token,
       process.env.JWT_SECRET as string
@@ -93,5 +102,6 @@ export const verifyToken = async (req: any, res: any, next: any) => {
     }
   } catch (error) {
     console.log(error);
+    return res.status(401).json({ message: "Authentication failed"})
   }
 };

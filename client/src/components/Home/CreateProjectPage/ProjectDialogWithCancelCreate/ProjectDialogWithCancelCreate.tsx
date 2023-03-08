@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../../../redux/hooks";
 import {
   addNewProject,
-  toggleIsEmptyStateProject,
 } from "../../../../redux/projectSlice/projectSlice";
 import { RootState } from "../../../../redux/store";
 import { useLocation } from "react-router-dom";
@@ -46,8 +45,7 @@ export const ProjectDialogWithCancelCreate: FC<IProps> = ({
           description: projectDescription,
         })
       );
-      // dispatch(toggleIsEmptyStateProject(false));
-      // navigate("/main_table");
+      navigate("/main_table");
     }
   };
 

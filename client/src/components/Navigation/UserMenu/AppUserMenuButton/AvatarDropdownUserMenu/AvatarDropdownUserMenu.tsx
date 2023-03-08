@@ -18,7 +18,6 @@ export const AvatarDropdownUserMenu: FC<IProps> = ({ isOpen }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const handleLogout = () => {
-    localStorage.removeItem("token");
     dispatch(logout());
     navigate("/login");
   };

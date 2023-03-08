@@ -22,7 +22,7 @@ export const WorkspacesOption: FC<IProps> = ({
   setParentMenuIsOpen,
 }) => {
   const [isOpen, setIsOpen] = useState<boolean[]>(
-    Array(workspaces.length).fill(false)
+    Array(workspaces?.length).fill(false)
   );
   const projects = useAppSelector((state: RootState) => state.project.projects);
   const token: string | null = localStorage && localStorage.getItem("token");
@@ -82,6 +82,7 @@ export const WorkspacesOption: FC<IProps> = ({
                 projects={projects}
                 isOpen={isOpen[index]}
                 parentMenuIsOpen={parentMenuIsOpen}
+                setParentMenuIsOpen={setParentMenuIsOpen}
               />
             </div>
           );

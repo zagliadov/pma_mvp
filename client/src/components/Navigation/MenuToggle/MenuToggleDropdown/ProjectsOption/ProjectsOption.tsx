@@ -1,6 +1,7 @@
 import { FC, useEffect, useState, useRef } from "react";
 import { IProjects } from "../../../../../redux/projectSlice/projectSlice";
 import { useClickOutside } from "../../../../../hooks/useClickOutside";
+import { useNavigate } from "react-router-dom";
 import {
   FaChevronRight,
   FaMembers,
@@ -15,31 +16,34 @@ interface IProps {
   projects: IProjects[];
   isOpen: boolean;
   parentMenuIsOpen: boolean;
+  setParentMenuIsOpen: Function;
 }
 export const ProjectsOption: FC<IProps> = ({
   projects,
   isOpen,
   parentMenuIsOpen,
+  setParentMenuIsOpen,
 }) => {
   const [isViewHover, setIsViewHover] = useState<boolean>(false);
   const [isViewSubmenuOpen, setIsViewSubmenuOpen] = useState<boolean>(false);
   const moreMenuRef = useRef(null);
+  const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState<boolean[]>(
-    Array(projects.length).fill(false)
+    Array(projects?.length).fill(false)
   );
   const [moreMenuIsOpen, setMoreMenuIsOpen] = useState<boolean[]>(
-    Array(projects.length).fill(false)
+    Array(projects?.length).fill(false)
   );
   useClickOutside(moreMenuRef, () =>
-    setMoreMenuIsOpen(Array(projects.length).fill(false))
+    setMoreMenuIsOpen(Array(projects?.length).fill(false))
   );
 
   useEffect(() => {
     if (!parentMenuIsOpen) {
-      setIsVisible(Array(projects.length).fill(false));
-      setMoreMenuIsOpen(Array(projects.length).fill(false));
+      setIsVisible(Array(projects?.length).fill(false));
+      setMoreMenuIsOpen(Array(projects?.length).fill(false));
     }
-  }, [parentMenuIsOpen, projects.length]);
+  }, [parentMenuIsOpen, projects?.length]);
 
   const handleVisible = (id: number, index: number) => {
     setIsVisible((prevState: boolean[]) => {
@@ -54,7 +58,7 @@ export const ProjectsOption: FC<IProps> = ({
       return newState;
     });
     if (!isVisible[index] && moreMenuIsOpen[index]) {
-      setMoreMenuIsOpen(Array(projects.length).fill(false));
+      setMoreMenuIsOpen(Array(projects?.length).fill(false));
     }
   };
 
@@ -62,7 +66,7 @@ export const ProjectsOption: FC<IProps> = ({
     setMoreMenuIsOpen((prevState: boolean[]) => {
       const newState = [...prevState];
       newState[index] = !newState[index];
-      newState.forEach((item, i) => {
+      newState.forEach((_, i) => {
         if (i !== index) {
           newState[i] = false;
         }
@@ -73,6 +77,11 @@ export const ProjectsOption: FC<IProps> = ({
 
   const handleOpenViewSubmenu = () => {
     setIsViewSubmenuOpen(!isViewSubmenuOpen);
+  };
+
+  const handleGoToMainTable = (project_id: number) => {
+    setParentMenuIsOpen(false);
+    navigate(`/main_table/${project_id}`, { state: project_id });
   };
 
   return (
@@ -86,8 +95,8 @@ export const ProjectsOption: FC<IProps> = ({
               onMouseEnter={() => handleVisible(project.id, index)}
               className="flex items-center pt-3"
             >
-              <div className="flex w-8 h-8 bg-gray-50 rounded">
-                <span className="flex items-center justify-center uppercase text-sm w-full h-full">
+              <div className="flex bg-gray-50 rounded">
+                <span className="flex items-center w-8 h-8 justify-center uppercase text-sm">
                   {project.name.charAt(0)}
                 </span>
               </div>
@@ -142,7 +151,10 @@ export const ProjectsOption: FC<IProps> = ({
                     >
                       <div className="absolute bg-white right-[-415px] w-[200px] top-[60px] px-1 py-1 rounded-lg justify-around">
                         <div className="flex flex-col">
-                          <button className="flex items-center hover:bg-gray-50 px-2 py-2 rounded">
+                          <button
+                            onClick={() => handleGoToMainTable(project.id)}
+                            className="flex items-center hover:bg-gray-50 px-2 py-2 rounded"
+                          >
                             <FaNoActiveTable />
                             <span className="pl-2">Main Table</span>
                           </button>

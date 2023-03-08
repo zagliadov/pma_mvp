@@ -1,22 +1,22 @@
 import { FC, useState, KeyboardEvent } from "react";
-import { isItemExist } from "../../../../../helpers/helpers";
-import { FaEditButton, FaTrashButton } from "../../../../icons/icons";
+import { isItemExist } from "../../../../../../helpers/helpers";
+import { FaEditButton, FaTrashButton } from "../../../../../icons/icons";
 
 interface IProps {
-  setTasks: Function;
-  tasks: string[];
-  setTask: Function;
-  task: string;
+  setSubTasks: Function;
+  subTasks: string[];
+  setSubTask: Function;
+  subTask: string;
   isEdit: boolean;
   setIsEdit: Function;
   setIsAddingTask: Function;
 }
 
-export const ProjectTasksList: FC<IProps> = ({
-  setTasks,
-  tasks,
-  setTask,
-  task,
+export const SubTasksList: FC<IProps> = ({
+  setSubTasks,
+  subTasks,
+  setSubTask,
+  subTask,
   isEdit,
   setIsEdit,
   setIsAddingTask,
@@ -28,13 +28,13 @@ export const ProjectTasksList: FC<IProps> = ({
     isEdit: string[]
   ) => {
     if (e.key === "Enter") {
-      setTask(isEdit[0]);
-      const index = tasks.findIndex((e: string) => e === isEdit[0]);
-      if (isItemExist(task, tasks)) return;
-      if (task.length === 0) return;
-      setTasks((prevArray: string[]) => [
+      setSubTask(isEdit[0]);
+      const index = subTasks.findIndex((e: string) => e === isEdit[0]);
+      if (isItemExist(subTask, subTasks)) return;
+      if (subTask.length === 0) return;
+      setSubTasks((prevArray: string[]) => [
         ...prevArray.slice(0, index),
-        task,
+        subTask,
         ...prevArray.slice(index + 1),
       ]);
     }
@@ -43,22 +43,22 @@ export const ProjectTasksList: FC<IProps> = ({
   const handleOpenEdit = (task: string) => {
     setIsAddingTask(false);
     setIsEdit(true);
-    const a = tasks.filter((t: string) => {
+    const a = subTasks.filter((t: string) => {
       return t === task;
     });
     setEditItem(a);
   };
 
   const handleRemoveTask = (task: string) => {
-    setTasks((prevArray: string[]) => {
+    setSubTasks((prevArray: string[]) => {
       return prevArray.filter((item: string) => item !== task);
     });
   };
 
   return (
     <>
-      {tasks &&
-        tasks.map((task: string) => {
+      {subTasks &&
+        subTasks.map((task: string) => {
           return (
             <div key={task} className="flex justify-between pb-4">
               <div className="flex items-center pl-1.5">
@@ -71,8 +71,8 @@ export const ProjectTasksList: FC<IProps> = ({
                   {editItem[0] === task && isEdit ? (
                     <div className="flex flex-col mt-5 mr-2 ">
                       <input
-                        onFocus={() => setTask(editItem[0])}
-                        onChange={(e) => setTask(e.target.value)}
+                        onFocus={() => setSubTask(editItem[0])}
+                        onChange={(e) => setSubTask(e.target.value)}
                         onKeyDown={(e) => handleOnKeyDownEditTask(e, editItem)}
                         placeholder="Press enter to edit..."
                         type="text"

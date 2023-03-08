@@ -1,18 +1,13 @@
 import { FC } from "react";
 import { FaSearch } from "../../icons/icons";
-import { useLocation } from "react-router-dom";
 import { useAppSelector } from "../../../redux/hooks";
 import { RootState } from "../../../redux/store";
 
 export const SearchInput: FC = () => {
-  const { pathname } = useLocation();
   const toggleIsActiveSidebar = useAppSelector(
     (state: RootState) => state.diff.isActiveSidebar
   );
-  // w-10/12
-  const exceptRoute =
-    pathname === "/create_project" || pathname === "/empty_state_project";
-  const shutdownEffect = exceptRoute && toggleIsActiveSidebar;
+  const shutdownEffect = toggleIsActiveSidebar;
   return (
     <div className="flex w-full justify-end items-center">
       <button

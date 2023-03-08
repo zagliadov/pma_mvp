@@ -5,19 +5,25 @@ import {
   FaNoActiveTable,
   FaNoActiveTimeline,
 } from "../../icons/icons";
-import { Link, useLocation } from "react-router-dom";
+import { useAppSelector } from "../../../redux/hooks";
+import { Link, useLocation, useParams } from "react-router-dom";
+import { RootState } from "../../../redux/store";
 
 export const MainTableNavigation: FC = () => {
   const { pathname } = useLocation();
-  const mainTablePath = pathname === "/main_table";
-  const timelinePath = pathname === "/timeline";
+  const params = useParams();
+  const mainTablePath = pathname === `/main_table/${params.project_id}`;
+  const timelinePath = pathname === `/timeline/${params.project_id}`;
+  const project = useAppSelector((state: RootState) => state.project.project);
   return (
     <div className="desktop:flex hidden items-center w-[40%]">
       <div>
-        <span className="text-lg pl-6 font-medium  pr-4">Project Name</span>
+        <span className="text-lg pl-6 font-medium  pr-4">
+          {project[0] ? project[0].name : "Project name"}
+        </span>
       </div>
 
-      <Link to="/main_table">
+      <Link to={`/main_table/${params.project_id}`}>
         <div className="relative flex items-center border-l-[2px] border-gray-100 px-4">
           {mainTablePath ? <FaActiveTable /> : <FaNoActiveTable />}
           <span
@@ -33,7 +39,7 @@ export const MainTableNavigation: FC = () => {
         </div>
       </Link>
 
-      <Link to="/timeline">
+      <Link to={`/timeline/${params.project_id}`}>
         <div className="flex relative items-center border-l-[2px] border-gray-100 pl-4">
           {timelinePath ? <FaActiveTimeline /> : <FaNoActiveTimeline />}
           <span

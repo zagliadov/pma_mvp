@@ -10,6 +10,7 @@ export const LogIn: FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const message = useAppSelector((state: RootState) => state.auth.message);
+  const status = useAppSelector((state: RootState) => state.auth.status);
   useEffect(() => {
     localStorage.removeItem("token");
   }, []);
@@ -59,7 +60,7 @@ export const LogIn: FC = () => {
             Forgot Password?
           </Link>
           <div className="pb-8"></div>
-          <AppLoginButton email={email} password={password} />
+          <AppLoginButton email={email} password={password} status={status} />
           <div className="pb-8"></div>
 
           <div className="flex item-center">

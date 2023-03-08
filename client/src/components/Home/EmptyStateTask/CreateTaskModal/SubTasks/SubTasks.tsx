@@ -1,16 +1,16 @@
 import { FC, useState, useEffect, useRef } from "react";
-import { ProjectTasksList } from "./ProjectTasksList/ProjectTasksList";
-import { ProjectAddTask } from "./ProjectAddTask/ProjectAddTask";
+import { SubTasksList } from "./SubTasksList/SubTasksList";
+import { AddSubTasks } from "./AddSubTasks/AddSubTasks";
 
 interface IProps {
-  setTasks: Function;
-  tasks: string[];
+  setSubTasks: Function;
+  subTasks: string[];
 }
 
-export const ProjectTasks: FC<IProps> = ({ setTasks, tasks }) => {
+export const SubTasks: FC<IProps> = ({ setSubTasks, subTasks }) => {
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [isAddingTask, setIsAddingTask] = useState<boolean>(false);
-  const [task, setTask] = useState<string>("");
+  const [subTask, setSubTask] = useState<string>("");
   const inputAddTaskRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -18,28 +18,28 @@ export const ProjectTasks: FC<IProps> = ({ setTasks, tasks }) => {
   }, [isEdit, isAddingTask]);
 
   return (
-    <div className="border-t pt-2 pb-8">
-      <p className="text-gray-600 text-xs pb-4 pt-4">Tasks</p>
+    <div className="border-t border-b pt-4 pb-8 px-8">
+      <p className="text-gray-600 text-xs pb-4">Subtasks</p>
 
-      <ProjectTasksList
-        setTasks={setTasks}
-        tasks={tasks}
-        setTask={setTask}
-        task={task}
+      <SubTasksList
+        setSubTasks={setSubTasks}
+        subTasks={subTasks}
+        setSubTask={setSubTask}
+        subTask={subTask}
         isEdit={isEdit}
         setIsEdit={setIsEdit}
         setIsAddingTask={setIsAddingTask}
       />
 
       <div className="flex items-center h-8">
-        <ProjectAddTask
-          setTask={setTask}
-          task={task}
+        <AddSubTasks
+          setSubTask={setSubTask}
+          subTask={subTask}
           isAddingTask={isAddingTask}
           setIsAddingTask={setIsAddingTask}
           setIsEdit={setIsEdit}
-          setTasks={setTasks}
-          tasks={tasks}
+          setSubTasks={setSubTasks}
+          subTasks={subTasks}
           inputAddTaskRef={inputAddTaskRef}
         />
       </div>

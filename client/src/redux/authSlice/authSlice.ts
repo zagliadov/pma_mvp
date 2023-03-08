@@ -11,7 +11,7 @@ export interface IUsers {
   iat: number;
 }
 export interface AuthState {
-  status: number;
+  status: number | null;
   message: string;
   isAuthenticated: boolean;
   user: IUsers[];
@@ -33,7 +33,7 @@ export interface ILogInProps {
 }
 
 const initialState: AuthState = {
-  status: 0,
+  status: null,
   message: "",
   isAuthenticated: false,
   user: [],
@@ -135,6 +135,8 @@ export const authSlice = createSlice({
       state.isAuthenticated = true;
     },
     logout: (state) => {
+      state.token = "";
+      localStorage.removeItem("token");
       state.isAuthenticated = false;
     },
   },

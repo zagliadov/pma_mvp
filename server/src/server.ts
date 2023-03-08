@@ -7,6 +7,7 @@ import { pool } from "./pool/db";
 import auth from "./routes/auth";
 import projects from "./routes/projects";
 import workspaces from "./routes/workspaces";
+import tasks from "./routes/tasks";
 
 const app = express();
 app.use(express.json());
@@ -16,6 +17,7 @@ const PORT: string | undefined = process.env.PORT;
 app.use("/api/auth", auth);
 app.use("/api/projects", projects);
 app.use("/api/workspaces", workspaces);
+app.use("/api/tasks", tasks);
 
 pool.connect().then(() => {
   app.listen(PORT, async () => {

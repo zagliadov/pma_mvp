@@ -1,26 +1,26 @@
 import { FC, useState, useEffect, KeyboardEvent } from "react";
-import { FaAddTask } from "../../../../icons/icons";
-import { isItemExist } from "../../../../../helpers/helpers";
+import { isItemExist } from "../../../../../../helpers/helpers";
+import { FaAddTask } from "../../../../../icons/icons";
 
 interface IProps {
-  setTask: Function;
-  task: string;
+  setSubTask: Function;
+  subTask: string;
   isAddingTask: boolean;
   setIsAddingTask: Function;
   setIsEdit: Function;
-  setTasks: Function;
-  tasks: string[];
+  setSubTasks: Function;
+  subTasks: string[];
   inputAddTaskRef: any;
 }
 
-export const ProjectAddTask: FC<IProps> = ({
-  setTask,
-  task,
+export const AddSubTasks: FC<IProps> = ({
+  setSubTask,
+  subTask,
   isAddingTask,
   setIsAddingTask,
   setIsEdit,
-  setTasks,
-  tasks,
+  setSubTasks,
+  subTasks,
   inputAddTaskRef,
 }) => {
   const [width, setWidth] = useState<number>(0);
@@ -32,9 +32,9 @@ export const ProjectAddTask: FC<IProps> = ({
 
   const handleOnKeyDownAddTask = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      if (task.length === 0) return;
-      if (isItemExist(task, tasks)) return;
-      setTasks((prevArray: string[]) => [...prevArray, task]);
+      if (subTask.length === 0) return;
+      if (isItemExist(subTask, subTasks)) return;
+      setSubTasks((prevArray: string[]) => [...prevArray, subTask]);
       if (inputAddTaskRef.current) inputAddTaskRef.current.value = "";
     }
   };
@@ -54,16 +54,16 @@ export const ProjectAddTask: FC<IProps> = ({
       >
         <FaAddTask />
         <span className="pl-1.5 text-gray-600 text-sm font-medium">
-          Add task
+          Add subtask
         </span>
       </button>
       <div className="pl-3">
         <input
           ref={inputAddTaskRef}
-          onChange={(e) => setTask(e.target.value)}
+          onChange={(e) => setSubTask(e.target.value)}
           onKeyDown={(e) => handleOnKeyDownAddTask(e)}
           style={{ width: `${width}px` }}
-          placeholder="Press enter to add task..."
+          placeholder="Press enter to add subtask..."
           type="text"
           maxLength={40}
           className={`transition-all duration-500 ease-in-out w-0 focus:outline-none ${

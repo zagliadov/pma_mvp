@@ -4,11 +4,25 @@ import { query } from "../pool/db";
 
 export const getProjects = async (req: any, res: any) => {
   const { workspaces_id } = req.body;
-  if (!workspaces_id) return;
+  if (!workspaces_id)
+    return res.status(400).json({ message: "workspaces_id is required" });
   const { rows } = await query(
-    `SELECT id, name FROM projects WHERE workspace_id = ${workspaces_id}`
+    `SELECT id, name FROM projects WHERE workspace_id = $1`,
+    [workspaces_id]
   );
-  if (rows.length === 0) return;
+  if (rows.length === 0) return res.end();
+  res.status(200).json(rows);
+};
+
+export const getProject = async (req: any, res: any) => {
+  const { project_id } = req.body;
+  if (!project_id)
+    return res.status(400).json({ message: "project_id is required" });
+  const { rows } = await query(
+    `SELECT workspace_id, name, description FROM projects WHERE id = $1`,
+    [project_id]
+  );
+  if (rows.length === 0) return res.end();
   res.status(200).json(rows);
 };
 
@@ -18,14 +32,16 @@ export const addNewProject = async (req: any, res: any) => {
 
   try {
     const { rows } = await query(
-      `INSERT INTO projects (workspace_id, name) VALUES (${workspace_id}, '${name}') RETURNING id`
-    )
+      `INSERT INTO projects (workspace_id, name, description) VALUES ($1, $2, $3) RETURNING id`,
+      [workspace_id, name, description]
+    );
 
     members.map((member: string) => {
-      // console.log(member, typeof rows[0].id, typeof userId)
-      query(`INSERT INTO project_members (email, project_id, user_id) VALUES
-      ('${member}', ${rows[0].id}, ${userId})
-      `);
+      query(
+        `INSERT INTO project_members (email, project_id, user_id) VALUES
+      ($1, $2, $3)`,
+        [member, rows[0].id, userId]
+      );
     });
   } catch (error) {
     console.log(error);
