@@ -1,48 +1,54 @@
-import { FC, useState } from "react";
-import {
-  FaCloseButton,
-  FaColorCheck,
-  FaPlusSpace,
-} from "../../../../icons/icons";
-import { hexToRgba } from "../../../../../helpers/helpers";
+import { FC, useState, useEffect } from "react";
+import { FaCloseButton, FaPlusSpace } from "../../../../icons/icons";
+import { useAppDispatch } from "../../../../../redux/hooks";
+import { getStatuses } from "../../../../../redux/statusSlice/statusSlice";
+import { DefaultListOfStatuses } from "./DefaultListOfStatuses/DefaultListOfStatuses";
 
-interface IStatusArray {
-  color: string;
-  status: string;
-}
 interface IProps {
   setCreateStatusModalOpen: Function;
+  setCreateEditStatusModalOpen: Function;
   setStatusModalOpen: Function;
-  statusArray: IStatusArray[];
+  createStatusModalOpen: boolean;
+  createEditStatusModalOpen: boolean;
   setStatus: Function;
   setColor: Function;
-  color: string | null;
+  handleEditStatus: Function;
 }
 export const StatusModal: FC<IProps> = ({
   setStatusModalOpen,
   setCreateStatusModalOpen,
-  statusArray,
+  createStatusModalOpen,
+  createEditStatusModalOpen,
+  setCreateEditStatusModalOpen,
+  handleEditStatus,
   setStatus,
   setColor,
-  color,
 }) => {
   const [isStatusSelected, setIsStatusSelected] = useState<number | null>(null);
+  const dispatch = useAppDispatch();
+  const token: string | null = localStorage.getItem("token");
   const handleCloseStatusModal = () => {
     setStatusModalOpen(false);
     setCreateStatusModalOpen(false);
   };
+
   const handleOpenCreateStatusModal = () => {
     setCreateStatusModalOpen(true);
+    setCreateEditStatusModalOpen(false);
   };
-  const handleEditStatus = (status: string, color: string, index: number) => {
-    setCreateStatusModalOpen(true);
-  };
+
+
 
   const handleSaveStatus = (index: number, status: string, color: string) => {
     setIsStatusSelected(index);
     setStatus(status);
     setColor(color);
   };
+
+  useEffect(() => {
+    if (!token) return;
+    dispatch(getStatuses({ token }));
+  }, [dispatch, token, createStatusModalOpen, createEditStatusModalOpen]);
 
   return (
     <div className="absolute z-[111] flex flex-col justify-between bg-white shadow-md top-[60px] left-[140px] w-[320px] h-[480px] border">
@@ -62,56 +68,12 @@ export const StatusModal: FC<IProps> = ({
           />
         </div>
 
-        <div className="flex flex-col px-4">
-          {statusArray &&
-            statusArray.map((status: IStatusArray, index: number) => {
-              return (
-                <div key={index} className="flex items-center py-2">
-                  <button
-                    onClick={() =>
-                      handleSaveStatus(index, status.status, status.color)
-                    }
-                    className={`h-5 w-5 ${
-                      isStatusSelected === index || color === status.color
-                        ? "bg-primary-500"
-                        : "bg-gray-100"
-                    } rounded flex items-center justify-center`}
-                  >
-                    {(isStatusSelected === index || color === status.color) && (
-                      <FaColorCheck />
-                    )}
-                  </button>
-
-                  <div className="w-full pl-2">
-                    <div
-                      className="rounded"
-                      style={{
-                        backgroundColor: hexToRgba(status.color, 0.16),
-                      }}
-                    >
-                      <div className="flex items-center justify-between py-1 px-3">
-                        <div className="flex items-center">
-                          <div
-                            style={{ backgroundColor: status.color }}
-                            className="h-3 w-3 rounded-sm"
-                          ></div>
-                          <span className="pl-2">{status.status}</span>
-                        </div>
-
-                        {/* <button
-                          className="p-1"
-                          onClick={() =>
-                            handleEditStatus(status.status, status.color, index)
-                          }
-                        >
-                          <FaEditButton />
-                        </button> */}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+        <div className="flex flex-col px-4 border-green-600 h-[309px] overflow-auto">
+          <DefaultListOfStatuses
+            handleEditStatus={handleEditStatus}
+            handleSaveStatus={handleSaveStatus}
+            isStatusSelected={isStatusSelected}
+          />
         </div>
       </div>
 

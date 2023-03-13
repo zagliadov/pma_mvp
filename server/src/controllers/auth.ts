@@ -45,13 +45,15 @@ interface IPayload {
   userId: string;
   username: string;
   email: string;
+  avatar_filename: string;
 }
-const createJwtToken = (userId: string, username: string, email: string) => {
+const createJwtToken = (userId: string, username: string, email: string, avatar_filename: string) => {
   const expiresIn = Math.floor(Date.now() / 1000) + 60 * 60 * 24;
   const payload: IPayload = {
     userId,
     username,
     email,
+    avatar_filename,
   };
   const secret = process.env.JWT_SECRET as string;
   if (!secret) {
@@ -65,7 +67,7 @@ export const login = async (req: any, res: any) => {
   const { email, password } = req.body;
   try {
     const { rows } = await query(
-      `SELECT id, email, username, password FROM users WHERE email = $1`,
+      `SELECT id, email, username, password, avatar_filename FROM users WHERE email = $1`,
       [email]
     );
     if (!rows || rows.length === 0) {
@@ -75,7 +77,7 @@ export const login = async (req: any, res: any) => {
     if (!validPassword) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-    const token = createJwtToken(rows[0].id, rows[0].username, rows[0].email);
+    const token = createJwtToken(rows[0].id, rows[0].username, rows[0].email, rows[0].avatar_filename);
     res.json({ token });
   } catch (error) {
     console.log(error);

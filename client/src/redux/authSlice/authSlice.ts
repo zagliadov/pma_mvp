@@ -47,7 +47,7 @@ export const createAccount = createAsyncThunk(
   async (user: ICreateAccountProps) => {
     try {
       const data = await axios.post(
-        "http://localhost:9000/api/auth/registration",
+        "http://localhost:9000/auth/registration",
         user
       );
       return { status: data.status, message: data.data.message };
@@ -70,10 +70,7 @@ export const logIn = createAsyncThunk(
   "auth/login",
   async (user: ILogInProps) => {
     try {
-      const data = await axios.post(
-        "http://localhost:9000/api/auth/login",
-        user
-      );
+      const data = await axios.post("http://localhost:9000/auth/login", user);
       return data.data;
     } catch (error: any) {
       if (
@@ -95,7 +92,7 @@ export const verifyToken = createAsyncThunk(
   async (token: string) => {
     try {
       const data = await axios.post(
-        "http://localhost:9000/api/auth/verifytoken",
+        "http://localhost:9000/auth/verifytoken",
         {},
         {
           headers: {
@@ -171,7 +168,7 @@ export const authSlice = createSlice({
       .addCase(verifyToken.pending, (state) => {})
       .addCase(verifyToken.fulfilled, (state, action) => {
         if (!action.payload) return;
-        state.user = action.payload;
+        return { ...state, user: action.payload };
       })
       .addCase(verifyToken.rejected, (state) => {});
   },

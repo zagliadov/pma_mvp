@@ -12,11 +12,19 @@ interface IProject {
   name: string;
   description: string;
 }
+
+export interface IProjectMembers {
+  email: string;
+  id: number;
+  project_id: number;
+  user_id: number;
+}
 export interface projectState {
   isEmptyStateProject: boolean;
   isEmptyStateTask: boolean;
   projects: IProjects[];
   project: IProject[];
+  projectMembers: IProjectMembers[],
 }
 
 const initialState: projectState = {
@@ -24,6 +32,7 @@ const initialState: projectState = {
   isEmptyStateTask: true,
   projects: [],
   project: [],
+  projectMembers: [],
 };
 
 interface IGetProjects {
@@ -31,11 +40,11 @@ interface IGetProjects {
   token: string;
 }
 export const getProjects = createAsyncThunk(
-  "auth/get_projects",
+  "projects/get_projects",
   async ({ workspaces_id, token }: IGetProjects) => {
     try {
       const projects = await axios.post(
-        "http://localhost:9000/api/projects/get_projects",
+        "http://localhost:9000/projects/get_projects",
         { workspaces_id },
         {
           headers: {
@@ -55,11 +64,11 @@ interface IGetProject {
   token: string;
 }
 export const getProject = createAsyncThunk(
-  "auth/get_project",
+  "projects/get_project",
   async ({ project_id, token }: IGetProject) => {
     try {
       const project = await axios.post(
-        "http://localhost:9000/api/projects/get_project",
+        "http://localhost:9000/projects/get_project",
         { project_id },
         {
           headers: {
@@ -83,7 +92,7 @@ interface IAddNewProject {
 }
 
 export const addNewProject = createAsyncThunk(
-  "auth/add_new_project",
+  "projects/add_new_project",
   async ({
     workspace_id,
     token,
@@ -93,7 +102,7 @@ export const addNewProject = createAsyncThunk(
   }: IAddNewProject) => {
     try {
       const projects = await axios.post(
-        "http://localhost:9000/api/projects/add_new_project",
+        "http://localhost:9000/projects/add_new_project",
         { workspace_id, name, members, description },
         {
           headers: {
@@ -102,6 +111,30 @@ export const addNewProject = createAsyncThunk(
         }
       );
       return console.log(projects.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+interface IGetProjectMembers {
+  project_id: number;
+  token: string;
+}
+export const getProjectMembers = createAsyncThunk(
+  "projects/get_project_members",
+  async ({ project_id, token }: IGetProjectMembers) => {
+    try {
+      const projectMembers = await axios.post(
+        "http://localhost:9000/projects/get_project_members",
+        { project_id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return projectMembers.data;
     } catch (error) {
       console.log(error);
     }
@@ -138,9 +171,14 @@ export const projectSlice = createSlice({
         // state.projects = action.payload;
       })
       .addCase(addNewProject.rejected, (state) => {});
+    builder
+      .addCase(getProjectMembers.pending, (state) => {})
+      .addCase(getProjectMembers.fulfilled, (state, action) => {
+        return { ...state, projectMembers: action.payload };
+      })
+      .addCase(getProjectMembers.rejected, (state) => {});
   },
 });
-
 export const { toggleIsEmptyStateProject, toggleIsEmptyStateTask } =
   projectSlice.actions;
 

@@ -31,7 +31,7 @@ export const SubTasksList: FC<IProps> = ({
       setSubTask(isEdit[0]);
       const index = subTasks.findIndex((e: string) => e === isEdit[0]);
       if (isItemExist(subTask, subTasks)) return;
-      if (subTask.length === 0) return;
+      if (subTask?.length === 0) return;
       setSubTasks((prevArray: string[]) => [
         ...prevArray.slice(0, index),
         subTask,

@@ -8,7 +8,7 @@ import {
   FaDropdownSettings,
   FaProfile,
 } from "../../../../icons/icons";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface IProps {
   isOpen: boolean;
@@ -45,25 +45,25 @@ export const AvatarDropdownUserMenu: FC<IProps> = ({ isOpen }) => {
       </div>
 
       <div className="px-4 pt-4">
-        <button className="flex w-full pb-4">
+        <Link to="/user_settings/my_settings" className="flex w-full pb-4">
           <FaProfile />
           <span className="text-xs font-normal pl-2">Profile</span>
-        </button>
+        </Link>
 
-        <button className="flex w-full pb-4">
+        <Link to="/user_settings/notification" className="flex w-full pb-4">
           <FaBellNotification />
           <span className="text-xs font-normal pl-2">Notification</span>
-        </button>
+        </Link>
 
-        <button className="flex w-full pb-4">
+        <Link to="/user_settings/projects" className="flex w-full pb-4">
           <FaDropdownSettings />
-          <span className="text-xs font-normal pl-2">Settings</span>
-        </button>
+          <span className="text-xs font-normal pl-2">Projects</span>
+        </Link>
 
-        <button className="flex w-full pb-4">
+        <Link to="/user_settings/information" className="flex w-full pb-4">
           <FaDropdownInformation />
           <span className="text-xs font-normal pl-2">Information</span>
-        </button>
+        </Link>
       </div>
 
       <div className="px-4">

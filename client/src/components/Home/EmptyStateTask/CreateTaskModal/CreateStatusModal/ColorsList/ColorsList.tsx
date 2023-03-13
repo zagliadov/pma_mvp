@@ -1,16 +1,17 @@
 import { FC } from "react";
 import { FaColorCheck } from "../../../../../icons/icons";
+import { useAppSelector } from "../../../../../../redux/hooks";
+import { RootState } from "../../../../../../redux/store";
 
 interface IProps {
-  colors: string[];
   isActiveColor: Function;
   handleSelectColor: Function;
 }
 export const ColorsList: FC<IProps> = ({
-  colors,
   isActiveColor,
   handleSelectColor,
 }) => {
+  const colors = useAppSelector((state: RootState) => state.status.colors);
   return (
     <div className="flex">
       {colors &&

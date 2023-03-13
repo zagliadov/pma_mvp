@@ -21,11 +21,11 @@ const initialState: workspacesState = {
 };
 
 export const getWorkspaces = createAsyncThunk(
-  "api/get_workspaces",
+  "workspace/get_workspaces",
   async (token: string) => {
     try {
       const workspaces = await axios.post(
-        "http://localhost:9000/api/workspaces/get_workspaces",
+        "http://localhost:9000/workspaces/get_workspaces",
         {},
         {
           headers: {
@@ -45,11 +45,11 @@ interface IAddNewWorkspace {
   workspace_name: string;
 }
 export const addNewWorkspace = createAsyncThunk(
-  "api/add_new_workspace",
+  "workspace/add_new_workspace",
   async ({ token, workspace_name }: IAddNewWorkspace) => {
     try {
       const workspaces = await axios.post(
-        "http://localhost:9000/api/workspaces/add_new_workspace",
+        "http://localhost:9000/workspaces/add_new_workspace",
         {workspace_name},
         {
           headers: {

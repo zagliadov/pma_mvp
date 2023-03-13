@@ -8,30 +8,39 @@ import { DropFiles } from "./DropFiles/DropFiles";
 import { SubTasks } from "./SubTasks/SubTasks";
 import { StatusModal } from "./StatusModal/StatusModal";
 import { CreateStatusModal } from "./CreateStatusModal/CreateStatusModal";
+import { EditStatusModal } from "./CreateStatusModal/EditStatusModal";
+import { useAppSelector } from "../../../../redux/hooks";
+import { RootState } from "../../../../redux/store";
+import { AssigneeModal } from "./AssigneeModal/AssigneeModal";
 
 interface IProps {
   setIsModalOpen: Function;
 }
-interface IStatusArray {
-  color: string;
-  status: string;
-}
+
 export const CreateTaskModal: FC<IProps> = ({ setIsModalOpen }) => {
   const [statusModalOpen, setStatusModalOpen] = useState<boolean>(false);
   const [createStatusModalOpen, setCreateStatusModalOpen] =
     useState<boolean>(false);
+  const [createEditStatusModalOpen, setCreateEditStatusModalOpen] =
+    useState<boolean>(false);
+  const isAssigneeModalOpen = useAppSelector((state: RootState) => state.diff.isAssigneeModalOpen);
   const [taskName, setTaskName] = useState<string>("");
   const [statusColor, setStatusColor] = useState<string>("#7ec770");
   const [status, setStatus] = useState<string | null>(null);
   const [color, setColor] = useState<string | null>(null);
   const [subTasks, setSubTasks] = useState<string[]>([]);
   const [taskDescription, setTaskDescription] = useState<string>("");
-  const [statusArray, setStatusArray] = useState<IStatusArray[]>([
-    { color: "#8dbed8", status: "Can start" },
-    { color: "#ed7668", status: "In progress" },
-    { color: "#7ec770", status: "Complete" },
-    { color: "#fdae4b", status: "Blocked" },
-  ]);
+  const [editId, setEditId] = useState<number | null>(null);
+
+  const handleEditStatus = (id: number) => {
+    setCreateEditStatusModalOpen(true);
+    setCreateStatusModalOpen(false);
+    setEditId(id);
+  };
+
+  const handleCreate = () => {
+    console.log(taskName, taskDescription, color, status)
+  }
 
   return (
     <div className="flex flex-col justify-center items-center h-full w-full bg-gray-200">
@@ -50,6 +59,7 @@ export const CreateTaskModal: FC<IProps> = ({ setIsModalOpen }) => {
               status={status}
               color={color}
               setCreateStatusModalOpen={setCreateStatusModalOpen}
+              setCreateEditStatusModalOpen={setCreateEditStatusModalOpen}
               setStatusModalOpen={setStatusModalOpen}
               statusModalOpen={statusModalOpen}
             />
@@ -71,26 +81,42 @@ export const CreateTaskModal: FC<IProps> = ({ setIsModalOpen }) => {
           <button className="py-2.5 px-6 text-base text-gray-600 font-medium">
             Cancel
           </button>
-          <button className="bg-primary-500 rounded py-2.5 px-6 text-white text-base font-medium">
+          <button onClick={() => handleCreate()} className="bg-primary-500 rounded py-2.5 px-6 text-white text-base font-medium">
             Create
           </button>
         </div>
 
         {statusModalOpen && (
           <StatusModal
-            color={color}
             setColor={setColor}
             setStatus={setStatus}
-            statusArray={statusArray}
             setStatusModalOpen={setStatusModalOpen}
+            createEditStatusModalOpen={createEditStatusModalOpen}
+            setCreateEditStatusModalOpen={setCreateEditStatusModalOpen}
+            createStatusModalOpen={createStatusModalOpen}
             setCreateStatusModalOpen={setCreateStatusModalOpen}
+            handleEditStatus={handleEditStatus}
           />
         )}
         {createStatusModalOpen && (
           <CreateStatusModal
+            statusColor={statusColor}
             setStatusColor={setStatusColor}
             setCreateStatusModalOpen={setCreateStatusModalOpen}
           />
+        )}
+        {createEditStatusModalOpen && (
+          <EditStatusModal
+            setColor={setColor}
+            setStatus={setStatus}
+            editId={editId}
+            statusColor={statusColor}
+            setStatusColor={setStatusColor}
+            setCreateEditStatusModalOpen={setCreateEditStatusModalOpen}
+          />
+        )}
+        {isAssigneeModalOpen && (
+          <AssigneeModal />
         )}
       </div>
     </div>

@@ -30,7 +30,7 @@ export const WorkspacesOption: FC<IProps> = ({
   const navigate = useNavigate();
 
   useEffect(() => {
-    setIsOpen(Array(workspaces.length).fill(false));
+    setIsOpen(Array(workspaces?.length).fill(false));
   }, [parentMenuIsOpen, workspaces.length]);
 
   const handleOpenWorkspace = async (id: number, index: number) => {

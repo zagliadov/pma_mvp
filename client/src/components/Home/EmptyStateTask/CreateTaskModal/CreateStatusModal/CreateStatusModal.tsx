@@ -5,28 +5,30 @@ import {
   FaGroupColor,
 } from "../../../../icons/icons";
 import { ColorsList } from "./ColorsList/ColorsList";
+import { useAppDispatch } from "../../../../../redux/hooks";
+import {
+  getStatuses,
+  setStatus,
+} from "../../../../../redux/statusSlice/statusSlice";
 
 interface IProps {
   setCreateStatusModalOpen: Function;
   setStatusColor: Function;
+  statusColor: string;
 }
 export const CreateStatusModal: FC<IProps> = ({
   setCreateStatusModalOpen,
   setStatusColor,
+  statusColor,
 }) => {
+  const dispatch = useAppDispatch();
   const [colorNumber, setColorNumber] = useState<number>(0);
+  const [newStatus, setNewStatus] = useState<string>("");
   const [colorIsNotListed, setColorIsNotListed] = useState<boolean>(false);
   const colorInputRef = useRef<any>(null);
+  const token = localStorage.getItem("token");
   const isActiveColor = (index: number) =>
     colorNumber === index && !colorIsNotListed;
-  const colors = [
-    "#7ec770",
-    "#f4dc40",
-    "#fdae4b",
-    "#ed7668",
-    "#cc90e3",
-    "#8dbed8",
-  ];
   const handleCloseCreateStatusModal = () => {
     setCreateStatusModalOpen(false);
   };
@@ -45,8 +47,12 @@ export const CreateStatusModal: FC<IProps> = ({
     setColorIsNotListed(true);
   };
 
-  const handleChangeStatus = (e: ChangeEvent<HTMLInputElement>) => {
-
+  const handleSaveStatus = () => {
+    if (!token) return;
+    if (newStatus === "") return;
+    dispatch(setStatus({ color: statusColor, status: newStatus, token }));
+    dispatch(getStatuses({ token }));
+    setCreateStatusModalOpen(false);
   };
 
   return (
@@ -69,8 +75,9 @@ export const CreateStatusModal: FC<IProps> = ({
         </div>
         <div className="flex items-center pt-4 justify-center">
           <input
-            onChange={(e) => handleChangeStatus(e)}
+            onChange={(e) => setNewStatus(e.target.value)}
             type="text"
+
             className="py-2 px-2 border rounded"
             placeholder="Input status..."
           />
@@ -79,7 +86,6 @@ export const CreateStatusModal: FC<IProps> = ({
           <span>Select color</span>
           <div className="flex justify-between">
             <ColorsList
-              colors={colors}
               isActiveColor={isActiveColor}
               handleSelectColor={handleSelectColor}
             />
@@ -97,7 +103,12 @@ export const CreateStatusModal: FC<IProps> = ({
         </div>
       </div>
       <div className="py-2 px-4 border-t">
-        <button className="bg-primary-500 py-1.5 w-full text-white font-medium rounded">Save</button>
+        <button
+          onClick={() => handleSaveStatus()}
+          className="bg-primary-500 py-1.5 w-full text-white font-medium rounded"
+        >
+          Save
+        </button>
       </div>
     </div>
   );

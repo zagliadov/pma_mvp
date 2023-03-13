@@ -1,9 +1,12 @@
 import { FC } from "react";
 import { FaTaskStatusIcon } from "../../../../icons/icons";
+import { useAppDispatch } from "../../../../../redux/hooks";
+import { toggleIsAssigneeModalOpen } from "../../../../../redux/diffSlice/diffSlice";
 
 interface IProps {
   setStatusModalOpen: Function;
   setCreateStatusModalOpen: Function;
+  setCreateEditStatusModalOpen: Function;
   statusModalOpen: boolean;
   status: string | null;
   color: string | null;
@@ -13,12 +16,16 @@ export const StatusButton: FC<IProps> = ({
   setStatusModalOpen,
   statusModalOpen,
   setCreateStatusModalOpen,
+  setCreateEditStatusModalOpen,
   status,
   color
 }) => {
+  const dispatch = useAppDispatch();
   const handleChangeStatus = () => {
     setStatusModalOpen(!statusModalOpen);
     setCreateStatusModalOpen(false);
+    setCreateEditStatusModalOpen(false);
+    dispatch(toggleIsAssigneeModalOpen(false));
   };
 
   return (

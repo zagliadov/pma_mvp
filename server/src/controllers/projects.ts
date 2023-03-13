@@ -47,3 +47,16 @@ export const addNewProject = async (req: any, res: any) => {
     console.log(error);
   }
 };
+
+export const getProjectMembers = async (req: any, res: any) => {
+  const { project_id } = req.body;
+  const { userId } = req.userData;
+  if (!project_id)
+    return res.status(400).json({ message: "project_id is required" });
+  const { rows } = await query(
+    `SELECT * FROM project_members WHERE project_id = $1 AND user_id = $2`,
+    [project_id, userId]
+  );
+  if (rows.length === 0) return res.end();
+  res.status(200).json(rows);
+};

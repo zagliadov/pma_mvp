@@ -18,7 +18,7 @@ export const UsersListButton: FC = () => {
   return (
     <div className="flex relative">
       {truncatedUsers.map((user, index) => (
-        <button key={user.id}>
+        <button key={user.id} className="flex w-[20px]">
           <img
             className={`absolute w-10 h-10 z-[10] top-0 rounded-full ${
               index !== 0 ? `ml-[${index * 20}px]` : ""
@@ -29,7 +29,7 @@ export const UsersListButton: FC = () => {
         </button>
       ))}
       {users.length > 3 && (
-        <button className="flex items-center justify-center w-10 h-10 z-[11] ml-[60px] rounded-full bg-gray-300 border-2 border-white">
+        <button className="flex items-center justify-center w-10 h-10 z-[11] rounded-full bg-gray-300 border-2 border-white">
           <span className="font-medium text-xs">
             + {users.length - truncatedUsers.length}
           </span>

@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useMemo } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { verifyToken } from "../../redux/authSlice/authSlice";
@@ -6,7 +6,6 @@ import { RootState } from "../../redux/store";
 
 export const ProtectedRoute: FC = () => {
   const dispatch = useAppDispatch();
-  const [isOpen, setIsOpen] = useState<boolean>(false);
   const isAuthenticated = useAppSelector((state: RootState) => state.auth.isAuthenticated);
   const token: string = useMemo(
     () => (localStorage.getItem("token") as string) || "",
