@@ -1,30 +1,33 @@
-import { FC, useState, useEffect } from "react";
+import { FC, useState, useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../redux/hooks";
 import { RootState } from "../../../../redux/store";
 import {
   downloadPhoto,
   getAvatarFilename,
   removeUserAvatar,
-  setColorAvatar,
   uploadPhoto,
 } from "../../../../redux/userSettingsSlice/userSettingsSlice";
 
 export const ProfilePhoto: FC = () => {
-  const [selectedColor, setSelectedColor] = useState<number>(0);
-  const colorAvatar = useAppSelector(
-    (state: RootState) => state.user.colorAvatar
+  const [selectedColor, setSelectedColor] = useState<number>(
+    Number(localStorage.getItem("color_id")) | 0
+  );
+  const [colorAvatar, setColorAvatar] = useState<string>(
+    localStorage.getItem("color") || "#6e5ee6"
   );
   const userPhoto = useAppSelector((state: RootState) => state.user.userPhoto);
   const [background, setBackground] = useState<any>({
     backgroundColor: colorAvatar,
   });
+  const inputFile = useRef<any>(null);
   const token: string | null = localStorage.getItem("token");
-  const { avatar_filename, username } = useAppSelector(
-    (state: RootState) => state.user.user
-  );
+  const { username } = useAppSelector((state: RootState) => state.user.user);
   const dispatch = useAppDispatch();
+
   const handleChooseColor = (color: string, id: number) => {
-    dispatch(setColorAvatar(color));
+    localStorage.setItem("color", color);
+    localStorage.setItem("color_id", String(id));
+    setColorAvatar(color);
     setSelectedColor(id);
   };
   useEffect(() => {
@@ -34,7 +37,6 @@ export const ProfilePhoto: FC = () => {
 
   useEffect(() => {
     if (userPhoto) {
-      console.log(userPhoto);
       setBackground({
         backgroundImage: `url("http://localhost:9000/user_settings/user_avatar/${userPhoto}")`,
       });
@@ -53,16 +55,16 @@ export const ProfilePhoto: FC = () => {
     if (e.target.files && e.target.files.length > 0) {
       dispatch(uploadPhoto({ token, file: e.target.files[0] }));
     }
+    inputFile.current.value = null;
   };
 
   const handleRemoveUserAvatar = () => {
     if (!token) return;
     dispatch(removeUserAvatar(token));
-    console.log(userPhoto);
   };
 
   return (
-    <div className="pt-8">
+    <div className="pt-8 pb-8">
       <h4 className="text-base font-medium">Profile photo</h4>
       <div className="flex flex-col pt-6">
         <div className="relative flex items-center">
@@ -83,6 +85,7 @@ export const ProfilePhoto: FC = () => {
             </span>
             <input
               type="file"
+              ref={inputFile}
               id="upload-photo"
               accept="/image/*, .jpeg, .png, .jpg"
               className="hidden"
@@ -101,7 +104,7 @@ export const ProfilePhoto: FC = () => {
         <div className="pt-6">
           <div className="flex flex-col pl-20">
             <span className="text-sm font-medium">Color your avatar</span>
-            <div className="flex justify-around pt-2">
+            <div className="flex justify-around pt-2 w-[250px]">
               <button
                 className={`flex items-center justify-center w-12 h-12 rounded-full ${
                   selectedColor === 0 && "border"

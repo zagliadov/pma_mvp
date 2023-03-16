@@ -3,11 +3,11 @@ import { FaCloseButton, FaPlusSpace } from "../../../../icons/icons";
 import { useAppDispatch } from "../../../../../redux/hooks";
 import { getStatuses } from "../../../../../redux/statusSlice/statusSlice";
 import { DefaultListOfStatuses } from "./DefaultListOfStatuses/DefaultListOfStatuses";
+import { toggleIsStatusModalOpen } from "../../../../../redux/diffSlice/diffSlice";
 
 interface IProps {
   setCreateStatusModalOpen: Function;
   setCreateEditStatusModalOpen: Function;
-  setStatusModalOpen: Function;
   createStatusModalOpen: boolean;
   createEditStatusModalOpen: boolean;
   setStatus: Function;
@@ -15,7 +15,6 @@ interface IProps {
   handleEditStatus: Function;
 }
 export const StatusModal: FC<IProps> = ({
-  setStatusModalOpen,
   setCreateStatusModalOpen,
   createStatusModalOpen,
   createEditStatusModalOpen,
@@ -28,7 +27,7 @@ export const StatusModal: FC<IProps> = ({
   const dispatch = useAppDispatch();
   const token: string | null = localStorage.getItem("token");
   const handleCloseStatusModal = () => {
-    setStatusModalOpen(false);
+    dispatch(toggleIsStatusModalOpen(false));
     setCreateStatusModalOpen(false);
   };
 

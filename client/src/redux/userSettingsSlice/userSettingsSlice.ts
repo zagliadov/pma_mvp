@@ -3,12 +3,22 @@ import { RootState, AppThunk } from "../store";
 import axios from "axios";
 
 interface IInitialState {
-  colorAvatar: string;
+  userLanguage: string;
+  userTimezone: string;
+  userFirstname: string;
+  userLastname: string;
+  userEmail: string;
+  userPhone: string;
   userPhoto: any;
   user: any;
 }
 const initialState: IInitialState = {
-  colorAvatar: "#6e5ee6",
+  userLanguage: "English",
+  userTimezone: "EST",
+  userFirstname: "",
+  userLastname: "",
+  userEmail: "",
+  userPhone: "".replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3'),
   userPhoto: null,
   user: [],
 };
@@ -116,8 +126,23 @@ export const userSettingsSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setColorAvatar: (state, action) => {
-      return { ...state, colorAvatar: action.payload };
+    setUserLanguage(state, action) {
+      return { ...state, userLanguage: action.payload };
+    },
+    setUserTimezone(state, action) {
+      return { ...state, userTimezone: action.payload };
+    },
+    setUserFirstname(state, action) {
+      return { ...state, userFirstname: action.payload };
+    },
+    setUserLastname(state, action) {
+      return { ...state, userLastname: action.payload };
+    },
+    setUserEmail(state, action) {
+      return { ...state, userEmail: action.payload };
+    },
+    setUserPhone(state, action) {
+      return { ...state, userPhone: action.payload };
     },
   },
   extraReducers: (builder) => {
@@ -155,6 +180,13 @@ export const userSettingsSlice = createSlice({
   },
 });
 
-export const { setColorAvatar } = userSettingsSlice.actions;
+export const {
+  setUserLanguage,
+  setUserTimezone,
+  setUserFirstname,
+  setUserLastname,
+  setUserEmail,
+  setUserPhone,
+} = userSettingsSlice.actions;
 
 export default userSettingsSlice.reducer;

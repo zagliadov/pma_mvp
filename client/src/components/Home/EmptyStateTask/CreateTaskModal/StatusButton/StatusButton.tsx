@@ -1,31 +1,30 @@
 import { FC } from "react";
 import { FaTaskStatusIcon } from "../../../../icons/icons";
-import { useAppDispatch } from "../../../../../redux/hooks";
-import { toggleIsAssigneeModalOpen } from "../../../../../redux/diffSlice/diffSlice";
+import { useAppDispatch, useAppSelector } from "../../../../../redux/hooks";
+import { toggleIsAssigneeModalOpen, toggleIsBlockingTasksModalOpen, toggleIsStatusModalOpen } from "../../../../../redux/diffSlice/diffSlice";
+import { RootState } from "../../../../../redux/store";
 
 interface IProps {
-  setStatusModalOpen: Function;
   setCreateStatusModalOpen: Function;
   setCreateEditStatusModalOpen: Function;
-  statusModalOpen: boolean;
   status: string | null;
   color: string | null;
 }
 
 export const StatusButton: FC<IProps> = ({
-  setStatusModalOpen,
-  statusModalOpen,
   setCreateStatusModalOpen,
   setCreateEditStatusModalOpen,
   status,
   color
 }) => {
   const dispatch = useAppDispatch();
+  const isStatusModalOpen = useAppSelector((state: RootState) => state.diff.isStatusModalOpen);
   const handleChangeStatus = () => {
-    setStatusModalOpen(!statusModalOpen);
+    dispatch(toggleIsStatusModalOpen(!isStatusModalOpen))
     setCreateStatusModalOpen(false);
     setCreateEditStatusModalOpen(false);
     dispatch(toggleIsAssigneeModalOpen(false));
+    dispatch(toggleIsBlockingTasksModalOpen(false));
   };
 
   return (
@@ -33,7 +32,7 @@ export const StatusButton: FC<IProps> = ({
       <button
         onClick={() => handleChangeStatus()}
         className={`flex items-center border rounded px-4 py-1.5 
-        ${statusModalOpen ? "border-primary-500" : "border-gray-100"}`}
+        ${isStatusModalOpen ? "border-primary-500" : "border-gray-100"}`}
       >
         {color !== null ? (
           <div

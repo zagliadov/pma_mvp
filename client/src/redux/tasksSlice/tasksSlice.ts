@@ -20,11 +20,11 @@ interface IGetTasks {
 }
 
 export const getTasks = createAsyncThunk(
-  "auth/get_tasks",
+  "tasks/get_tasks",
   async ({ project_id, token }: IGetTasks) => {
     try {
       const tasks = await axios.post(
-        "http://localhost:9000/api/tasks/get_tasks",
+        "http://localhost:9000/tasks/get_tasks",
         { project_id },
         {
           headers: {
@@ -32,7 +32,57 @@ export const getTasks = createAsyncThunk(
           },
         }
       );
-      return tasks?.data;
+      return tasks.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+interface ISetTask {
+  project_id: any;
+  taskName: string;
+  taskDescription: string;
+  color: string | null;
+  status: string | null;
+  subTasks?: string[];
+  taskAssignee: { id: number; email: string }[];
+  taskBlocker?: number[];
+}
+export const setTask = createAsyncThunk(
+  "tasks/set_task",
+  async ({
+    project_id,
+    taskName,
+    taskDescription,
+    color,
+    status,
+    subTasks,
+    taskAssignee,
+    taskBlocker,
+  }: ISetTask) => {
+    try {
+      const token: string | null = localStorage.getItem("token");
+      if (!token) return;
+      const tasks = await axios.post(
+        "http://localhost:9000/tasks/set_task",
+        {
+          project_id,
+          taskName,
+          taskDescription,
+          color,
+          status,
+          subTasks,
+          taskAssignee,
+          taskBlocker,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return tasks.data;
     } catch (error) {
       console.log(error);
     }
@@ -54,10 +104,17 @@ export const tasksSlice = createSlice({
     builder
       .addCase(getTasks.pending, (state, action) => {})
       .addCase(getTasks.fulfilled, (state, action) => {
-        if (action.payload.length === 0) return { ...state, isEmptyStateTask: true};
+        if (action.payload.length === 0)
+          return { ...state, isEmptyStateTask: true };
         return { ...state, tasks: action.payload, isEmptyStateTask: false };
       })
       .addCase(getTasks.rejected, (state) => {});
+    builder
+      .addCase(setTask.pending, (state, action) => {})
+      .addCase(setTask.fulfilled, (state, action) => {
+        return { ...state, isEmptyStateTask: false };
+      })
+      .addCase(setTask.rejected, (state) => {});
   },
 });
 

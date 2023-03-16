@@ -2,7 +2,7 @@ import { FC } from "react";
 import { FaProfile } from "../../../../icons/icons";
 import { useAppDispatch, useAppSelector } from '../../../../../redux/hooks';
 import { RootState } from "../../../../../redux/store";
-import { toggleIsAssigneeModalOpen } from "../../../../../redux/diffSlice/diffSlice";
+import { toggleIsAssigneeModalOpen, toggleIsBlockingTasksModalOpen } from "../../../../../redux/diffSlice/diffSlice";
 
 export const AssigneeButton: FC = () => {
   const isAssigneeModalOpen = useAppSelector((state: RootState) => state.diff.isAssigneeModalOpen);
@@ -10,6 +10,7 @@ export const AssigneeButton: FC = () => {
 
   const handleModalOpen = () => {
     dispatch(toggleIsAssigneeModalOpen(!isAssigneeModalOpen));
+    dispatch(toggleIsBlockingTasksModalOpen(false));
   }
 
   return (

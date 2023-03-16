@@ -4,10 +4,15 @@ import { RootState } from "../../../redux/store";
 import { EmptyStateTask } from "../EmptyStateTask/EmptyStateTask";
 import { useParams } from "react-router-dom";
 import { getTasks } from "../../../redux/tasksSlice/tasksSlice";
+import { CreateTaskModal } from "../EmptyStateTask/CreateTaskModal/CreateTaskModal";
+import { Table } from "./Table/Table";
 
 export const MainTable: FC = () => {
   const params = useParams();
   const dispatch = useAppDispatch();
+  const isCreateTaskModal = useAppSelector(
+    (state: RootState) => state.diff.isCreateTaskModal
+  );
   const toggleIsActiveSidebar = useAppSelector(
     (state: RootState) => state.diff.isActiveSidebar
   );
@@ -29,7 +34,9 @@ export const MainTable: FC = () => {
         shutdownEffect ? "bg-gray-150 border-gray-300" : "bg-white"
       }`}
     >
-      {isEmptyStateTask && <EmptyStateTask />}
+      {isEmptyStateTask && !isCreateTaskModal && <EmptyStateTask />}
+      {isCreateTaskModal && <CreateTaskModal />}
+      {!isCreateTaskModal && <Table /> }
     </div>
   );
 };

@@ -1,13 +1,15 @@
 import { FC } from "react";
 import { FaButtonPlus } from "../../../icons/icons";
+import { useAppDispatch } from "../../../../redux/hooks";
+import { toggleIsCreateTaskModal } from "../../../../redux/diffSlice/diffSlice";
 
-interface IProps {
-  setIsModalOpen: Function;
-}
-export const AppCreateTaskButton: FC<IProps> = ({ setIsModalOpen }) => {
+
+export const AppCreateTaskButton: FC = () => {
+  const dispatch = useAppDispatch();
   const handleClick = () => {
-    setIsModalOpen(true);
+    dispatch(toggleIsCreateTaskModal(true));
   };
+
   return (
     <button
       onClick={() => handleClick()}

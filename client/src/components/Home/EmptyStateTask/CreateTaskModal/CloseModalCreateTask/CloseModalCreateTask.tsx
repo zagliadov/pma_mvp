@@ -1,13 +1,12 @@
 import { FC } from "react";
 import { FaCloseButton } from "../../../../icons/icons";
+import { useAppDispatch } from "../../../../../redux/hooks";
+import { toggleIsCreateTaskModal } from "../../../../../redux/diffSlice/diffSlice";
 
-interface IProps {
-  setIsModalOpen: Function;
-}
-export const CloseModalCreateTask: FC<IProps> = ({ setIsModalOpen }) => {
-
+export const CloseModalCreateTask: FC = () => {
+  const dispatch = useAppDispatch();
   const handleClick = () => {
-    setIsModalOpen(false);
+    dispatch(toggleIsCreateTaskModal(false));
   };
 
   return (

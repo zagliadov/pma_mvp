@@ -1,20 +1,25 @@
 import { FC } from "react";
 import { FaButtonPlus, FaEye, FaFilter, FaUsers } from "../../icons/icons";
 import { UsersListButton } from "./UsersListButton/UsersListButton";
-import { useAppSelector } from "../../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { RootState } from "../../../redux/store";
+import { toggleIsCreateTaskModal } from "../../../redux/diffSlice/diffSlice";
 
 export const MainTableSubNavigation: FC = () => {
+  const dispatch = useAppDispatch();
   const toggleIsActiveSidebar = useAppSelector(
     (state: RootState) => state.diff.isActiveSidebar
   );
   const shutdownEffect = toggleIsActiveSidebar;
+  const handleCreateTaskModalOpen = () => {
+    dispatch(toggleIsCreateTaskModal(true));
+  }
   return (
     <div className={`py-2 px-4 flex items-center justify-between ${
       shutdownEffect ? "bg-gray-150 border-gray-300" : "bg-white"
     }`}>
       <div className="flex">
-        <button className="flex items-center rounded bg-primary-500 py-2 px-4">
+        <button className="flex items-center rounded bg-primary-500 py-2 px-4" onClick={handleCreateTaskModalOpen}>
           <FaButtonPlus />
           <span className="font-medium font-sm text-white pl-1">Task</span>
         </button>

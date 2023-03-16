@@ -20,7 +20,7 @@ export const UserSettings: FC = () => {
       <div className="flex">
         <UserSettingsNavigation />
 
-        <div className="py-8 pl-16">
+        <div className="py-8 pl-16 w-full">
           <Outlet />
         </div>
       </div>
