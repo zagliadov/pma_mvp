@@ -35,7 +35,7 @@ export const setTask = async (req: any, res: any) => {
   }
   if (taskBlocker.length) {
     taskBlocker.map((taskId: number) => {
-      query(`UPDATE tasks SET blocker = $1 WHERE id = $2`, [rows[0].id, taskId])
+      query(`UPDATE tasks SET blocker_by = $1 WHERE id = $2`, [rows[0].id, taskId])
     })
   }
   res.status(200).json()

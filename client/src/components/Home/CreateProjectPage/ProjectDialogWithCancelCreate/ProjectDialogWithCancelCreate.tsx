@@ -1,11 +1,10 @@
 import { FC } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useAppSelector, useAppDispatch } from "../../../../redux/hooks";
 import {
   addNewProject,
 } from "../../../../redux/projectSlice/projectSlice";
 import { RootState } from "../../../../redux/store";
-import { useLocation } from "react-router-dom";
 interface IProps {
   projectName: string;
   members: string[];
@@ -18,7 +17,7 @@ export const ProjectDialogWithCancelCreate: FC<IProps> = ({
   projectDescription,
 }) => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const params = useParams();
   const dispatch = useAppDispatch();
   const token: string | null = localStorage && localStorage.getItem("token");
   const isEmptyStateProject = useAppSelector(
@@ -27,7 +26,7 @@ export const ProjectDialogWithCancelCreate: FC<IProps> = ({
 
   const handleCancel = () => {
     if (isEmptyStateProject) {
-      navigate("/empty_state_project");
+      navigate(`/empty_state_project/${params.workspace_id}`);
     } else {
       navigate("/");
     }
@@ -35,17 +34,17 @@ export const ProjectDialogWithCancelCreate: FC<IProps> = ({
 
   const handleCreateProject = () => {
     if (!token) return;
-    if (members.length && projectName && projectDescription && location.state) {
+    if (members.length && projectName && projectDescription) {
       dispatch(
         addNewProject({
-          workspace_id: Number(location.state),
+          workspace_id: Number(params.workspace_id),
           token,
           name: projectName,
           members,
           description: projectDescription,
         })
       );
-      navigate("/main_table");
+      navigate(`/main_table/${params.workspace_id}`);
     }
   };
 

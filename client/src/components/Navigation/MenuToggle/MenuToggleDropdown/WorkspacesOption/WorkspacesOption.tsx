@@ -50,7 +50,7 @@ export const WorkspacesOption: FC<IProps> = ({
   };
 
   const handleAddProject = (workspace_id: number) => {
-    navigate("/create_project", { state: workspace_id });
+    navigate(`/create_project/${workspace_id}`, { state: workspace_id });
     setParentMenuIsOpen(false);
   };
 

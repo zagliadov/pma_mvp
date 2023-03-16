@@ -22,8 +22,8 @@ export const App: FC = () => {
       <Route element={<Layout />}>
         <Route element={<ProtectedRoute />}>
           <Route element={<Home />} path="/" />
-          <Route element={<CreateProjectPage />} path="/create_project" />
-          <Route element={<EmptyStateProject />} path="/empty_state_project" />
+          <Route element={<CreateProjectPage />} path="/create_project/:workspace_id" />
+          <Route element={<EmptyStateProject />} path="/empty_state_project/:workspace_id" />
           <Route element={<MainTable />} path="/main_table/:project_id" />
           <Route element={<Timeline />} path="/timeline/:project_id" />
         </Route>

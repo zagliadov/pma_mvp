@@ -47,65 +47,6 @@ export const Table: FC = () => {
 
   return (
     <div className="py-4 px-4">
-      {/* <div className="flex justify-between items-center">
-        <div className="w-[50%]">
-          <span className="font-medium text-gray-600 py-2 pl-6">Task name</span>
-        </div>
-        <div className="w-[8%]">
-          <span className="font-medium text-gray-600">
-            Task owner
-          </span>
-        </div>
-        <div className="w-[8%]">
-          <span className="font-medium text-gray-600">Goal start</span>
-        </div>
-        <div className="flex items-center w-[8%]">
-          <span className="font-medium text-gray-600 pr-2">Goal end</span>
-          <FaArrowDown />
-        </div>
-        <div className="w-[8%]">
-          <span className="font-medium text-gray-600">Task time</span>
-        </div>
-        <div className="w-[8%]">
-          <span className="font-medium text-gray-600">Priority</span>
-        </div>
-        <div className="w-[8%]">
-          <span className="font-medium text-gray-600">Effort</span>
-        </div>
-        <div className="w-[8%]">
-          <FaPlusCircle />
-        </div>
-      </div>
-
-      <div className="flex justify-between items-center pt-4">
-        <div className="w-[50%]">
-          <span className="font-medium text-gray-600 py-2 pl-6">
-            New task name
-          </span>
-        </div>
-        <div className="w-[8%]">
-          <button className="flex items-center justify-center border rounded-full w-7 h-7">
-            <FaAddOwner />
-          </button>
-        </div>
-        <div className="w-[8%]">
-          <button className="flex items-center justify-center border rounded-full w-7 h-7">
-            <FaCalendar />
-          </button>
-        </div>
-        <div className="flex items-center w-[8%]">
-          <button className="flex items-center justify-center border rounded-full w-7 h-7">
-            <FaCalendar />
-          </button>
-        </div>
-        <div className="w-[8%]"></div>
-        <div className="w-[8%]">
-          <FaPriorityFlag fill={""} />
-        </div>
-        <div className="w-[8%]"></div>
-        <div className="w-[8%]"></div>
-      </div> */}
-
       <table className="min-w-full table-auto">
         <thead className="border text-left text-xs">
           <tr>

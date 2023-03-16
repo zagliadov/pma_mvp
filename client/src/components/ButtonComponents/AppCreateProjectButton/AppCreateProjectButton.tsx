@@ -1,10 +1,11 @@
 import { FC } from "react";
 import { FaButtonPlus } from "../../icons/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 export const AppCreateProjectButton: FC = () => {
   const navigate = useNavigate();
+  const params = useParams();
   const handleClick = () => {
-    navigate("/create_project");
+    navigate(`/create_project/${params.workspace_id}`);
   };
   return (
     <button
