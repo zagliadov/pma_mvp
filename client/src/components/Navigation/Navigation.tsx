@@ -19,16 +19,18 @@ export const Navigation: FC = () => {
   return (
     <div className="flex flex-col">
       <div
-        className={`flex justify-start pr-4 py-2 border-b ${
-          shutdownEffect ? "bg-gray-150 border-gray-300" : "bg-white"
-        }
-      `}
+        className={`flex justify-start pr-4 py-2 border-b`}
       >
         <MenuToggle />
 
-        {isMainRoute && <MainTableNavigation />}
+        <div className={`desktop:flex hidden items-center w-[40%] ${shutdownEffect ? "blur-[2px]" : ""}`}>
+          {isMainRoute && <MainTableNavigation />}
+        </div>
         
-        <div className="flex w-full justify-end">
+        
+        <div className={`flex w-full justify-end ${
+          shutdownEffect ? "blur-[2px]" : "bg-white"
+        }`}>
           <SearchInput />
           <UserMenu />
         </div>

@@ -31,12 +31,6 @@ export const TasksList: FC = () => {
   };
 
   const handleOpenSubtasks = (taskId: number, index: number) => {
-    const parent = document.getElementById(`${taskId}`);
-    if (!parent) return;
-    const subtasksListEl = document.createElement('div');
-    subtasksListEl.textContent = "Component";
-    parent?.parentNode?.insertBefore(subtasksListEl, parent.nextSibling); //<SubtasksList />
-
     setIsOpenSubtasks(!isOpenSubtasks);
     dispatch(getSubtask(taskId)).then(() => {
       setIsOpen((prevState: boolean[]) => {
@@ -74,6 +68,7 @@ export const TasksList: FC = () => {
           index: number
         ) => {
           return (
+            <>
             <div
               ref={ref}
               id={String(id)}
@@ -124,6 +119,8 @@ export const TasksList: FC = () => {
               <div className="flex justify-center items-center desktop:basis-1/12 basis-2/12 border"></div>
               <div className="flex justify-center items-center desktop:basis-1/12 basis-2/12 border"></div>
             </div>
+            {isOpen[index] && <SubtasksList /> }
+            </>
           );
 
           // return (
@@ -175,6 +172,7 @@ export const TasksList: FC = () => {
           // );
         }
       )}
+      
     </div>
   );
 };

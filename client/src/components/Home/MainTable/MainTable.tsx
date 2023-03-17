@@ -31,7 +31,7 @@ export const MainTable: FC = () => {
   return (
     <div
       className={`w-full h-full border ${
-        shutdownEffect ? "bg-gray-150 border-gray-300" : "bg-white"
+        shutdownEffect ? "blur-[2px] border-gray-300" : "bg-white"
       }`}
     >
       {isEmptyStateTask && !isCreateTaskModal && <EmptyStateTask />}

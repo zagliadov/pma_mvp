@@ -16,7 +16,7 @@ export const MainTableSubNavigation: FC = () => {
   }
   return (
     <div className={`py-2 px-4 flex items-center justify-between ${
-      shutdownEffect ? "bg-gray-150 border-gray-300" : "bg-white"
+      shutdownEffect ? "blur-[2px] border-gray-300" : "bg-white"
     }`}>
       <div className="flex">
         <button className="flex items-center rounded bg-primary-500 py-2 px-4" onClick={handleCreateTaskModalOpen}>

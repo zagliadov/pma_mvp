@@ -16,7 +16,7 @@ export const MainTableNavigation: FC = () => {
   const timelinePath = pathname === `/timeline/${params.project_id}`;
   const project = useAppSelector((state: RootState) => state.project.project);
   return (
-    <div className="desktop:flex hidden items-center w-[40%]">
+    <>
       <div>
         <span className="text-lg pl-6 font-medium  pr-4">
           {project[0] ? project[0].name : "Project name"}
@@ -54,6 +54,6 @@ export const MainTableNavigation: FC = () => {
           )}
         </div>
       </Link>
-    </div>
+    </>
   );
 };
