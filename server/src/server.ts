@@ -11,6 +11,7 @@ import workspaces from "./routes/workspaces";
 import tasks from "./routes/tasks";
 import status from "./routes/status";
 import user from "./routes/user";
+import subtasks from "./routes/subtasks";
 
 const app = express();
 app.use(express.json());
@@ -26,6 +27,7 @@ app.use("/workspaces", workspaces);
 app.use("/tasks", tasks);
 app.use("/status", status);
 app.use("/user_settings", user);
+app.use("/subtasks", subtasks);
 
 app.use('/controllers/uploads', express.static('./controllers/uploads'));
 

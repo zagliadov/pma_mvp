@@ -6,6 +6,7 @@ import workspacesReducer from "./workspacesSlice/workspacesSlice";
 import tasksReducer from "./tasksSlice/tasksSlice";
 import statusReducer from "./statusSlice/statusSlice";
 import userSettingsReducer from "./userSettingsSlice/userSettingsSlice";
+import subtasksReducer from "./subtasksSlice/subtasksSlice";
 
 export const store = configureStore({
   reducer: {
@@ -16,6 +17,7 @@ export const store = configureStore({
     tasks: tasksReducer,
     status: statusReducer,
     user: userSettingsReducer,
+    subtasks: subtasksReducer,
   },
 });
 

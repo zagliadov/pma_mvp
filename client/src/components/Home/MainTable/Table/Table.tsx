@@ -12,6 +12,8 @@ import {
 import { useParams } from "react-router-dom";
 import { getTasks } from "../../../../redux/tasksSlice/tasksSlice";
 import { AssigneeList } from "./AssigneeList/AssigneeList";
+import { TasksList } from "./TasksList/TasksList";
+import { SubtasksList } from "./SubtasksList/SubtasksList";
 
 export const Table: FC = () => {
   const params = useParams();
@@ -46,8 +48,69 @@ export const Table: FC = () => {
   }, [isCreateTaskModal, params.project_id, dispatch]);
 
   return (
-    <div className="py-4 px-4">
-      <table className="min-w-full table-auto">
+    <div className="flex flex-col py-4 px-4">
+      <div className="flex min-w-full border py-2">
+        <div className="desktop:basis-9/12 basis-6/12">
+          <span className="font-medium text-gray-600 pl-6">Task name</span>
+        </div>
+        <div className="flex justify-center items-center desktop:basis-1/12 basis-2/12">
+          <span className="font-medium text-gray-600">Task owner</span>
+        </div>
+        <div className="flex justify-center items-center desktop:basis-1/12 basis-2/12">
+          <span className="font-medium text-gray-600">Goal start</span>
+        </div>
+        <div className="flex items-center justify-center desktop:basis-1/12 basis-2/12">
+          <span className="font-medium text-gray-600">Goal end</span>
+          <FaArrowDown />
+        </div>
+        <div className="flex items-center justify-center desktop:basis-1/12 basis-2/12">
+          <span className="font-medium text-gray-600">Task time</span>
+        </div>
+        <div className="flex items-center justify-center desktop:basis-1/12 basis-2/12">
+          <span className="font-medium text-gray-600">Priority</span>
+        </div>
+        <div className="flex items-center justify-center desktop:basis-1/12 basis-2/12">
+          <span className="font-medium text-gray-600">Effort</span>
+        </div>
+        <div className="flex items-center justify-center desktop:basis-1/12 basis-2/12">
+          <FaPlusCircle />
+        </div>
+      </div>
+      <div className="flex min-w-full border-b border-x py-2">
+        <div className="desktop:basis-9/12 basis-6/12">
+          <span className="font-medium text-gray-600 pl-6">New task name</span>
+        </div>
+        <div className="desktop:basis-1/12 basis-2/12">
+          <button className="flex items-center justify-center border rounded-full w-7 h-7">
+            <FaAddOwner />
+          </button>
+        </div>
+        <div className="desktop:basis-1/12 basis-2/12">
+          <button className="flex items-center justify-center border rounded-full w-7 h-7">
+            <FaCalendar />
+          </button>
+        </div>
+        <div className="desktop:basis-1/12 basis-2/12">
+          <button className="flex items-center justify-center border rounded-full w-7 h-7">
+            <FaCalendar />
+          </button>
+        </div>
+        <div className="desktop:basis-1/12 basis-2/12"></div>
+        <div className="desktop:basis-1/12 basis-2/12">
+          <button className="flex items-center justify-center w-7 h-7">
+            <FaPriorityFlag fill={""} />
+          </button>
+        </div>
+        <div className="desktop:basis-1/12 basis-2/12"></div>
+        <div className="desktop:basis-1/12 basis-2/12"></div>
+      </div>
+      <div className="flex min-w-full flex-col">
+        <TasksList />
+      </div>
+      {/* <div className="flex">
+        <SubtasksList />
+      </div> */}
+      {/* <table className="min-w-full table-auto">
         <thead className="border text-left text-xs">
           <tr>
             <th className="font-medium text-gray-600 py-2 pl-6 w-2/4">
@@ -97,27 +160,9 @@ export const Table: FC = () => {
           </tr>
         </thead>
         <tbody className="border text-left text-xs">
-          {tasks.map(({ id, name, color, assignee }: any) => {
-            return (
-              <tr key={id}>
-                <th className="pl-6 text-gray-600 font-normal border-t border-b py-2">
-                  <div className="flex items-center">
-                    <FaChevronRight />
-                    <div
-                      className="w-2.5 h-2.5 border ml-2 rounded-sm"
-                      style={{ backgroundColor: color }}
-                    ></div>
-                    <span className="pl-2">{name}</span>
-                  </div>
-                </th>
-                <th className="border-b">
-                  <AssigneeList assignee={assignee} />
-                </th>
-              </tr>
-            );
-          })}
+          <TasksList />
         </tbody>
-      </table>
+      </table> */}
     </div>
   );
 };
