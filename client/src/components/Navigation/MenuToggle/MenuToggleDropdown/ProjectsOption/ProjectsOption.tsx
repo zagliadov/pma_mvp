@@ -45,12 +45,12 @@ export const ProjectsOption: FC<IProps> = ({
     }
   }, [parentMenuIsOpen, projects?.length]);
 
-  const handleVisible = (id: number, index: number) => {
+  const handleVisible = (index: number) => {
     setIsVisible((prevState: boolean[]) => {
       const newState = [...prevState];
       if (newState[index]) return newState;
       newState[index] = !newState[index];
-      newState.forEach((item, i) => {
+      newState.forEach((_, i) => {
         if (i !== index) {
           newState[i] = false;
         }
@@ -62,7 +62,7 @@ export const ProjectsOption: FC<IProps> = ({
     }
   };
 
-  const handleOpenMoreMenu = (project_id: number, index: number) => {
+  const handleOpenMoreMenu = (index: number) => {
     setMoreMenuIsOpen((prevState: boolean[]) => {
       const newState = [...prevState];
       newState[index] = !newState[index];
@@ -92,7 +92,7 @@ export const ProjectsOption: FC<IProps> = ({
           return (
             <div
               key={project.id}
-              onMouseEnter={() => handleVisible(project.id, index)}
+              onMouseEnter={() => handleVisible(index)}
               className="flex items-center pt-3"
             >
               <div className="flex bg-gray-50 rounded">
@@ -101,11 +101,16 @@ export const ProjectsOption: FC<IProps> = ({
                 </span>
               </div>
               <div className="pl-2 w-full flex justify-between">
-                <span className="text-sm font-medium">{project.name}</span>
+                <span
+                  className="text-sm font-medium cursor-pointer"
+                  onClick={() => handleGoToMainTable(project.id)}
+                >
+                  {project.name}
+                </span>
                 {isVisible[index] && (
                   <button
-                    className="px-4"
-                    onClick={() => handleOpenMoreMenu(project.id, index)}
+                    className="px-5"
+                    onClick={() => handleOpenMoreMenu(index)}
                   >
                     <FaMoreVertical />
                   </button>
@@ -115,9 +120,9 @@ export const ProjectsOption: FC<IProps> = ({
                 <div
                   ref={moreMenuRef}
                   className="relative"
-                  onMouseEnter={() => handleVisible(project.id, index)}
+                  onMouseEnter={() => handleVisible(index)}
                 >
-                  <div className="absolute w-[200px] flex flex-col right-[-208px] px-1 py-1 top-[-20px] justify-around bg-white rounded-lg">
+                  <div className="absolute w-[200px] flex flex-col right-[-208px] px-1 py-1 border shadow-lg top-[-20px] justify-around bg-white rounded-lg">
                     <button className="flex items-center hover:bg-gray-50 px-2 py-2 rounded">
                       <FaProjectListSettings />
                       <span className="pl-2">Settings</span>
@@ -149,7 +154,7 @@ export const ProjectsOption: FC<IProps> = ({
                       className="relative"
                       onMouseLeave={() => setIsViewSubmenuOpen(false)}
                     >
-                      <div className="absolute bg-white right-[-415px] w-[200px] top-[60px] px-1 py-1 rounded-lg justify-around">
+                      <div className="absolute bg-white right-[-415px] w-[200px] top-[60px] shadow-lg border px-1 py-1 rounded-lg justify-around">
                         <div className="flex flex-col">
                           <button
                             onClick={() => handleGoToMainTable(project.id)}

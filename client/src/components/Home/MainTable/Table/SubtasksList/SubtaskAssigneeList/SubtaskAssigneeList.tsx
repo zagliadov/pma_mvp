@@ -1,23 +1,21 @@
 import { FC } from "react";
-import { FaAddOwner } from "../../../../icons/icons";
+import { FaAddOwner } from "../../../../../icons/icons";
 
 interface IProps {
-  assignee: any;
-  taskId: number;
+  assignee: string[];
 }
-export const AssigneeList: FC<IProps> = ({ assignee, taskId }) => {
+export const SubtaskAssigneeList: FC<IProps> = ({ assignee }) => {
   const truncatedAssignee =
     assignee.length > 3 ? assignee.slice(0, 3) : assignee;
   const quantity: number = assignee.length - truncatedAssignee.length;
-
   return (
     <div className="flex">
-      {truncatedAssignee && truncatedAssignee.map((item: any, index: number) => {
+      {truncatedAssignee.map((item: string, index: number) => {
         return (
           <div
-            className={`flex items-center bg-gray-50 ${index !== 0 && "ml-[-15px]"} z-[${
-              index * 4
-            }] justify-center w-8 h-8 border rounded-full`}
+            className={`flex items-center bg-gray-50 ${
+              index !== 0 && "ml-[-15px]"
+            } z-[${index * 4}] justify-center w-8 h-8 border rounded-full`}
             key={JSON.parse(item).id}
           >
             <span>{JSON.parse(item).email.charAt(0)}</span>

@@ -1,14 +1,13 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState, AppThunk } from "../store";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-
+import { ITask } from "../../helpers/interface";
 export interface tasksState {
   isEmptyStateProject: boolean;
   isEmptyStateTask: boolean;
-  tasks: any;
+  tasks: ITask[];
 }
 
-const initialState: any = {
+const initialState: tasksState = {
   isEmptyStateProject: true,
   isEmptyStateTask: true,
   tasks: [],
@@ -40,7 +39,7 @@ export const getTasks = createAsyncThunk(
 );
 
 interface ISetTask {
-  project_id: any;
+  project_id: number;
   taskName: string;
   taskDescription: string;
   color: string | null;
@@ -49,6 +48,7 @@ interface ISetTask {
   taskAssignee: { id: number; email: string }[];
   taskBlocker?: number[];
 }
+
 export const setTask = createAsyncThunk(
   "tasks/set_task",
   async ({

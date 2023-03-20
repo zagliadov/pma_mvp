@@ -5,7 +5,13 @@ import { query } from "../pool/db";
 export const getTasks = async (req: any, res: any) => {
   const { project_id } = req.body;
   const { rows, rowCount } = await query(
-    `SELECT * FROM tasks WHERE project_id = $1  ORDER BY id ASC`,
+    `SELECT tasks.*, COUNT(subtasks.*) AS completed_subtasks,
+    (SELECT COUNT(*) FROM subtasks WHERE task_id = tasks.id) AS total_subtasks
+      FROM tasks
+      LEFT JOIN subtasks ON tasks.id = subtasks.task_id AND subtasks.status = 'Complete'
+      WHERE tasks.project_id = $1
+      GROUP BY tasks.id
+      ORDER BY tasks.id ASC`,
     [project_id]
   );
   if (rowCount === 0) return res.end();
@@ -30,13 +36,19 @@ export const setTask = async (req: any, res: any) => {
   );
   if (subTasks.length) {
     subTasks.map((subTask: any) => {
-      query(`INSERT INTO subtasks (name, status, color, task_id) VALUES($1, $2, $3, $4)`, [subTask, status, color, rows[0].id])
+      query(
+        `INSERT INTO subtasks (name, status, color, task_id, assignee) VALUES($1, $2, $3, $4, $5)`,
+        [subTask, status, color, rows[0].id, "{}"]
+      );
     });
   }
   if (taskBlocker.length) {
     taskBlocker.map((taskId: number) => {
-      query(`UPDATE tasks SET blocker_by = $1 WHERE id = $2`, [rows[0].id, taskId])
-    })
+      query(`UPDATE tasks SET blocker_by = $1 WHERE id = $2`, [
+        rows[0].id,
+        taskId,
+      ]);
+    });
   }
-  res.status(200).json()
+  res.status(200).json();
 };

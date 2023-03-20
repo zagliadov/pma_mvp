@@ -9,10 +9,16 @@ import { RootState } from "../../redux/store";
 export const LogIn: FC = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const message = useAppSelector((state: RootState) => state.auth.message);
-  const status = useAppSelector((state: RootState) => state.auth.status);
+  const message: string = useAppSelector(
+    (state: RootState) => state.auth.message
+  );
+  const status: number | null = useAppSelector(
+    (state: RootState) => state.auth.status
+  );
   useEffect(() => {
     localStorage.removeItem("token");
+    localStorage.removeItem("task:priority");
+    localStorage.removeItem("subtask:priority");
   }, []);
 
   return (

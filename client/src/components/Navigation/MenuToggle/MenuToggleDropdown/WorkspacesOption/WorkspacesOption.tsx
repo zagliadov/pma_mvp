@@ -39,7 +39,7 @@ export const WorkspacesOption: FC<IProps> = ({
       setIsOpen((prevState: boolean[]) => {
         const newState = [...prevState];
         newState[index] = !newState[index];
-        newState.forEach((item, i) => {
+        newState.forEach((_, i) => {
           if (i !== index) {
             newState[i] = false;
           }

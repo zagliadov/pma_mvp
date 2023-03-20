@@ -34,13 +34,13 @@ export const CreateTaskModal: FC = () => {
     useState<boolean>(false);
   const [createEditStatusModalOpen, setCreateEditStatusModalOpen] =
     useState<boolean>(false);
-  const isAssigneeModalOpen = useAppSelector(
+  const isAssigneeModalOpen: boolean = useAppSelector(
     (state: RootState) => state.diff.isAssigneeModalOpen
   );
-  const isBlockingTasksModalOpen = useAppSelector(
+  const isBlockingTasksModalOpen: boolean = useAppSelector(
     (state: RootState) => state.diff.isBlockingTasksModalOpen
   );
-  const isStatusModalOpen = useAppSelector(
+  const isStatusModalOpen: boolean = useAppSelector(
     (state: RootState) => state.diff.isStatusModalOpen
   );
   const [taskName, setTaskName] = useState<string>("");
@@ -77,7 +77,7 @@ export const CreateTaskModal: FC = () => {
       return;
     dispatch(
       setTask({
-        project_id: params.project_id,
+        project_id: Number(params.project_id),
         taskName,
         taskDescription,
         color,
