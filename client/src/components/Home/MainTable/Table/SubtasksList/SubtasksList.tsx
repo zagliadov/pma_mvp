@@ -1,5 +1,5 @@
 import { FC, useEffect, useState } from "react";
-import { useAppSelector } from "../../../../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../../redux/hooks";
 import { RootState } from "../../../../../redux/store";
 import { SubtaskAssigneeList } from "./SubtaskAssigneeList/SubtaskAssigneeList";
 import {
@@ -13,31 +13,37 @@ import {
 import { ISubtasks, TaskPriority } from "../../../../../helpers/interface";
 import { updatePriorityArray } from "../../../../../helpers/helpers";
 import { SubtaskMoreMenu } from "./SubtaskMoreMenu/SubtaskMoreMenu";
+import { SubtaskStartDate } from "./SubtaskStartDate/SubtaskStartDate";
+import { SubtaskEndDate } from "./SubtaskEndDate/SubtaskEndDate";
 
 export const SubtasksList: FC = () => {
   const [openMore, setOpenMore] = useState<number | null>(null);
-  const [visible, setVisible] = useState<number | null>(null);
+  // const [visible, setVisible] = useState<number | null>(null);
   const subtasks: ISubtasks[] = useAppSelector(
     (state: RootState) => state.subtasks.subtasks
   );
-  // const [arrChoiceTask, setArrChoiceTask] = useState<number[]>([]);
-  const [choiceSubtask, setChoiceSubtask] = useState<number | null>(null);
   const existingArray: TaskPriority[] =
     JSON.parse(localStorage.getItem("subtask:priority") as string) || [];
   const [priorityArray, setPriorityArray] =
     useState<TaskPriority[]>(existingArray);
+  const [isSelectedSubtask, setIsSelectedSubtask] = useState<boolean[]>(
+    Array(subtasks?.length ?? 0).fill(false)
+  );
+  const [isVisibleMoreMenu, setIsVisibleMoreMenu] = useState<boolean[]>(
+    Array(subtasks?.length ?? 0).fill(false)
+  );
 
-  const handleChoiceSubtaskTask = (id: number) => {
-    setChoiceSubtask(id);
-    // setArrChoiceTask((prevState: number[]) => {
-    //   const isDuplicate = prevState.some((ids: number) => ids === id);
-    //   if (isDuplicate) {
-    //     return prevState.filter((ids: number) => ids !== id);
-    //   } else {
-    //     const newState = [...prevState, id];
-    //     return newState;
-    //   }
-    // });
+  const handleSelectedSubtask = (id: number, index: number) => {
+    setIsSelectedSubtask((prevState: boolean[]) => {
+      const newState = [...prevState];
+      newState[index] = !newState[index];
+      newState.forEach((_, i: number) => {
+        if (i !== index) {
+          newState[i] = false;
+        }
+      });
+      return newState;
+    });
   };
 
   const handleChangePriority = (id: number) => {
@@ -62,12 +68,21 @@ export const SubtasksList: FC = () => {
     updatePriorityArray(subtasks, setPriorityArray, "subtask:priority");
   }, [subtasks]);
 
-  const handleMouseEnter = (id: number) => {
-    setVisible(id);
+  const handleMouseEnter = (id: number, index: number) => {
+    setIsVisibleMoreMenu((prevState: boolean[]) => {
+      const newState = [...prevState];
+      newState[index] = !newState[index];
+      newState.forEach((_, i: number) => {
+        if (i !== index) {
+          newState[i] = false;
+        }
+      });
+      return newState;
+    });
   };
 
   const handleMouseLeave = () => {
-    setVisible(null);
+    setIsVisibleMoreMenu(Array(subtasks?.length ?? 0).fill(false));
     setOpenMore(null);
   };
 
@@ -79,20 +94,30 @@ export const SubtasksList: FC = () => {
   return (
     <>
       {subtasks &&
-        subtasks.map(({ id, color, name, assignee }: ISubtasks) => {
-          return (
-            <div key={id}>
-              <div
-                onMouseEnter={() => handleMouseEnter(id)}
+        subtasks.map(
+          (
+            {
+              id,
+              color,
+              name,
+              assignee,
+              days_between,
+              start_date,
+              end_date,
+            }: ISubtasks,
+            index: number
+          ) => {
+            return (
+              <tr
+                onMouseEnter={() => handleMouseEnter(id, index)}
                 onMouseLeave={() => handleMouseLeave()}
-                className={`flex border-b border-x ${
-                  choiceSubtask !== id && "hover:bg-gray-50"
-                } ${choiceSubtask === id && "bg-primary-100"}`}
+                className={`border hover:bg-gray-50 ${
+                  isSelectedSubtask[index] && "bg-primary-100"
+                }`}
+                key={id}
               >
-                <div
-                  className={`flex items-center desktop:basis-9/12 basis-6/12`}
-                >
-                  <div className="flex items-center py-2">
+                <td className={`w-1/2 min-w-[500px] py-2 pr-4 `}>
+                  <div className="flex items-center">
                     <div className="pl-1">
                       <label
                         htmlFor={"subtask" + String(id)}
@@ -100,17 +125,17 @@ export const SubtasksList: FC = () => {
                       >
                         <div
                           className={`w-4 h-4 rounded flex items-center justify-center ${
-                            visible === id && "bg-gray-300"
-                          } ${choiceSubtask === id && "bg-primary-500"}`}
+                            isVisibleMoreMenu[index] && "bg-gray-300"
+                          } ${isSelectedSubtask[index] && "bg-primary-500"}`}
                         >
-                          {choiceSubtask === id && <FaCheckbox />}
+                          {isSelectedSubtask[index] && <FaCheckbox />}
                         </div>
                       </label>
                       <input
                         id={"subtask" + String(id)}
                         className="hidden"
                         type="checkbox"
-                        onChange={() => handleChoiceSubtaskTask(id)}
+                        onChange={() => handleSelectedSubtask(id, index)}
                       />
                     </div>
                     <div className="pl-8"></div>
@@ -139,14 +164,37 @@ export const SubtasksList: FC = () => {
                       </button>
                     </div>
                   </div>
-                </div>
-                <div className="flex justify-start items-center desktop:basis-1/12 basis-2/12">
+                </td>
+                <td className="min-w-[120px]">
                   <SubtaskAssigneeList assignee={assignee} />
-                </div>
-                <div className="flex justify-start items-center desktop:basis-1/12 basis-2/12 "></div>
-                <div className="flex justify-start items-center desktop:basis-1/12 basis-2/12 "></div>
-                <div className="flex justify-start items-center desktop:basis-1/12 basis-2/12 "></div>
-                <div className="flex justify-start items-center desktop:basis-1/12 basis-2/12 ">
+                </td>
+                <td className="min-w-[60px] relative">
+                  <SubtaskStartDate
+                    start_date={start_date}
+                    index={index}
+                    subtaskId={id}
+                  />
+                </td>
+                <td className="min-w-[70px] relative">
+                  <SubtaskEndDate
+                    end_date={end_date}
+                    index={index}
+                    subtaskId={id}
+                  />
+                </td>
+                <td className="min-w-[60px]">
+                  {days_between > 1 && (
+                    <span className="text-gray-600 text-xs font-normal">
+                      {days_between} days
+                    </span>
+                  )}
+                  {days_between === 1 && (
+                    <span className="text-gray-600 text-xs font-normal">
+                      {days_between} day
+                    </span>
+                  )}
+                </td>
+                <td className="min-w-[50px]">
                   <button
                     className="flex items-center justify-center w-7 h-7"
                     onClick={() => handleChangePriority(id)}
@@ -161,23 +209,25 @@ export const SubtasksList: FC = () => {
                       );
                     })}
                   </button>
-                </div>
-                <div className="flex justify-start items-center desktop:basis-1/12 basis-2/12 "></div>
-                <div className="relative flex justify-center items-center desktop:basis-1/12 basis-2/12 ">
-                  {(choiceSubtask === id || visible === id) && (
-                    <button
-                      onClick={() => handleOpenMore(id)}
-                      className="px-4 py-2"
-                    >
-                      <FaMoreVertical />
-                    </button>
-                  )}
-                  {openMore === id && <SubtaskMoreMenu />}
-                </div>
-              </div>
-            </div>
-          );
-        })}
+                </td>
+                <td className="min-w-[50px]"></td>
+                <td className="min-w-[40px]">
+                  <div className="relative flex items-center">
+                    {(isSelectedSubtask[index] || isVisibleMoreMenu[index]) && (
+                      <button
+                        onClick={() => handleOpenMore(id)}
+                        className="px-4 py-2"
+                      >
+                        <FaMoreVertical />
+                      </button>
+                    )}
+                    {openMore === id && <SubtaskMoreMenu />}
+                  </div>
+                </td>
+              </tr>
+            );
+          }
+        )}
     </>
   );
 };

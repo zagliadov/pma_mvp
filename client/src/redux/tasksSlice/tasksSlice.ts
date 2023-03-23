@@ -13,18 +13,59 @@ const initialState: tasksState = {
   tasks: [],
 };
 
-interface IGetTasks {
-  project_id: number;
-  token: string;
-}
-
 export const getTasks = createAsyncThunk(
   "tasks/get_tasks",
-  async ({ project_id, token }: IGetTasks) => {
+  async (projectId: number) => {
+    const token: string | null = localStorage.getItem("token");
+    if (!token) return;
     try {
       const tasks = await axios.post(
         "http://localhost:9000/tasks/get_tasks",
-        { project_id },
+        { projectId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return tasks.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+export const setGoalStartDate = createAsyncThunk(
+  "tasks/set_goal_start_date",
+  async ({ date, taskId }: { date: string | null; taskId: number | null }) => {
+    const token: string | null = localStorage.getItem("token");
+    if (!token) return;
+    try {
+      const tasks = await axios.post(
+        "http://localhost:9000/tasks/set_goal_start_date",
+        { date, taskId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return tasks.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+export const setGoalEndDate = createAsyncThunk(
+  "tasks/set_goal_end_date",
+  async ({ date, taskId }: { date: string | null; taskId: number | null }) => {
+    const token: string | null = localStorage.getItem("token");
+    if (!token) return;
+    try {
+      const tasks = await axios.post(
+        "http://localhost:9000/tasks/set_goal_end_date",
+        { date, taskId },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -115,6 +156,18 @@ export const tasksSlice = createSlice({
         return { ...state, isEmptyStateTask: false };
       })
       .addCase(setTask.rejected, (state) => {});
+    builder
+      .addCase(setGoalStartDate.pending, (state, action) => {})
+      .addCase(setGoalStartDate.fulfilled, (state, action) => {
+        return { ...state, tasks: action.payload };
+      })
+      .addCase(setGoalStartDate.rejected, (state) => {});
+    builder
+      .addCase(setGoalEndDate.pending, (state, action) => {})
+      .addCase(setGoalEndDate.fulfilled, (state, action) => {
+        return { ...state, tasks: action.payload };
+      })
+      .addCase(setGoalEndDate.rejected, (state) => {});
   },
 });
 

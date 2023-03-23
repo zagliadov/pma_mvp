@@ -1,5 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState, AppThunk } from "../store";
+import { createSlice } from "@reduxjs/toolkit";
 
 export interface diffState {
   isActiveSidebar: boolean;
@@ -35,7 +34,7 @@ export const diffSlice = createSlice({
     },
     toggleIsStatusModalOpen: (state, action) => {
       return { ...state, isStatusModalOpen: action.payload };
-    }
+    },
   },
   extraReducers: (builder) => {},
 });

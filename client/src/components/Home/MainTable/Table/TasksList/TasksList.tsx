@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { FC, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../../redux/hooks";
 import { RootState } from "../../../../../redux/store";
 import {
@@ -17,10 +17,13 @@ import { SubtasksList } from "../SubtasksList/SubtasksList";
 import { ITask, TaskPriority } from "../../../../../helpers/interface";
 import { updatePriorityArray } from "../../../../../helpers/helpers";
 import { TaskMoreMenu } from "./TaskMoreMenu/TaskMoreMenu";
+import React from "react";
+import { TaskEndDate } from "./TaskEndDate/TaskEndDate";
+import { TaskStartDate } from "./TaskStartDate/TaskStartDate";
 
 export const TasksList: FC = () => {
-  const [visible, setVisible] = useState<number | null>(null);
   const [isOpenSubtasks, setIsOpenSubtasks] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
   const { tasks } = useAppSelector((state: RootState) => state.tasks);
   const [openMore, setOpenMore] = useState<number | null>(null);
   const existingArray: TaskPriority[] =
@@ -28,19 +31,34 @@ export const TasksList: FC = () => {
   const [priorityArray, setPriorityArray] =
     useState<TaskPriority[]>(existingArray);
   const [isOpen, setIsOpen] = useState<boolean[]>(
-    Array(tasks?.length).fill(false)
+    Array(tasks?.length ?? 0).fill(false)
+  );
+  const [isSelectedTask, setIsSelectedTask] = useState<boolean[]>(
+    Array(tasks?.length ?? 0).fill(false)
+  );
+  const [isVisibleMoreMenu, setIsVisibleMoreMenu] = useState<boolean[]>(
+    Array(tasks?.length ?? 0).fill(false)
   );
 
   useEffect(() => {
-    setIsOpen(Array(tasks?.length).fill(false));
+    setIsOpen(Array(tasks?.length ?? 0).fill(false));
   }, [tasks?.length]);
 
-  const dispatch = useAppDispatch();
   // const [arrChoiceTask, setArrChoiceTask] = useState<number[]>([]);
-  const [choiceTask, setChoiceTask] = useState<number | null>(null);
+  // const [choiceTask, setChoiceTask] = useState<number | null>(null);
 
-  const handleChoiceTask = (id: number) => {
-    setChoiceTask(id);
+  const handleSelectedTask = (id: number, index: number) => {
+    setIsSelectedTask((prevState: boolean[]) => {
+      const newState = [...prevState];
+      newState[index] = !newState[index];
+      newState.forEach((_, i) => {
+        if (i !== index) {
+          newState[i] = false;
+        }
+      });
+      return newState;
+    });
+    // setChoiceTask(id);
     // setArrChoiceTask((prevState: number[]) => {
     //   const isDuplicate = prevState.some((ids: number) => ids === id);
     //   if (isDuplicate) {
@@ -90,12 +108,21 @@ export const TasksList: FC = () => {
     setPriorityArray(updatedArray);
   };
 
-  const handleMouseEnter = (id: number) => {
-    setVisible(id);
+  const handleMouseEnter = (id: number, index: number) => {
+    setIsVisibleMoreMenu((prevState: boolean[]) => {
+      const newState = [...prevState];
+      newState[index] = !newState[index];
+      newState.forEach((_, i: number) => {
+        if (i !== index) {
+          newState[i] = false;
+        }
+      });
+      return newState;
+    });
   };
 
   const handleMouseLeave = () => {
-    setVisible(null);
+    setIsVisibleMoreMenu(Array(tasks?.length ?? 0).fill(false));
     setOpenMore(null);
   };
 
@@ -116,22 +143,23 @@ export const TasksList: FC = () => {
               assignee,
               completed_subtasks,
               total_subtasks,
+              days_between,
+              start_date,
+              end_date,
             }: ITask,
             index: number
           ) => {
             return (
-              <div key={id}>
-                <div
-                  onMouseEnter={() => handleMouseEnter(id)}
+              <React.Fragment key={id}>
+                <tr
+                  onMouseEnter={() => handleMouseEnter(id, index)}
                   onMouseLeave={() => handleMouseLeave()}
-                  className={`flex ${choiceTask !== id && "hover:bg-gray-50"} ${
-                    choiceTask === id && "bg-primary-100"
-                  } border-b border-x`}
+                  className={`border hover:bg-gray-50 ${
+                    isSelectedTask[index] && "bg-primary-100"
+                  }`}
                 >
-                  <div
-                    className={`flex flex-col desktop:basis-9/12 basis-6/12`}
-                  >
-                    <div className="flex items-center py-2">
+                  <td className={`w-1/2 min-w-[500px] py-2 pr-4 `}>
+                    <div className="flex items-center">
                       <div className="pl-1">
                         <label
                           htmlFor={"task" + String(id)}
@@ -139,17 +167,17 @@ export const TasksList: FC = () => {
                         >
                           <div
                             className={`w-4 h-4 rounded flex items-center justify-center ${
-                              visible === id && "bg-gray-300"
-                            } ${choiceTask === id && "bg-primary-500"}`}
+                              isVisibleMoreMenu[index] && "bg-gray-300"
+                            } ${isSelectedTask[index] && "bg-primary-500"}`}
                           >
-                            {choiceTask === id && <FaCheckbox />}
+                            {isSelectedTask[index] && <FaCheckbox />}
                           </div>
                         </label>
                         <input
                           id={"task" + String(id)}
                           className="hidden"
                           type="checkbox"
-                          onChange={() => handleChoiceTask(id)}
+                          onChange={() => handleSelectedTask(id, index)}
                         />
                       </div>
                       <div className="pl-8">
@@ -198,14 +226,37 @@ export const TasksList: FC = () => {
                         </button>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex justify-start items-center desktop:basis-1/12 basis-2/12">
+                  </td>
+                  <td className="min-w-[120px]">
                     <AssigneeList assignee={assignee} taskId={id} />
-                  </div>
-                  <div className="flex justify-center items-center desktop:basis-1/12 basis-2/12"></div>
-                  <div className="flex justify-center items-center desktop:basis-1/12 basis-2/12"></div>
-                  <div className="flex justify-center items-center desktop:basis-1/12 basis-2/12"></div>
-                  <div className="flex justify-start items-center desktop:basis-1/12 basis-2/12">
+                  </td>
+                  <td className="min-w-[60px] relative">
+                    <TaskStartDate
+                      start_date={start_date}
+                      index={index}
+                      taskId={id}
+                    />
+                  </td>
+                  <td className="min-w-[70px] relative">
+                    <TaskEndDate
+                      end_date={end_date}
+                      index={index}
+                      taskId={id}
+                    />
+                  </td>
+                  <td className="min-w-[60px]">
+                    {days_between > 1 && (
+                      <span className="text-gray-600 text-xs font-normal">
+                        {days_between} days
+                      </span>
+                    )}
+                    {days_between === 1 && (
+                      <span className="text-gray-600 text-xs font-normal">
+                        {days_between} day
+                      </span>
+                    )}
+                  </td>
+                  <td className="min-w-[50px]">
                     <button
                       className="flex items-center justify-center w-7 h-7"
                       onClick={() => handleChangePriority(id)}
@@ -220,22 +271,24 @@ export const TasksList: FC = () => {
                         );
                       })}
                     </button>
-                  </div>
-                  <div className="flex justify-center items-center desktop:basis-1/12 basis-2/12"></div>
-                  <div className="relative flex justify-center items-center desktop:basis-1/12 basis-2/12">
-                    {(choiceTask === id || visible === id) && (
-                      <button
-                        onClick={() => handleOpenMore(id)}
-                        className="px-4 py-2"
-                      >
-                        <FaMoreVertical />
-                      </button>
-                    )}
-                    {openMore === id && <TaskMoreMenu />}
-                  </div>
-                </div>
-                {isOpen[index] && <SubtasksList />}
-              </div>
+                  </td>
+                  <td className="min-w-[50px]"></td>
+                  <td className="min-w-[40px]">
+                    <div className="relative flex items-center">
+                      {(isSelectedTask[index] || isVisibleMoreMenu[index]) && (
+                        <button
+                          onClick={() => handleOpenMore(id)}
+                          className="px-4 py-2"
+                        >
+                          <FaMoreVertical />
+                        </button>
+                      )}
+                      {openMore === id && <TaskMoreMenu />}
+                    </div>
+                  </td>
+                </tr>
+                <>{isOpen[index] && <SubtasksList />}</>
+              </React.Fragment>
             );
           }
         )}

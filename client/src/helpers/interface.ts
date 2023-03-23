@@ -5,6 +5,9 @@ export interface ITask {
   assignee: string;
   completed_subtasks: string;
   total_subtasks: string;
+  days_between: number;
+  start_date: string;
+  end_date: string
 }
 
 export interface TaskPriority {
@@ -21,5 +24,8 @@ export interface ISubtasks {
   assignee: string[] | [];
   file_name: string | null;
   description: string | null;
+  days_between: number,
+  start_date: string,
+  end_date: string,
 }
 

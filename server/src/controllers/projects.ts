@@ -29,6 +29,7 @@ export const getProject = async (req: any, res: any) => {
 export const addNewProject = async (req: any, res: any) => {
   const { userId } = req.userData;
   const { workspace_id, name, members, description } = req.body;
+  console.log(workspace_id, "+++++++++++++++++++++++++++++");
 
   try {
     const { rows } = await query(

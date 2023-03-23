@@ -24,7 +24,7 @@ export const AvatarDropdownUserMenu: FC<IProps> = ({ isOpen }) => {
 
   return (
     <div
-      className={`absolute flex-col top-16 bg-white right-2 border rounded-lg w-80 ${
+      className={`absolute z-[1] flex-col top-16 shadow-lg bg-white right-2 border rounded-lg w-80 ${
         isOpen ? "flex" : "hidden"
       }`}
     >

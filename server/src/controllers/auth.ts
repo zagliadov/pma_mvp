@@ -47,7 +47,12 @@ interface IPayload {
   email: string;
   avatar_filename: string;
 }
-const createJwtToken = (userId: string, username: string, email: string, avatar_filename: string) => {
+const createJwtToken = (
+  userId: string,
+  username: string,
+  email: string,
+  avatar_filename: string
+) => {
   const expiresIn = Math.floor(Date.now() / 1000) + 60 * 60 * 24;
   const payload: IPayload = {
     userId,
@@ -70,6 +75,10 @@ export const login = async (req: any, res: any) => {
       `SELECT id, email, username, password, avatar_filename FROM users WHERE email = $1`,
       [email]
     );
+    const { rows: workspace_id } = await query(
+      `SELECT id FROM workspaces WHERE user_id = $1 ORDER BY id LIMIT 1`,
+      [rows[0].id]
+    );
     if (!rows || rows.length === 0) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
@@ -77,8 +86,13 @@ export const login = async (req: any, res: any) => {
     if (!validPassword) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
-    const token = createJwtToken(rows[0].id, rows[0].username, rows[0].email, rows[0].avatar_filename);
-    res.json({ token });
+    const token = createJwtToken(
+      rows[0].id,
+      rows[0].username,
+      rows[0].email,
+      rows[0].avatar_filename
+    );
+    res.json({ token, workspace_id });
   } catch (error) {
     console.log(error);
   }
@@ -88,7 +102,8 @@ export const verifyToken = async (req: any, res: any, next: any) => {
   const authHeader = req.headers["authorization"];
   const token: string = authHeader && authHeader.split(" ")[1];
   try {
-    if (!token) return res.status(401).json({ message: "Authentication failed" });
+    if (!token)
+      return res.status(401).json({ message: "Authentication failed" });
     const decodedToken: any = await jwt.verify(
       token,
       process.env.JWT_SECRET as string
@@ -104,6 +119,6 @@ export const verifyToken = async (req: any, res: any, next: any) => {
     }
   } catch (error) {
     console.log(error);
-    return res.status(401).json({ message: "Authentication failed"})
+    return res.status(401).json({ message: "Authentication failed" });
   }
 };

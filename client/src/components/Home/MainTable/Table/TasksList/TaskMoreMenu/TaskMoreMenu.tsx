@@ -11,7 +11,7 @@ import {
 
 export const TaskMoreMenu: FC = () => {
   return (
-    <div className="absolute w-[200px] z-[2] bg-white top-[42px] rounded-lg shadow-lg right-1 border">
+    <div className="absolute w-[200px] z-[2] bg-white top-[30px] rounded-lg shadow-lg right-1 border">
       <div className="p-1">
         <button className="flex items-center w-full hover:bg-gray-50 p-2 rounded">
           <FaRename />

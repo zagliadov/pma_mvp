@@ -50,7 +50,7 @@ export const addNewWorkspace = createAsyncThunk(
     try {
       const workspaces = await axios.post(
         "http://localhost:9000/workspaces/add_new_workspace",
-        {workspace_name},
+        { workspace_name },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -72,13 +72,13 @@ export const workspacesSlice = createSlice({
     builder
       .addCase(getWorkspaces.pending, (state) => {})
       .addCase(getWorkspaces.fulfilled, (state, action) => {
-        state.workspaces = action.payload;
+        return { ...state, workspaces: action.payload };
       })
       .addCase(getWorkspaces.rejected, (state) => {});
     builder
       .addCase(addNewWorkspace.pending, (state) => {})
       .addCase(addNewWorkspace.fulfilled, (state, action) => {
-        state.workspaces = action.payload;
+        return { ...state, workspaces: action.payload };
       })
       .addCase(addNewWorkspace.rejected, (state) => {});
   },

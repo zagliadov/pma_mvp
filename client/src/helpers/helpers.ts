@@ -48,3 +48,10 @@ export const updatePriorityArray = (
 export const isIncludes = (array: number[], id: number) => {
   return array.includes(id);
 }
+
+export const convertDate = (date: Date | null) => {
+  if (date) {
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+  }
+  return null;
+};

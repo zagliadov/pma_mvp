@@ -17,8 +17,8 @@ export const MainTableNavigation: FC = () => {
   const project = useAppSelector((state: RootState) => state.project.project);
   return (
     <>
-      <div>
-        <span className="text-lg pl-6 font-medium  pr-4">
+      <div className="min-w-[170px]">
+        <span className="text-lg pl-6 font-medium pr-4">
           {project[0] ? project[0].name : "Project name"}
         </span>
       </div>
@@ -27,7 +27,7 @@ export const MainTableNavigation: FC = () => {
         <div className="relative flex items-center border-l-[2px] border-gray-100 px-4">
           {mainTablePath ? <FaActiveTable /> : <FaNoActiveTable />}
           <span
-            className={`text-sm font-medium pl-1 ${
+            className={`text-sm font-medium pl-1 min-w-[80px] ${
               mainTablePath ? "text-primary-500" : "text-gray-600"
             }`}
           >

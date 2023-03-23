@@ -13,6 +13,7 @@ export interface IUsers {
 export interface AuthState {
   status: number | null;
   message: string;
+  workspace_id: number | null;
   isAuthenticated: boolean;
   user: IUsers[];
   members: IUsers[];
@@ -36,6 +37,7 @@ const initialState: AuthState = {
   status: null,
   message: "",
   isAuthenticated: false,
+  workspace_id: null,
   user: [],
   members: [],
   token: "",
@@ -147,12 +149,19 @@ export const authSlice = createSlice({
       .addCase(logIn.fulfilled, (state, action) => {
         if (!action.payload) return;
         if (action.payload.status && action.payload.message) {
-          state.message = action.payload.message;
-          state.status = action.payload.status;
+          return {
+            ...state,
+            message: action.payload.message,
+            status: action.payload.status,
+          };
         }
         if (action.payload.token) {
           localStorage.setItem("token", action.payload.token);
-          state.token = action.payload.token;
+          return {
+            ...state,
+            token: action.payload.token,
+            workspace_id: action.payload.workspace_id[0].id,
+          };
         }
       })
       .addCase(logIn.rejected, (state) => {});
@@ -160,8 +169,11 @@ export const authSlice = createSlice({
       .addCase(createAccount.pending, (state) => {})
       .addCase(createAccount.fulfilled, (state, action) => {
         if (!action.payload) return;
-        state.status = action.payload.status;
-        state.message = action.payload.message;
+        return {
+          ...state,
+          status: action.payload.status,
+          message: action.payload.message,
+        };
       })
       .addCase(createAccount.rejected, (state) => {});
     builder

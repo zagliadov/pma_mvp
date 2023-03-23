@@ -13,21 +13,14 @@ export const EmptyStateProject: FC = () => {
   const isEmptyStateTask = useAppSelector(
     (state: RootState) => state.project.isEmptyStateTask
   );
-  const toggleIsActiveSidebar = useAppSelector(
-    (state: RootState) => state.diff.isActiveSidebar
-  );
 
-  useEffect(() => {
-    if (!isEmptyStateProject) navigate("/main_table");
-    if (!isEmptyStateProject && !isEmptyStateTask) navigate("/");
-  }, [dispatch, isEmptyStateProject, isEmptyStateTask, navigate]);
+  // useEffect(() => {
+  //   if (!isEmptyStateProject) navigate("/main_table");
+  //   if (!isEmptyStateProject && !isEmptyStateTask) navigate("/");
+  // }, [dispatch, isEmptyStateProject, isEmptyStateTask, navigate]);
 
   return (
-    <div
-      className={`flex flex-col justify-center items-center h-full ${
-        toggleIsActiveSidebar && "bg-gray-200"
-      }`}
-    >
+    <div className={`flex flex-col justify-center items-center h-full`}>
       <div className="w-32 h-28 bg-[url('assets/CProject.svg')]"></div>
       <div className="flex flex-col justify-center items-center w-[460px] pt-8 pb-4">
         <p className="text-2xl font-medium text-gray-900 pb-4">

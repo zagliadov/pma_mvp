@@ -15,14 +15,13 @@ export const BlockingTasksModal: FC<IProps> = ({
   taskBlocker,
 }) => {
   const params = useParams();
-  const token: string | null = localStorage.getItem("token");
   const tasks = useAppSelector((state: RootState) => state.tasks.tasks);
   const dispatch = useAppDispatch();
 
   const handleCloseModal = () => {
     dispatch(toggleIsBlockingTasksModalOpen(false));
-    if (!token) return;
-    dispatch(getTasks({ project_id: Number(params.project_id), token }));
+    const projectId = Number(params.project_id);
+    dispatch(getTasks(projectId));
   };
 
   const handleAddBlocker = (taskId: number) => {

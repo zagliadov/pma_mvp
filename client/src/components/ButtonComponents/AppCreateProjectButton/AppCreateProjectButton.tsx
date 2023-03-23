@@ -5,7 +5,8 @@ export const AppCreateProjectButton: FC = () => {
   const navigate = useNavigate();
   const params = useParams();
   const handleClick = () => {
-    navigate(`/create_project/${params.workspace_id}`);
+    console.log(params)
+    // navigate(`/create_project/${params.project_id}`);
   };
   return (
     <button

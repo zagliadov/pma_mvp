@@ -10,6 +10,62 @@ const initialState: subtasksState = {
   subtasks: [],
 };
 
+export const setGoalStartDateForSubtask = createAsyncThunk(
+  "subtasks/set_goal_start_date",
+  async ({
+    date,
+    subtaskId,
+  }: {
+    date: string | null;
+    subtaskId: number | null;
+  }) => {
+    const token: string | null = localStorage.getItem("token");
+    if (!token) return;
+    try {
+      const subtasks = await axios.post(
+        "http://localhost:9000/subtasks/set_goal_start_date",
+        { date, subtaskId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return subtasks.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
+export const setGoalEndDateForSubtask = createAsyncThunk(
+  "subtasks/set_goal_end_date",
+  async ({
+    date,
+    subtaskId,
+  }: {
+    date: string | null;
+    subtaskId: number | null;
+  }) => {
+    const token: string | null = localStorage.getItem("token");
+    if (!token) return;
+    try {
+      const subtasks = await axios.post(
+        "http://localhost:9000/subtasks/set_goal_end_date",
+        { date, subtaskId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return subtasks.data;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
 export const getSubtask = createAsyncThunk(
   "subtasks/get_subtask",
   async (taskId: number) => {
@@ -36,6 +92,18 @@ export const subtasksSlice = createSlice({
         return { ...state, subtasks: action.payload };
       })
       .addCase(getSubtask.rejected, (state) => {});
+    builder
+      .addCase(setGoalStartDateForSubtask.pending, (state, action) => {})
+      .addCase(setGoalStartDateForSubtask.fulfilled, (state, action) => {
+        return { ...state, subtasks: action.payload };
+      })
+      .addCase(setGoalStartDateForSubtask.rejected, (state) => {});
+    builder
+      .addCase(setGoalEndDateForSubtask.pending, (state, action) => {})
+      .addCase(setGoalEndDateForSubtask.fulfilled, (state, action) => {
+        return { ...state, subtasks: action.payload };
+      })
+      .addCase(setGoalEndDateForSubtask.rejected, (state) => {});
   },
 });
 

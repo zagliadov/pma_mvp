@@ -34,7 +34,7 @@ export const ProjectDialogWithCancelCreate: FC<IProps> = ({
 
   const handleCreateProject = () => {
     if (!token) return;
-    if (members.length && projectName && projectDescription) {
+    if (members.length && projectName && projectDescription && params.workspace_id) {
       dispatch(
         addNewProject({
           workspace_id: Number(params.workspace_id),

@@ -17,8 +17,6 @@ export const LogIn: FC = () => {
   );
   useEffect(() => {
     localStorage.removeItem("token");
-    localStorage.removeItem("task:priority");
-    localStorage.removeItem("subtask:priority");
   }, []);
 
   return (
