@@ -36,7 +36,7 @@ export const MainTable: FC = () => {
         shutdownEffect ? "blur-[2px] border-gray-300" : "bg-gray-10"
       }`}
     >
-      {isEmptyStateProject && <EmptyStateProject />}
+      {/* {isEmptyStateProject && <EmptyStateProject />} */}
       {isEmptyStateTask && !isCreateTaskModal && <EmptyStateTask />}
       {isCreateTaskModal && <CreateTaskModal />}
       {!isCreateTaskModal && !isEmptyStateTask && <Table />}

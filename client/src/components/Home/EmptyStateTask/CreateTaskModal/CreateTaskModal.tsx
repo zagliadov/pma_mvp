@@ -72,7 +72,7 @@ export const CreateTaskModal: FC = () => {
     dispatch(toggleIsCreateTaskModal(false));
   };
 
-  const handleCreate = () => {
+  const CreateTask = () => {
     if (!taskName.length || !taskDescription.length || !color || !status)
       return;
     dispatch(
@@ -91,8 +91,8 @@ export const CreateTaskModal: FC = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center h-full w-full bg-gray-200">
-      <div className="relative w-[70%] bg-white rounded-lg">
+    <div className="flex flex-col justify-center items-center h-full w-full">
+      <div className="relative w-[70%] bg-white rounded-lg shadow-lg border border-gray-50">
         <div className="border-b border-gray-50 flex justify-between items-center h-14">
           <span className="pl-4 text-lg font-medium">Create task</span>
           <div className="pr-5">
@@ -141,7 +141,7 @@ export const CreateTaskModal: FC = () => {
             Cancel
           </button>
           <button
-            onClick={() => handleCreate()}
+            onClick={() => CreateTask()}
             className="bg-primary-500 rounded py-2.5 px-6 text-white text-base font-medium"
           >
             Create

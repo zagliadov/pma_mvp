@@ -107,18 +107,19 @@ export const setTask = async (req: any, res: any) => {
               VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
     [taskName, status, color, taskAssignee, taskDescription, project_id]
   );
+  const task_id = rows[0].id
   if (subTasks.length) {
     subTasks.map((subTask: any) => {
       query(
         `INSERT INTO subtasks (name, status, color, task_id, assignee) VALUES($1, $2, $3, $4, $5)`,
-        [subTask, status, color, rows[0].id, "{}"]
+        [subTask, status, color, task_id, "{}"]
       );
     });
   }
   if (taskBlocker.length) {
     taskBlocker.map((taskId: number) => {
       query(`UPDATE tasks SET blocker_by = $1 WHERE id = $2`, [
-        rows[0].id,
+        task_id,
         taskId,
       ]);
     });

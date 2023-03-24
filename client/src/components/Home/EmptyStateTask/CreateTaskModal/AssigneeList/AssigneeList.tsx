@@ -22,7 +22,7 @@ export const AssigneeList: FC<IProps> = ({
           return (
             <div
               className={`flex items-center bg-gray-50 ml-[-15px] z-[${
-                index * 2
+                index * 4
               }] justify-center w-8 h-8 border rounded-full`}
               key={assignee.id}
             >

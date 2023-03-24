@@ -3,25 +3,28 @@ import { isAuth } from "../../../redux/authSlice/authSlice";
 import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { logIn } from "../../../redux/authSlice/authSlice";
 import { useNavigate } from "react-router-dom";
-import { RootState } from "../../../redux/store";
 
 interface IProps {
   email: string;
   password: string;
-  status: number | null;
 }
-export const AppLoginButton: FC<IProps> = ({ email, password, status }) => {
+export const AppLoginButton: FC<IProps> = ({ email, password }) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const { workspace_id } = useAppSelector((state: RootState) => state.auth);
-  const token = useAppSelector((state: RootState) => state.auth.token);
+  const { workspace_id, project_id, token } = useAppSelector(({ auth }) => ({
+    workspace_id: auth.workspace_id,
+    project_id: auth.project_id,
+    token: auth.token,
+  }));
 
   useEffect(() => {
-    if (token && workspace_id) {
-      dispatch(isAuth());
-      navigate(`/main_table/${workspace_id}`);
+    dispatch(isAuth());
+    if (workspace_id && project_id && token) {
+      navigate(`/main_table/${project_id}`);
+    } else if (workspace_id && !project_id) {
+      navigate(`/empty_state_project/${workspace_id}`);
     }
-  }, [dispatch, navigate, token, workspace_id]);
+  }, [dispatch, navigate, project_id, token, workspace_id]);
 
   const handleClick = () => {
     if (email === "" && password === "") return;

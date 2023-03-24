@@ -3,10 +3,9 @@ import { FaButtonPlus } from "../../icons/icons";
 import { useNavigate, useParams } from "react-router-dom";
 export const AppCreateProjectButton: FC = () => {
   const navigate = useNavigate();
-  const params = useParams();
+  const { workspace_id } = useParams();
   const handleClick = () => {
-    console.log(params)
-    // navigate(`/create_project/${params.project_id}`);
+    navigate(`/create_project/${workspace_id}`);
   };
   return (
     <button

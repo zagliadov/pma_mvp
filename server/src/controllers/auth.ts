@@ -75,10 +75,22 @@ export const login = async (req: any, res: any) => {
       `SELECT id, email, username, password, avatar_filename FROM users WHERE email = $1`,
       [email]
     );
-    const { rows: workspace_id } = await query(
+
+    if (!rows || rows.length === 0) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    };
+
+    const { rows: workspace } = await query(
       `SELECT id FROM workspaces WHERE user_id = $1 ORDER BY id LIMIT 1`,
       [rows[0].id]
     );
+    const workspace_id = workspace[0]?.id;
+
+    const { rows: project } = await query(
+      `SELECT id FROM projects WHERE workspace_id = $1 ORDER BY id LIMIT 1`,
+      [workspace_id]
+    );
+    const project_id = project[0]?.id;
     if (!rows || rows.length === 0) {
       return res.status(401).json({ message: "Invalid email or password" });
     }
@@ -92,7 +104,7 @@ export const login = async (req: any, res: any) => {
       rows[0].email,
       rows[0].avatar_filename
     );
-    res.json({ token, workspace_id });
+    res.json({ token, workspace_id, project_id });
   } catch (error) {
     console.log(error);
   }

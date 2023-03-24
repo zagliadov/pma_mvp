@@ -14,6 +14,7 @@ export interface AuthState {
   status: number | null;
   message: string;
   workspace_id: number | null;
+  project_id: number | null;
   isAuthenticated: boolean;
   user: IUsers[];
   members: IUsers[];
@@ -38,6 +39,7 @@ const initialState: AuthState = {
   message: "",
   isAuthenticated: false,
   workspace_id: null,
+  project_id: null,
   user: [],
   members: [],
   token: "",
@@ -134,9 +136,14 @@ export const authSlice = createSlice({
       state.isAuthenticated = true;
     },
     logout: (state) => {
-      state.token = "";
       localStorage.removeItem("token");
-      state.isAuthenticated = false;
+      return {
+        ...state,
+        isAuthenticated: false,
+        token: "",
+        project_id: null,
+        workspace_id: null,
+      };
     },
   },
   extraReducers: (builder) => {
@@ -146,21 +153,22 @@ export const authSlice = createSlice({
       .addCase(forgotPassword.rejected, (state) => {});
     builder
       .addCase(logIn.pending, (state) => {})
-      .addCase(logIn.fulfilled, (state, action) => {
-        if (!action.payload) return;
-        if (action.payload.status && action.payload.message) {
+      .addCase(logIn.fulfilled, (state, { payload}) => {
+        if (!payload) return;
+        if (payload?.status && payload?.message) {
           return {
             ...state,
-            message: action.payload.message,
-            status: action.payload.status,
+            message: payload.message,
+            status: payload.status,
           };
         }
-        if (action.payload.token) {
-          localStorage.setItem("token", action.payload.token);
+        if (payload.token) {
+          localStorage.setItem("token", payload.token);
           return {
             ...state,
-            token: action.payload.token,
-            workspace_id: action.payload.workspace_id[0].id,
+            token: payload.token,
+            workspace_id: payload?.workspace_id,
+            project_id: payload?.project_id || null,
           };
         }
       })

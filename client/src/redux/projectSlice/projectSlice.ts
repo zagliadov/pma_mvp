@@ -24,7 +24,8 @@ export interface projectState {
   isEmptyStateTask: boolean;
   projects: IProjects[];
   project: IProject[];
-  projectMembers: IProjectMembers[],
+  project_id: number | null;
+  projectMembers: IProjectMembers[];
 }
 
 const initialState: projectState = {
@@ -32,6 +33,7 @@ const initialState: projectState = {
   isEmptyStateTask: true,
   projects: [],
   project: [],
+  project_id: null,
   projectMembers: [],
 };
 
@@ -44,7 +46,7 @@ export const getProjects = createAsyncThunk(
   async ({ workspaces_id, token }: IGetProjects) => {
     try {
       const projects = await axios.post(
-        "http://localhost:9000/projects/get_projects",
+        `http://localhost:9000/projects/get_projects`,
         { workspaces_id },
         {
           headers: {
@@ -110,7 +112,7 @@ export const addNewProject = createAsyncThunk(
           },
         }
       );
-      return console.log(projects.data);
+      return projects.data;
     } catch (error) {
       console.log(error);
     }
@@ -168,7 +170,7 @@ export const projectSlice = createSlice({
     builder
       .addCase(addNewProject.pending, (state) => {})
       .addCase(addNewProject.fulfilled, (state, action) => {
-        // state.projects = action.payload;
+        return { ...state, project_id: action.payload };
       })
       .addCase(addNewProject.rejected, (state) => {});
     builder
