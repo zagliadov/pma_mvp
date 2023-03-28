@@ -1,31 +1,12 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import moment from "moment";
+import { useAppSelector } from "../../../redux/hooks";
+import { RootState } from "../../../redux/store";
+import { hexToRgba } from "../../../helpers/helpers";
+import { ITask } from "../../../helpers/interface";
 
 export const Timeline: FC = () => {
-  const tasks = [
-    {
-      id: 0,
-      name: "First task",
-      task_goal_start: "2023-03-01",
-      task_goal_end: "2023-03-04",
-      color: "#8dbed8",
-    },
-    {
-      id: 1,
-      name: "Second task",
-      task_goal_start: "2023-03-05",
-      task_goal_end: "2023-03-06",
-      color: "#fdae4b",
-    },
-    {
-      id: 2,
-      name: "Third task",
-      task_goal_start: "2023-03-07",
-      task_goal_end: "2023-03-08",
-      color: "#8dbed8",
-    },
-  ];
-
+  const { tasks } = useAppSelector((state: RootState) => state.tasks);
   const getTaskDuration = (task: any) => {
     const start = moment(task.task_goal_start, "YYYY-MM-DD");
     const end = moment(task.task_goal_end, "YYYY-MM-DD");
@@ -39,31 +20,65 @@ export const Timeline: FC = () => {
     currentDate = currentDate.clone().add(1, "day");
   }
 
+  const hasDate = (tasks: any) => {
+    let hasCoincidence: any = [];
+    let some_array_of_dates: any = [];
+
+    tasks.map((task: any) => {
+      const start = moment(task.task_goal_start, "YYYY-MM-DD");
+      const end = moment(task.task_goal_end, "YYYY-MM-DD");
+      const diff = end.diff(start, "days");
+      let curDate = start.clone();
+
+      for (let i = 0; i <= diff; i++) {
+        // Check if the current date is already saved
+        if (
+          some_array_of_dates.some((date: any) => date.isSame(curDate, "day"))
+        ) {
+          hasCoincidence.push(task.id);
+          break; // No need to keep checking
+        }
+        // If the date is unique then add to the array to compare in the next iteration
+        some_array_of_dates.push(curDate.clone());
+        curDate.add(1, "days");
+      }
+    });
+
+    return hasCoincidence;
+  };
+
   const tableData = dates.map((date) => {
     const matchingTasks = tasks.filter(
       (task) =>
-        task.task_goal_start === moment(date, "D MMMM").format("YYYY-MM-DD")
+        moment(task.task_goal_start).format("YYYY-MM-DD") ===
+        moment(date, "D MMMM").format("YYYY-MM-DD")
     );
 
     return (
       <tr key={date}>
         <td className="border text-center p-2 w-1/12 h-20">{date}</td>
         <td className="relative">
-          {matchingTasks.map((task) => (
-            <div
-              key={task.id}
-              style={{
-                backgroundColor: task.color,
-                opacity: 0.7,
-                height: `${getTaskDuration(task) * 80}px`,
-              }}
-              className={`${
-                task.id === 0 && "border border-red-400"
-              } p-2 w-[200px] absolute top-0`}
-            >
-              {task.name}
-            </div>
-          ))}
+          {matchingTasks.map((task) => {
+            return (
+              <div
+                key={task.id}
+                style={{
+                  backgroundColor: hexToRgba(task.color, 0.6),
+                  height: `${getTaskDuration(task) * 80}px`,
+                  left: `${
+                    hasDate(tasks).includes(task.id)
+                      ? `${hasDate(tasks).length * 200}px`
+                      : "0px"
+                  }`,
+                }}
+                className={`${
+                  task.id === 0 && "border border-red-400"
+                } p-2 w-2/12 absolute top-0`}
+              >
+                {task.name}
+              </div>
+            );
+          })}
         </td>
       </tr>
     );
