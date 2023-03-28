@@ -37,7 +37,7 @@ export const getTasks = createAsyncThunk(
 
 export const setGoalStartDate = createAsyncThunk(
   "tasks/set_goal_start_date",
-  async ({ date, taskId }: { date: string | null; taskId: number | null }) => {
+  async ({ date, taskId }: { date: string | null; taskId: number | null })=> {
     const token: string | null = localStorage.getItem("token");
     if (!token) return;
     try {
