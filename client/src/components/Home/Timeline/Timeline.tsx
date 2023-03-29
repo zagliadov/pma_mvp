@@ -58,7 +58,11 @@ export const Timeline: FC = () => {
       <tr key={date}>
         <td className="border text-center p-2 w-1/12 h-20">{date}</td>
         <td className="relative">
-          {matchingTasks.map((task) => {
+          {matchingTasks.map((task, index) => {
+            const arr = hasDate(tasks).map((t: any, index: any) => {
+              return (index + 1) * 200;
+            });
+            console.log(arr.map((a: any) => a + "px"));
             return (
               <div
                 key={task.id}
@@ -66,9 +70,7 @@ export const Timeline: FC = () => {
                   backgroundColor: hexToRgba(task.color, 0.6),
                   height: `${getTaskDuration(task) * 80}px`,
                   left: `${
-                    hasDate(tasks).includes(task.id)
-                      ? `${hasDate(tasks).length * 200}px`
-                      : "0px"
+                    hasDate(tasks).includes(task.id) && arr[index] + "px"
                   }`,
                 }}
                 className={`${
