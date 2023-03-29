@@ -33,7 +33,7 @@ export const orderByDesc = async (req: any, res: any) => {
       LEFT JOIN subtasks ON tasks.id = subtasks.task_id AND subtasks.status = 'Complete'
       WHERE tasks.project_id = $1
       GROUP BY tasks.id
-      ORDER BY tasks.id DESC`,
+      ORDER BY tasks.task_goal_end DESC`,
     [project_id]
   );
   if (rowCount === 0) return res.end();
@@ -52,7 +52,7 @@ export const orderByAsc = async (req: any, res: any) => {
       LEFT JOIN subtasks ON tasks.id = subtasks.task_id AND subtasks.status = 'Complete'
       WHERE tasks.project_id = $1
       GROUP BY tasks.id
-      ORDER BY tasks.id ASC`,
+      ORDER BY tasks.task_goal_start ASC`,
     [project_id]
   );
   if (rowCount === 0) return res.end();
