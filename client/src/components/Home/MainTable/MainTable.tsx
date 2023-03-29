@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { getTasks } from "../../../redux/tasksSlice/tasksSlice";
 import { CreateTaskModal } from "../EmptyStateTask/CreateTaskModal/CreateTaskModal";
 import { Table } from "./Table/Table";
-import { EmptyStateProject } from "../EmptyStateProject/EmptyStateProject";
+import { getProject } from "../../../redux/projectSlice/projectSlice";
 
 export const MainTable: FC = () => {
   const params = useParams();
@@ -20,13 +20,11 @@ export const MainTable: FC = () => {
   const isEmptyStateTask = useAppSelector(
     (state: RootState) => state.tasks.isEmptyStateTask
   );
-  const { isEmptyStateProject } = useAppSelector(
-    (state: RootState) => state.project
-  );
   const shutdownEffect = toggleIsActiveSidebar;
 
   useEffect(() => {
     const projectId = Number(params.project_id);
+    dispatch(getProject(projectId));
     dispatch(getTasks(projectId));
   }, [dispatch, params.project_id]);
 

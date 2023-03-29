@@ -61,13 +61,11 @@ export const getProjects = createAsyncThunk(
   }
 );
 
-interface IGetProject {
-  project_id: number;
-  token: string;
-}
 export const getProject = createAsyncThunk(
   "projects/get_project",
-  async ({ project_id, token }: IGetProject) => {
+  async (project_id: number) => {
+    const token: string | null = localStorage?.getItem("token");
+    if (!token) return;
     try {
       const project = await axios.post(
         "http://localhost:9000/projects/get_project",
