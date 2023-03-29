@@ -35,9 +35,27 @@ export const getTasks = createAsyncThunk(
   }
 );
 
+export const orderByDesc = createAsyncThunk("tasks/order_by_desc", async (project_id: number) => {
+  try {
+    const tasks = await axios.get(`http://localhost:9000/tasks/order_by_desc/${project_id}`);
+    return tasks.data;
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+export const orderByAsc = createAsyncThunk("tasks/order_by_asc", async (project_id: number) => {
+  try {
+    const tasks = await axios.get(`http://localhost:9000/tasks/order_by_asc/${project_id}`);
+    return tasks.data;
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 export const setGoalStartDate = createAsyncThunk(
   "tasks/set_goal_start_date",
-  async ({ date, taskId }: { date: string | null; taskId: number | null })=> {
+  async ({ date, taskId }: { date: string | null; taskId: number | null }) => {
     const token: string | null = localStorage.getItem("token");
     if (!token) return;
     try {
@@ -168,6 +186,18 @@ export const tasksSlice = createSlice({
         return { ...state, tasks: action.payload };
       })
       .addCase(setGoalEndDate.rejected, (state) => {});
+    builder
+      .addCase(orderByDesc.pending, (state, action) => {})
+      .addCase(orderByDesc.fulfilled, (state, action) => {
+        return { ...state, tasks: action.payload };
+      })
+      .addCase(orderByDesc.rejected, (state) => {});
+    builder
+      .addCase(orderByAsc.pending, (state, action) => {})
+      .addCase(orderByAsc.fulfilled, (state, action) => {
+        return { ...state, tasks: action.payload };
+      })
+      .addCase(orderByAsc.rejected, (state) => {});
   },
 });
 

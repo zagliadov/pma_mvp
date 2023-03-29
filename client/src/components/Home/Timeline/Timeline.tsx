@@ -58,29 +58,34 @@ export const Timeline: FC = () => {
       <tr key={date}>
         <td className="border text-center p-2 w-1/12 h-20">{date}</td>
         <td className="relative">
-          {matchingTasks.map((task, index) => {
-            const arr = hasDate(tasks).map((t: any, index: any) => {
-              return (index + 1) * 200;
-            });
-            console.log(arr.map((a: any) => a + "px"));
-            return (
-              <div
-                key={task.id}
-                style={{
-                  backgroundColor: hexToRgba(task.color, 0.6),
-                  height: `${getTaskDuration(task) * 80}px`,
-                  left: `${
-                    hasDate(tasks).includes(task.id) && arr[index] + "px"
-                  }`,
-                }}
-                className={`${
-                  task.id === 0 && "border border-red-400"
-                } p-2 w-2/12 absolute top-0`}
-              >
-                {task.name}
-              </div>
-            );
-          })}
+          <div className="border border-gray-100 h-[80px]">
+            {matchingTasks.map((task, index) => {
+              const arr = hasDate(tasks).map((t: any, index: any) => {
+                return (index + 1) * 200;
+              });
+              return (
+                <div
+                  key={task.id}
+                  style={{
+                    backgroundColor: hexToRgba(task.color, 0.7),
+                    height: `${getTaskDuration(task) * 80}px`,
+                    left: `${
+                      hasDate(tasks).includes(task.id) && arr[index] + "px"
+                    }`,
+                  }}
+                  className={`min-w-[196px] absolute top-0 rounded z-[2]`}
+                >
+                  <div className="flex items-center py-3 px-2">
+                    <div
+                      style={{ backgroundColor: task.color }}
+                      className={`w-3 h-3 rounded-sm`}
+                    ></div>
+                    <span className="pl-1 text-xs">{task.name}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </td>
       </tr>
     );

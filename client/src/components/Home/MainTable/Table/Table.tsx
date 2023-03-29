@@ -9,7 +9,7 @@ import {
   FaPriorityFlag,
 } from "../../../icons/icons";
 import { useParams } from "react-router-dom";
-import { getTasks } from "../../../../redux/tasksSlice/tasksSlice";
+import { getTasks, orderByAsc, orderByDesc } from "../../../../redux/tasksSlice/tasksSlice";
 import { TasksList } from "./TasksList/TasksList";
 
 export const Table: FC = () => {
@@ -28,6 +28,17 @@ export const Table: FC = () => {
   const handleAddCol = () => {
     setIsAdded(!isAdded);
   };
+
+  const handleOrderByDesc = () => {
+    const project_id = Number(params.project_id);
+    dispatch(orderByDesc(project_id));
+    
+  }
+
+  const handleOrderByAsc = () => {
+    const project_id = Number(params.project_id);
+    dispatch(orderByAsc(project_id));
+  }
 
   return (
     <div className="relative overflow-x-auto bg-white h-full w-full">
@@ -49,18 +60,19 @@ export const Table: FC = () => {
               </div>
             </th>
             <th className="min-w-[60px]">
-              <div className="flex items-center">
-                <span className="font-medium text-gray-600 text-xs">
+              <button className="flex items-center" onClick={() => handleOrderByAsc()}>
+                <span className="font-medium text-gray-600 text-xs pr-2">
                   Goal start
                 </span>
-              </div>
+                <FaArrowDown />
+              </button>
             </th>
             <th className="min-w-[70px]">
-              <button className="flex items-center">
+              <button className="flex items-center" onClick={() => handleOrderByDesc()}>
                 <span className="font-medium text-gray-600 text-xs pr-2">
                   Goal end
                 </span>
-                <FaArrowDown />
+                <div className="origin-center rotate-180"><FaArrowDown /></div>
               </button>
             </th>
             <th className="min-w-[60px]">

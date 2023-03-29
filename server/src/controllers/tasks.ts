@@ -21,6 +21,44 @@ export const getTasks = async (req: any, res: any) => {
   res.status(200).json(rows);
 };
 
+export const orderByDesc = async (req: any, res: any) => {
+  const { project_id } = req.params;
+  const { rows, rowCount } = await query(
+    `SELECT tasks.*, COUNT(subtasks.*) AS completed_subtasks,
+    (SELECT COUNT(*) FROM subtasks WHERE task_id = tasks.id) AS total_subtasks,
+    (SELECT (task_goal_end - task_goal_start)) AS days_between,
+    to_char(tasks.task_goal_start::date, 'Month DD') AS start_date,
+    to_char(tasks.task_goal_end::date, 'Month DD') AS end_date
+      FROM tasks
+      LEFT JOIN subtasks ON tasks.id = subtasks.task_id AND subtasks.status = 'Complete'
+      WHERE tasks.project_id = $1
+      GROUP BY tasks.id
+      ORDER BY tasks.id DESC`,
+    [project_id]
+  );
+  if (rowCount === 0) return res.end();
+  res.status(200).json(rows);
+};
+
+export const orderByAsc = async (req: any, res: any) => {
+  const { project_id } = req.params;
+  const { rows, rowCount } = await query(
+    `SELECT tasks.*, COUNT(subtasks.*) AS completed_subtasks,
+    (SELECT COUNT(*) FROM subtasks WHERE task_id = tasks.id) AS total_subtasks,
+    (SELECT (task_goal_end - task_goal_start)) AS days_between,
+    to_char(tasks.task_goal_start::date, 'Month DD') AS start_date,
+    to_char(tasks.task_goal_end::date, 'Month DD') AS end_date
+      FROM tasks
+      LEFT JOIN subtasks ON tasks.id = subtasks.task_id AND subtasks.status = 'Complete'
+      WHERE tasks.project_id = $1
+      GROUP BY tasks.id
+      ORDER BY tasks.id ASC`,
+    [project_id]
+  );
+  if (rowCount === 0) return res.end();
+  res.status(200).json(rows);
+};
+
 export const setGoalStartDate = async (req: any, res: any) => {
   const { date, taskId } = req.body;
   if (!date || !taskId) {
@@ -107,7 +145,7 @@ export const setTask = async (req: any, res: any) => {
               VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
     [taskName, status, color, taskAssignee, taskDescription, project_id]
   );
-  const task_id = rows[0].id
+  const task_id = rows[0].id;
   if (subTasks.length) {
     subTasks.map((subTask: any) => {
       query(
