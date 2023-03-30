@@ -77,3 +77,14 @@ export const removeUserAvatar = async (req: any, res: any) => {
     res.status(500).json();
   }
 };
+
+export const getUser = async (req: any, res: any) => {
+  const { userId } = req.userData;
+  try {
+    const { rows } = await query(`SELECT id, email, avatar_filename, username FROM users WHERE id = $1`, [userId]);
+    return res.status(200).json(rows[0]);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send(error);
+  }
+};

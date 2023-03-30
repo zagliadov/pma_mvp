@@ -1,9 +1,16 @@
-import { FC } from "react";
+import { FC, useState, useRef } from "react";
 import { FaSearch } from "../../icons/icons";
 
 export const SearchInput: FC = () => {
+  const [searchText, setSearchText] = useState<string>("");
+  const inputRef = useRef<any>(null);
+
+  const handleChange = (e: any) => {
+    setSearchText(e.target.value);
+  };
+
   return (
-    <div className="flex w-full justify-end items-center">
+    <div className="flex w-full justify-end items-center relative" ref={inputRef}>
       <button
         type="submit"
         disabled
@@ -12,6 +19,7 @@ export const SearchInput: FC = () => {
         <FaSearch />
       </button>
       <input
+        onChange={(e) => handleChange(e)}
         type="search"
         className={`py-2 border border-gray-100 focus:w-full text-gray-600 text-sm rounded pl-8 focus:outline-none`}
         placeholder="Search..."

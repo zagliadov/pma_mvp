@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { useAppDispatch } from "../../../../../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../../../../../redux/hooks";
 import { logout } from "../../../../../redux/authSlice/authSlice";
 import {
   FaBellNotification,
@@ -9,14 +9,16 @@ import {
   FaProfile,
 } from "../../../../icons/icons";
 import { Link, useNavigate } from "react-router-dom";
-
+import { RootState } from "../../../../../redux/store";
 interface IProps {
   isOpen: boolean;
+  avatar: string;
 }
 
-export const AvatarDropdownUserMenu: FC<IProps> = ({ isOpen }) => {
+export const AvatarDropdownUserMenu: FC<IProps> = ({ isOpen, avatar }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const { user } = useAppSelector((state: RootState) => state.user);
   const handleLogout = () => {
     dispatch(logout());
     navigate("/login");
@@ -30,8 +32,9 @@ export const AvatarDropdownUserMenu: FC<IProps> = ({ isOpen }) => {
     >
       <div className="flex justify-start items-center border-b border-gray-50 py-4">
         <button
+          style={{ backgroundImage: avatar }}
           type="button"
-          className="w-10 h-10 ml-4 bg-[url('assets/avatar-header.svg')] rounded-full"
+          className="w-10 h-10 ml-4 rounded-full bg-center bg-contain bg-[url('assets/avatar-header.svg')]"
           id="user-menu-button"
           aria-expanded="false"
           data-dropdown-toggle="user-dropdown"
@@ -39,7 +42,7 @@ export const AvatarDropdownUserMenu: FC<IProps> = ({ isOpen }) => {
         ></button>
 
         <div className="flex flex-col pl-4">
-          <span className="text-base font-medium">username</span>
+          <span className="text-base font-medium">{user.username}</span>
           <span className="text-gray-400 text-sm font-normal">username</span>
         </div>
       </div>

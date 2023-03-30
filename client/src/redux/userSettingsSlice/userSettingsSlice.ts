@@ -18,10 +18,30 @@ const initialState: IInitialState = {
   userFirstname: "",
   userLastname: "",
   userEmail: "",
-  userPhone: "".replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3'),
+  userPhone: "".replace(/(\d{3})(\d{3})(\d{4})/, "($1) $2-$3"),
   userPhoto: null,
   user: [],
 };
+
+export const getUser = createAsyncThunk("user/get_user", async () => {
+  const token: string | null = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("Token is required but not found in local storage.");
+  }
+  try {
+    const response = await axios.get(
+      "http://localhost:9000/user_settings/get_user",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 export const uploadPhoto = createAsyncThunk(
   "user/upload_photo",
@@ -177,6 +197,12 @@ export const userSettingsSlice = createSlice({
         return { ...state, userPhoto: null };
       })
       .addCase(removeUserAvatar.rejected, (state) => {});
+    builder
+      .addCase(getUser.pending, (state) => {})
+      .addCase(getUser.fulfilled, (state, action) => {
+        return { ...state, user: action.payload };
+      })
+      .addCase(getUser.rejected, (state) => {});
   },
 });
 

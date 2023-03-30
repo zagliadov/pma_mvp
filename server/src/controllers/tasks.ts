@@ -14,7 +14,7 @@ export const getTasks = async (req: any, res: any) => {
       LEFT JOIN subtasks ON tasks.id = subtasks.task_id AND subtasks.status = 'Complete'
       WHERE tasks.project_id = $1
       GROUP BY tasks.id
-      ORDER BY tasks.task_goal_start ASC`,
+      ORDER BY tasks.id ASC`,
     [projectId]
   );
   if (rowCount === 0) return res.end();

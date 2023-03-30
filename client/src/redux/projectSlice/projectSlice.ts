@@ -1,5 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState, AppThunk } from "../store";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 
 export interface IProjects {
@@ -45,7 +44,7 @@ export const getProjects = createAsyncThunk(
   "projects/get_projects",
   async ({ workspaces_id, token }: IGetProjects) => {
     try {
-      const projects = await axios.post(
+      const response = await axios.post(
         `http://localhost:9000/projects/get_projects`,
         { workspaces_id },
         {
@@ -54,7 +53,7 @@ export const getProjects = createAsyncThunk(
           },
         }
       );
-      return projects?.data;
+      return response.data;
     } catch (error) {
       console.log(error);
     }
@@ -101,7 +100,7 @@ export const addNewProject = createAsyncThunk(
     description,
   }: IAddNewProject) => {
     try {
-      const projects = await axios.post(
+      const response = await axios.post(
         "http://localhost:9000/projects/add_new_project",
         { workspace_id, name, members, description },
         {
@@ -110,7 +109,7 @@ export const addNewProject = createAsyncThunk(
           },
         }
       );
-      return projects.data;
+      return response.data;
     } catch (error) {
       console.log(error);
     }
@@ -125,7 +124,7 @@ export const getProjectMembers = createAsyncThunk(
   "projects/get_project_members",
   async ({ project_id, token }: IGetProjectMembers) => {
     try {
-      const projectMembers = await axios.post(
+      const response = await axios.post(
         "http://localhost:9000/projects/get_project_members",
         { project_id },
         {
@@ -134,7 +133,7 @@ export const getProjectMembers = createAsyncThunk(
           },
         }
       );
-      return projectMembers.data;
+      return response.data;
     } catch (error) {
       console.log(error);
     }

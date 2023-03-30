@@ -9,7 +9,7 @@ export const AppNotificationButton: FC = () => {
   useClickOutside(dropdownRef, () => setIsOpen(false));
 
   return (
-    <div className="flex" ref={dropdownRef}>
+    <div className="flex z-[10]" ref={dropdownRef}>
       <button onClick={() => setIsOpen(!isOpen)}>
         <FaNotification />
       </button>

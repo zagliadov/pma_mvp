@@ -28,14 +28,14 @@ export const MainTableSubNavigation: FC = () => {
           <UsersListButton />
 
           <div className="flex pl-4">
-            <button className="flex items-center">
+            <button className="flex items-center min-w-[110px]">
               <FaEye />
               <span className="font-medium font-sm text-gray-600 pl-1 pr-4 border-r-[2px]">
                 Show me
               </span>
             </button>
 
-            <button className="flex items-center pl-4">
+            <button className="flex items-center pl-4 min-w-[110px]">
               <FaFilter />
               <span className="font-medium font-sm text-gray-600 pl-1 pr-4 border-r-[2px]">
                 Filter
