@@ -5,7 +5,7 @@ import moment from "moment";
 import "./styles.css";
 import { useAppSelector } from "../../../redux/hooks";
 import { RootState } from "../../../redux/store";
-import { hexToRgba } from "../../../helpers/helpers";
+import { hexToRgba, upgradeColor } from "../../../helpers/helpers";
 
 const ReactGridLayout = WidthProvider(RGL);
 
@@ -64,7 +64,7 @@ export const Timeline = (props: TimelineProps) => {
         x: 0,
         y: parseInt(xDay),
         w: setWidth(task.name),
-        h: taskDuration * 2,
+        h: taskDuration / 2,
       };
     })
     // -- now let's group tasks into arrays per day --
@@ -102,7 +102,7 @@ export const Timeline = (props: TimelineProps) => {
         <div className="flex flex-col w-full absolute">
           {dates.map((_) => {
             return (
-              <div className="h-20 w-full border border-gray-50  opacity-[0.4] rounded"></div>
+              <div key={_} className="h-20 w-full border border-gray-50 rounded"></div>
             );
           })}
         </div>
@@ -119,7 +119,7 @@ export const Timeline = (props: TimelineProps) => {
                 key={task.id}
                 data-grid={task}
                 style={{
-                  backgroundColor: hexToRgba(task.color, 0.6),
+                  backgroundColor: upgradeColor(task.color),
                 }}
               >
                 <div className="flex items-center py-3 px-2">

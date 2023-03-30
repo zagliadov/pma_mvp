@@ -1,4 +1,4 @@
-import { ISubtasks, ITask, TaskPriority } from "./interface";
+import { ISubtasks, ITask, StatusColor, TaskPriority } from "./interface";
 
 export const isEmailValid = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -55,3 +55,18 @@ export const convertDate = (date: Date | null) => {
   }
   return null;
 };
+
+export const upgradeColor = (color: string) => {
+  switch (color) {
+    case StatusColor.InProgress:
+      return "#eb8c81"
+    case StatusColor.Complete:
+      return "#95c78b"
+    case StatusColor.Blocked:
+      return "#fcc279"
+    case StatusColor.CanStart:
+      return "#b0c9d6"
+    default:
+      return StatusColor.Default
+  }
+}

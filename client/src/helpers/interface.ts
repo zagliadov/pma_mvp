@@ -32,3 +32,11 @@ export interface ISubtasks {
   task_goal_start?: string;
   task_goal_end?: string;
 }
+
+export enum StatusColor {
+  InProgress = "#ed7668",
+  Complete = "#7ec770",
+  Blocked = "#fdae4b",
+  CanStart = "#8dbed8",
+  Default = "#d1d1d1",
+}
