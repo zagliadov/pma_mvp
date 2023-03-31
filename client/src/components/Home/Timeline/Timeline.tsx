@@ -1,20 +1,13 @@
-import React, { useState } from "react";
+import { FC, useState } from "react";
 import RGL, { WidthProvider, Layout } from "react-grid-layout";
 import * as _ from "lodash";
 import moment from "moment";
 import "./styles.css";
 import { useAppSelector } from "../../../redux/hooks";
 import { RootState } from "../../../redux/store";
-import { hexToRgba, upgradeColor } from "../../../helpers/helpers";
+import { upgradeColor } from "../../../helpers/helpers";
 
 const ReactGridLayout = WidthProvider(RGL);
-
-let idCounter = 0;
-
-const getId = (): string => {
-  idCounter++;
-  return idCounter.toString();
-};
 
 type TimelineProps = {
   isDraggable?: boolean;
@@ -25,19 +18,46 @@ type TimelineProps = {
   cols?: number;
 };
 
-export const Timeline = (props: TimelineProps) => {
-  // const [layout, setLayout] = useState<Layout[]>([
-  //   { x: 0, y: 0, w: 3, h: 3, i: getId() },
-  //   { x: 0, y: 1, w: 3, h: 3, i: getId() },
-  // ]);
+interface IDateColumn {
+  dates: String[];
+}
+const DateColumn: FC<IDateColumn> = ({ dates }) => {
+  return (
+    <div className="flex flex-col">
+      {dates.map((date: any) => (
+        <div
+          id={date}
+          key={date}
+          className="date text-center flex items-center justify-center h-20 bg-gray-50"
+        >
+          <span className="text-sm font-normal text-gray-400 px-4">
+            {moment(date).format("D MMMM")}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+export const Timeline: FC = (props: TimelineProps) => {
   const { tasks } = useAppSelector((state: RootState) => state.tasks);
   // get current month and year
   const currentMonth = moment().format("MMMM");
   const currentYear = moment().format("YYYY");
   // create array of dates for current month
-  const dates = Array.from(Array(moment().daysInMonth()).keys()).map((day) =>
-    moment(`${currentMonth} ${day + 1}, ${currentYear}`).format("MM-DD-YYYY")
-  );
+  const startDate = moment.min(tasks.map((task: any) => moment(task.task_goal_start))).subtract(5, "days").format("D MMMM");
+  const endDate = moment.max(tasks.map((task: any) => moment(task.task_goal_start))).add(5, "days").format("D MMMM");
+  const dates: string[] = [];
+
+  const currentDate = moment(startDate);
+  while (currentDate.isSameOrBefore(endDate)) {
+    dates.push(currentDate.format("D MMMM"));
+    currentDate.add(1, "days")
+  }
+
+  // const dates = Array.from(Array(moment().daysInMonth()).keys()).map((day) =>
+  //   moment(`${currentMonth} ${day + 1}, ${currentYear}`).format("MM-DD-YYYY")
+  // );
 
   const getTaskDuration = (task: any) => {
     const start = moment(task.task_goal_start, "YYYY-MM-DD");
@@ -46,36 +66,48 @@ export const Timeline = (props: TimelineProps) => {
   };
 
   const onLayoutChange = (layout: any) => {
-    console.log("[onLayoutChange]: ", layout);
+    // console.log("[onLayoutChange]: ", layout);
   };
 
   const setWidth = (name: string) => {
     return name.length > 20 ? name.length / 14 : 2;
   };
+
+  const handleResizeStop = (
+    layout: Array<Layout>,
+    oldItem: Layout,
+    newItem: Layout,
+    i: any,
+    xy: any,
+    target: any
+  ) => {
+    console.log("newItem:", newItem);
+    console.log("oldItem:", oldItem);
+  };
+
   const layout = _.chain(tasks)
     .map((task) => {
       const yDay = moment(task.task_goal_start).format("D");
-      const xDay = moment(task.task_goal_end).format("D");
       // -- calculate task position by his day of month --
       const taskDuration = getTaskDuration(task);
       // -- let's create a grid for each task --
       return {
         i: task.id.toString(),
         x: 0,
-        y: parseInt(xDay),
+        y: parseInt(yDay), //-- parseInt(yDay) === 1 ? 0 : parseInt(yDay) - 1
         w: setWidth(task.name),
-        h: taskDuration / 2,
+        h: taskDuration,
       };
     })
     // -- now let's group tasks into arrays per day --
-    .groupBy("x")
+    .groupBy("y")
     // -- iterate over each task in one day --
     .mapValues((day: any) => {
       // -- for each task let's set x as incremented key (so they will be in one line) --
       return day.map((day: any, key: number) => {
         return {
           ...day,
-          x: key, // shift to the right column
+          x: key, // shift to the right column key === 0 ? key : key - 1
         };
       });
     })
@@ -87,22 +119,16 @@ export const Timeline = (props: TimelineProps) => {
   return (
     <div className="flex border border-gray-50">
       <div className="flex flex-col">
-        {dates.map((date: any, index: any) => (
-          <div
-            key={"date_" + index}
-            className="text-center flex items-center justify-center h-20 bg-gray-50"
-          >
-            <span className="text-sm font-normal text-gray-400 px-4">
-              {moment(date).format("D MMMM")}
-            </span>
-          </div>
-        ))}
+        <DateColumn dates={dates} />
       </div>
       <div className="w-full">
-        <div className="flex flex-col w-full absolute">
-          {dates.map((_) => {
+        <div className="flex flex-col w-full absolute left-0">
+          {dates.map((date) => {
             return (
-              <div key={_} className="h-20 w-full border border-gray-50 rounded"></div>
+              <div
+                key={date}
+                className="h-20 w-full border border-gray-50 rounded"
+              ></div>
             );
           })}
         </div>
@@ -110,9 +136,17 @@ export const Timeline = (props: TimelineProps) => {
         <ReactGridLayout
           {...props}
           layout={layout}
+          onResizeStop={handleResizeStop}
           onLayoutChange={onLayoutChange}
+          rowHeight={70}
+          // verticalCompact={false}
+          margin={[10, 10]}
+          cols={12}
+          style={{ height: "100%" }}
         >
           {tasks.map((task) => {
+            const date = document.querySelectorAll(".date");
+            
             return (
               <div
                 className="rounded mt-[-5px]"
@@ -122,12 +156,20 @@ export const Timeline = (props: TimelineProps) => {
                   backgroundColor: upgradeColor(task.color),
                 }}
               >
-                <div className="flex items-center py-3 px-2">
-                  <div
-                    style={{ backgroundColor: task.color }}
-                    className={`w-3 h-3 rounded-sm`}
-                  ></div>
-                  <span className="pl-1 text-xs">{task.name}</span>
+                <div className="flex flex-col items-center py-3 px-2">
+                  <div className="flex items-center">
+                    <div
+                      style={{ backgroundColor: task.color }}
+                      className={`w-3 h-3 rounded-sm`}
+                    ></div>
+                    <span className="pl-1 text-xs">{task.name}</span>
+                  </div>
+
+                  <div>
+                    <span>
+                      {task.start_date} - {task.end_date}
+                    </span>
+                  </div>
                 </div>
               </div>
             );

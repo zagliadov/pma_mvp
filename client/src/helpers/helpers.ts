@@ -47,7 +47,7 @@ export const updatePriorityArray = (
 
 export const isIncludes = (array: number[], id: number) => {
   return array.includes(id);
-}
+};
 
 export const convertDate = (date: Date | null) => {
   if (date) {
@@ -59,14 +59,14 @@ export const convertDate = (date: Date | null) => {
 export const upgradeColor = (color: string) => {
   switch (color) {
     case StatusColor.InProgress:
-      return "#eb8c81"
+      return "#eb8c81";
     case StatusColor.Complete:
-      return "#95c78b"
+      return "#95c78b";
     case StatusColor.Blocked:
-      return "#fcc279"
+      return "#fcc279";
     case StatusColor.CanStart:
-      return "#b0c9d6"
+      return "#b0c9d6";
     default:
-      return StatusColor.Default
+      return StatusColor.Default;
   }
-}
+};
