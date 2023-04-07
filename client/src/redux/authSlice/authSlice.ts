@@ -127,13 +127,13 @@ export const authSlice = createSlice({
   initialState,
   reducers: {
     setMessage: (state, action) => {
-      state.message = action.payload;
+      return { ...state, message: action.payload };
     },
     setStatus: (state, action) => {
-      state.status = action.payload;
+      return { ...state, status: action.payload };
     },
     isAuth: (state) => {
-      state.isAuthenticated = true;
+      return { ...state, isAuthenticated: true };
     },
     logout: (state) => {
       localStorage.removeItem("token");
@@ -153,7 +153,7 @@ export const authSlice = createSlice({
       .addCase(forgotPassword.rejected, (state) => {});
     builder
       .addCase(logIn.pending, (state) => {})
-      .addCase(logIn.fulfilled, (state, { payload}) => {
+      .addCase(logIn.fulfilled, (state, { payload }) => {
         if (!payload) return;
         if (payload?.status && payload?.message) {
           return {

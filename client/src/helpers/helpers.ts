@@ -1,3 +1,4 @@
+import moment from "moment";
 import { ISubtasks, ITask, StatusColor, TaskPriority } from "./interface";
 
 export const isEmailValid = (email: string): boolean => {
@@ -69,4 +70,10 @@ export const upgradeColor = (color: string) => {
     default:
       return StatusColor.Default;
   }
+};
+
+export const getTaskDuration = (task: any) => {
+  const start = moment(task.task_goal_start, "YYYY-MM-DD");
+  const end = moment(task.task_goal_end, "YYYY-MM-DD");
+  return end.diff(start, "days") + 1;
 };

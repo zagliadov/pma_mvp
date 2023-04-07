@@ -6,6 +6,8 @@ export interface diffState {
   isCreateTaskModal: boolean;
   isBlockingTasksModalOpen: boolean;
   isStatusModalOpen: boolean;
+  timeline: string;
+  ownerFilter: string;
 }
 
 const initialState: diffState = {
@@ -14,6 +16,8 @@ const initialState: diffState = {
   isCreateTaskModal: false,
   isBlockingTasksModalOpen: false,
   isStatusModalOpen: false,
+  timeline: "day",
+  ownerFilter: "none",
 };
 
 export const diffSlice = createSlice({
@@ -35,6 +39,12 @@ export const diffSlice = createSlice({
     toggleIsStatusModalOpen: (state, action) => {
       return { ...state, isStatusModalOpen: action.payload };
     },
+    toggleTimeline: (state, action) => {
+      return { ...state, timeline: action.payload };
+    },
+    toggleOwner: (state, action) => {
+      return { ...state, ownerFilter: action.payload };
+    },
   },
   extraReducers: (builder) => {},
 });
@@ -45,6 +55,8 @@ export const {
   toggleIsCreateTaskModal,
   toggleIsBlockingTasksModalOpen,
   toggleIsStatusModalOpen,
+  toggleTimeline,
+  toggleOwner,
 } = diffSlice.actions;
 
 export default diffSlice.reducer;
