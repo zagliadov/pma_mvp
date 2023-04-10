@@ -150,7 +150,14 @@ export const Timeline: FC = (props: TimelineProps) => {
       case "month":
         return getDatesForCurrentMonth(), getDatesOfTheYearByDay();
     }
-  }, [getDatesForCurrentDay, getDatesForCurrentMonth, getDatesForCurrentWeek, getDatesOfTheWeekByDay, getDatesOfTheYearByDay, timeline]);
+  }, [
+    getDatesForCurrentDay,
+    getDatesForCurrentMonth,
+    getDatesForCurrentWeek,
+    getDatesOfTheWeekByDay,
+    getDatesOfTheYearByDay,
+    timeline,
+  ]);
 
   const onLayoutChange = (layout: any) => {
     // console.log("[onLayoutChange]: ", layout);
@@ -220,7 +227,11 @@ export const Timeline: FC = (props: TimelineProps) => {
         <DateColumn dates={dates} />
       </div>
       <div className="w-full">
-        <div className={`flex flex-col w-full ${monthTime && "pt-[3px]"} ${weekTime && "pt-[4px]"}`}>
+        <div
+          className={`flex flex-col w-full ${monthTime && "pt-[3px]"} ${
+            weekTime && "pt-[4px]"
+          }`}
+        >
           {dayTime &&
             dates.map((date: any) => {
               return (
