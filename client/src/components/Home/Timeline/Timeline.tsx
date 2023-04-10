@@ -25,7 +25,7 @@ const columnView = (timeline: string) => {
     case "week":
       return `h-40`;
     case "month":
-      return `h-40`;
+      return `h-[183px]`;
   }
 };
 interface IDateColumn {
@@ -42,7 +42,7 @@ const DateColumn: FC<IDateColumn> = ({ dates }) => {
           key={date}
           className={`${columnView(
             timeline
-          )} text-center w-28 flex items-center justify-center bg-gray-50`}
+          )} text-center w-28 flex items-center justify-center bg-gray-50 border border-b-gray-100 border-t-gray-100`}
         >
           <span className="text-sm font-normal text-gray-400 px-4">{date}</span>
         </div>
@@ -55,6 +55,8 @@ export const Timeline: FC = (props: TimelineProps) => {
   const [dates, setDates] = useState<string[]>([]);
   const { tasks } = useAppSelector((state: RootState) => state.tasks);
   const { timeline } = useAppSelector((state: RootState) => state.diff);
+  const [datesForWeek, setDatesForWeek] = useState<string[] | []>([]);
+  const [datesForYear, setDatesForYear] = useState<string[] | []>([]);
   // get current month and year
   const currentMonth = moment().format("MMMM");
   const currentYear = moment().format("YYYY");
@@ -68,7 +70,7 @@ export const Timeline: FC = (props: TimelineProps) => {
       .subtract(5, "days")
       .format("D MMMM");
     const endDate = moment
-      .max(tasks.map((task: any) => moment(task.task_goal_start)))
+      .max(tasks.map((task: any) => moment(task.task_goal_end)))
       .add(5, "days")
       .format("D MMMM");
     let dates: string[] = [];
@@ -79,6 +81,34 @@ export const Timeline: FC = (props: TimelineProps) => {
     }
     setDates(dates);
   }, [tasks]);
+
+  const getDatesOfTheWeekByDay = useCallback(() => {
+    const startDate = moment
+      .min(tasks.map((task: any) => moment(task.task_goal_start)))
+      .subtract(7, "days")
+      .format("D MMMM");
+    const endDate = moment
+      .max(tasks.map((task: any) => moment(task.task_goal_end)))
+      .format("D MMMM");
+    const currentDate = moment(startDate);
+    const dates = [];
+    const lastDayOfMonth = moment(endDate).endOf("month");
+    while (currentDate.isSameOrBefore(lastDayOfMonth)) {
+      currentDate.add(1, "days");
+      dates.push(currentDate.format("D MMMM"));
+    }
+    return setDatesForWeek(dates);
+  }, [tasks]);
+
+  const getDatesOfTheYearByDay = useCallback(() => {
+    const dates = [];
+    const year = moment().year();
+    for (let i = 0; i < 365; i++) {
+      const date = moment(`${year}-01-01`).add(i, "days");
+      dates.push(date.format("D MMMM"));
+    }
+    setDatesForYear(dates);
+  }, []);
 
   const getDatesForCurrentWeek = useCallback(() => {
     const currentDate = moment();
@@ -116,16 +146,11 @@ export const Timeline: FC = (props: TimelineProps) => {
       case "day":
         return getDatesForCurrentDay();
       case "week":
-        return getDatesForCurrentWeek();
+        return getDatesForCurrentWeek(), getDatesOfTheWeekByDay();
       case "month":
-        return getDatesForCurrentMonth();
+        return getDatesForCurrentMonth(), getDatesOfTheYearByDay();
     }
-  }, [
-    getDatesForCurrentDay,
-    getDatesForCurrentMonth,
-    getDatesForCurrentWeek,
-    timeline,
-  ]);
+  }, [getDatesForCurrentDay, getDatesForCurrentMonth, getDatesForCurrentWeek, getDatesOfTheWeekByDay, getDatesOfTheYearByDay, timeline]);
 
   const onLayoutChange = (layout: any) => {
     // console.log("[onLayoutChange]: ", layout);
@@ -195,79 +220,194 @@ export const Timeline: FC = (props: TimelineProps) => {
         <DateColumn dates={dates} />
       </div>
       <div className="w-full">
-        <div className="flex flex-col w-full">
-          {dates.map((date: any) => {
-            return (
-              <div
-                key={date}
-                className={`${columnView(
-                  timeline
-                )} w-full border border-gray-50 rounded`}
-              >
-                {weekTime && dates.map((date) => {
-                  return (
-                    <>
-                    <div className="w-full flex border border-red-500 h-[27px]"></div>
-                    
-                    </>
-                  
-                  
-                  )
-                })}
-
-                <ReactGridLayout
-                  {...props}
-                  layout={layout}
-                  onResizeStop={handleResizeStop}
-                  onLayoutChange={onLayoutChange}
-                  rowHeight={70}
-                  // verticalCompact={false}
-                  margin={[10, 10]}
-                  cols={12}
-                  style={{ height: "100%" }}
-                  className="layout"
+        <div className={`flex flex-col w-full ${monthTime && "pt-[3px]"} ${weekTime && "pt-[4px]"}`}>
+          {dayTime &&
+            dates.map((date: any) => {
+              return (
+                <div
+                  key={date}
+                  className={`${columnView(
+                    timeline
+                  )} w-full border border-gray-50 rounded`}
                 >
-                  {tasks.map((task) => {
-                    const startDate = moment(task.start_date).format("D");
-                    const currentDate = moment(date).format("D");
-                    const taskMonth = moment(task.start_date).format("MMM");
-                    const currentMonth = moment(date).format("MMM");
-                    if (
-                      startDate === currentDate &&
-                      taskMonth === currentMonth
-                    ) {
-                      return (
-                        <div
-                          className="rounded mt-[-5px]"
-                          key={task.id}
-                          data-grid={{}}
-                          style={{
-                            backgroundColor: upgradeColor(task.color),
-                          }}
-                        >
-                          <div className="flex flex-col items-center py-3 px-2">
-                            <div className="flex items-center">
-                              <div
-                                style={{ backgroundColor: task.color }}
-                                className={`${
-                                  (dayTime || weekTime) && "w-3 h-3 rounded-sm"
-                                }`}
-                              ></div>
-                              {(dayTime || weekTime) && (
-                                <span className="pl-1 text-xs">
-                                  {task.name}
-                                </span>
-                              )}
+                  <ReactGridLayout
+                    {...props}
+                    layout={layout}
+                    onResizeStop={handleResizeStop}
+                    onLayoutChange={onLayoutChange}
+                    rowHeight={70}
+                    // verticalCompact={false}
+                    margin={[10, 10]}
+                    cols={12}
+                    style={{ height: "100%" }}
+                    className="layout"
+                  >
+                    {tasks.map((task) => {
+                      const startDate = moment(task.start_date).format("D");
+                      const currentDate = moment(date).format("D");
+                      const taskMonth = moment(task.start_date).format("MMM");
+                      const currentMonth = moment(date).format("MMM");
+                      if (
+                        startDate === currentDate &&
+                        taskMonth === currentMonth
+                      ) {
+                        return (
+                          <div
+                            className="rounded mt-[-5px]"
+                            key={task.id}
+                            data-grid={{}}
+                            style={{
+                              backgroundColor: upgradeColor(task.color),
+                            }}
+                          >
+                            <div className="flex flex-col items-center py-3 px-2">
+                              <div className="flex items-center">
+                                <div
+                                  style={{ backgroundColor: task.color }}
+                                  className={`${
+                                    (dayTime || weekTime) &&
+                                    "w-3 h-3 rounded-sm"
+                                  }`}
+                                ></div>
+                                {(dayTime || weekTime) && (
+                                  <span className="pl-1 text-xs">
+                                    {task.name}
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      );
-                    }
-                  })}
-                </ReactGridLayout>
-              </div>
-            );
-          })}
+                        );
+                      }
+                    })}
+                  </ReactGridLayout>
+                </div>
+              );
+            })}
+
+          {weekTime &&
+            datesForWeek.map((date: any) => {
+              return (
+                <div
+                  key={date}
+                  className={`h-[26px] w-full border border-gray-50 rounded`}
+                >
+                  <ReactGridLayout
+                    {...props}
+                    layout={layout}
+                    onResizeStop={handleResizeStop}
+                    onLayoutChange={onLayoutChange}
+                    rowHeight={70}
+                    // verticalCompact={false}
+                    margin={[10, 10]}
+                    cols={12}
+                    style={{ height: "100%" }}
+                    className="layout"
+                  >
+                    {tasks.map((task) => {
+                      const startDate = moment(task.start_date).format("D");
+                      const currentDate = moment(date).format("D");
+                      const taskMonth = moment(task.start_date).format("MMM");
+                      const currentMonth = moment(date).format("MMM");
+                      if (
+                        startDate === currentDate &&
+                        taskMonth === currentMonth
+                      ) {
+                        return (
+                          <div
+                            className="rounded mt-[-5px]"
+                            key={task.id}
+                            data-grid={{}}
+                            style={{
+                              backgroundColor: upgradeColor(task.color),
+                            }}
+                          >
+                            <div className="flex flex-col items-center py-3 px-2">
+                              <div className="flex items-center">
+                                <div
+                                  style={{ backgroundColor: task.color }}
+                                  className={`${
+                                    (dayTime || weekTime) &&
+                                    "w-3 h-3 rounded-sm"
+                                  }`}
+                                ></div>
+                                {(dayTime || weekTime) && (
+                                  <span className="pl-1 text-xs">
+                                    {task.name}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                    })}
+                  </ReactGridLayout>
+                </div>
+              );
+            })}
+
+          {monthTime &&
+            datesForYear.map((date: any) => {
+              return (
+                <div
+                  key={date}
+                  className={`h-[6px] w-full border border-red-50 rounded`}
+                >
+                  <ReactGridLayout
+                    {...props}
+                    layout={layout}
+                    onResizeStop={handleResizeStop}
+                    onLayoutChange={onLayoutChange}
+                    rowHeight={70}
+                    // verticalCompact={false}
+                    margin={[10, 10]}
+                    cols={12}
+                    style={{ height: "100%" }}
+                    className="layout"
+                  >
+                    {tasks.map((task) => {
+                      const startDate = moment(task.start_date).format("D");
+                      const currentDate = moment(date).format("D");
+                      const taskMonth = moment(task.start_date).format("MMM");
+                      const currentMonth = moment(date).format("MMM");
+                      if (
+                        startDate === currentDate &&
+                        taskMonth === currentMonth
+                      ) {
+                        return (
+                          <div
+                            className="rounded mt-[-5px]"
+                            key={task.id}
+                            data-grid={{}}
+                            style={{
+                              backgroundColor: upgradeColor(task.color),
+                            }}
+                          >
+                            <div className="flex flex-col items-center py-3 px-2">
+                              <div className="flex items-center">
+                                <div
+                                  style={{ backgroundColor: task.color }}
+                                  className={`${
+                                    (dayTime || weekTime) &&
+                                    "w-3 h-3 rounded-sm"
+                                  }`}
+                                ></div>
+                                {(dayTime || weekTime) && (
+                                  <span className="pl-1 text-xs">
+                                    {task.name}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                    })}
+                  </ReactGridLayout>
+                </div>
+              );
+            })}
         </div>
 
         {/* <ReactGridLayout

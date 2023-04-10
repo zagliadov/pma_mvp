@@ -145,10 +145,10 @@ export const projectSlice = createSlice({
   initialState,
   reducers: {
     toggleIsEmptyStateProject: (state, action) => {
-      state.isEmptyStateProject = action.payload;
+      return { ...state, isEmptyStateProject: action.payload };
     },
     toggleIsEmptyStateTask: (state, action) => {
-      state.isEmptyStateTask = action.payload;
+      return { ...state, isEmptyStateTask: action.payload };
     },
   },
   extraReducers: (builder) => {
