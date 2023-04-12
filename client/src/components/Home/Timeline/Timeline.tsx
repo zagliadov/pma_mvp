@@ -64,7 +64,7 @@ export const Timeline: FC = (props: TimelineProps) => {
   const weekTime = timeline === "week";
   const monthTime = timeline === "month";
 
-  const getDatesForCurrentDay = useCallback(() => {
+  const getDatesForCurrentDay = useCallback((tasks: any) => {
     const startDate = moment
       .min(tasks.map((task: any) => moment(task.task_goal_start)))
       .subtract(5, "days")
@@ -80,9 +80,9 @@ export const Timeline: FC = (props: TimelineProps) => {
       dates.push(currentDate.format("D MMMM"));
     }
     setDates(dates);
-  }, [tasks]);
+  }, []);
 
-  const getDatesOfTheWeekByDay = useCallback(() => {
+  const getDatesOfTheWeekByDay = useCallback((tasks: any) => {
     const startDate = moment
       .min(tasks.map((task: any) => moment(task.task_goal_start)))
       .subtract(7, "days")
@@ -98,7 +98,7 @@ export const Timeline: FC = (props: TimelineProps) => {
       dates.push(currentDate.format("D MMMM"));
     }
     return setDatesForWeek(dates);
-  }, [tasks]);
+  }, []);
 
   const getDatesOfTheYearByDay = useCallback(() => {
     const dates = [];
@@ -144,20 +144,13 @@ export const Timeline: FC = (props: TimelineProps) => {
   useEffect(() => {
     switch (timeline) {
       case "day":
-        return getDatesForCurrentDay();
+        return getDatesForCurrentDay(tasks);
       case "week":
-        return getDatesForCurrentWeek(), getDatesOfTheWeekByDay();
+        return getDatesForCurrentWeek(), getDatesOfTheWeekByDay(tasks);
       case "month":
         return getDatesForCurrentMonth(), getDatesOfTheYearByDay();
     }
-  }, [
-    getDatesForCurrentDay,
-    getDatesForCurrentMonth,
-    getDatesForCurrentWeek,
-    getDatesOfTheWeekByDay,
-    getDatesOfTheYearByDay,
-    timeline,
-  ]);
+  }, [getDatesForCurrentDay, getDatesForCurrentMonth, getDatesForCurrentWeek, getDatesOfTheWeekByDay, getDatesOfTheYearByDay, tasks, timeline]);
 
   const onLayoutChange = (layout: any) => {
     // console.log("[onLayoutChange]: ", layout);
@@ -184,9 +177,9 @@ export const Timeline: FC = (props: TimelineProps) => {
       case "day":
         return taskDuration;
       case "week":
-        return 0.5;
+        return taskDuration / 3;
       case "month":
-        return 0.1;
+        return taskDuration / 10;
     }
   };
 
@@ -246,6 +239,7 @@ export const Timeline: FC = (props: TimelineProps) => {
                     layout={layout}
                     onResizeStop={handleResizeStop}
                     onLayoutChange={onLayoutChange}
+                    resizeHandles={["s"]} //[ "n", "e", "s", "w", "ne", "se", "nw", "sw" ]
                     rowHeight={70}
                     // verticalCompact={false}
                     margin={[10, 10]}
@@ -303,15 +297,18 @@ export const Timeline: FC = (props: TimelineProps) => {
                   key={date}
                   className={`h-[26px] w-full border border-gray-50 rounded`}
                 >
+                  {date}
                   <ReactGridLayout
                     {...props}
                     layout={layout}
                     onResizeStop={handleResizeStop}
                     onLayoutChange={onLayoutChange}
                     rowHeight={70}
+                    resizeHandles={["s"]} //[ "n", "e", "s", "w", "ne", "se", "nw", "sw" ]
                     // verticalCompact={false}
-                    margin={[10, 10]}
+                    margin={[0, 0]}
                     cols={12}
+                    width={6400}
                     style={{ height: "100%" }}
                     className="layout"
                   >
@@ -371,6 +368,7 @@ export const Timeline: FC = (props: TimelineProps) => {
                     onResizeStop={handleResizeStop}
                     onLayoutChange={onLayoutChange}
                     rowHeight={70}
+                    resizeHandles={["s"]} //[ "n", "e", "s", "w", "ne", "se", "nw", "sw" ]
                     // verticalCompact={false}
                     margin={[10, 10]}
                     cols={12}
@@ -399,16 +397,7 @@ export const Timeline: FC = (props: TimelineProps) => {
                               <div className="flex items-center">
                                 <div
                                   style={{ backgroundColor: task.color }}
-                                  className={`${
-                                    (dayTime || weekTime) &&
-                                    "w-3 h-3 rounded-sm"
-                                  }`}
                                 ></div>
-                                {(dayTime || weekTime) && (
-                                  <span className="pl-1 text-xs">
-                                    {task.name}
-                                  </span>
-                                )}
                               </div>
                             </div>
                           </div>
@@ -420,48 +409,6 @@ export const Timeline: FC = (props: TimelineProps) => {
               );
             })}
         </div>
-
-        {/* <ReactGridLayout
-          {...props}
-          layout={layout}
-          onResizeStop={handleResizeStop}
-          onLayoutChange={onLayoutChange}
-          rowHeight={70}
-          // verticalCompact={false}
-          margin={[10, 10]}
-          cols={22}
-          style={{ height: "100%" }}
-          className="layout"
-        >
-          {tasks.map((task) => {
-            return (
-              <div
-                className="rounded mt-[-5px]"
-                key={task.id}
-                data-grid={{}}
-                style={{
-                  backgroundColor: upgradeColor(task.color),
-                }}
-              >
-                <div className="flex flex-col items-center py-3 px-2">
-                  <div className="flex items-center">
-                    <div
-                      style={{ backgroundColor: task.color }}
-                      className={`w-3 h-3 rounded-sm`}
-                    ></div>
-                    <span className="pl-1 text-xs">{task.name}</span>
-                  </div>
-
-                  <div>
-                    <span>
-                      {task.start_date} - {task.end_date}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </ReactGridLayout> */}
       </div>
     </div>
   );
