@@ -252,6 +252,7 @@ export const Timeline: FC = (props: TimelineProps) => {
                     onResizeStop={handleResizeStop}
                     onLayoutChange={onLayoutChange}
                     rowHeight={70}
+                    resizeHandles={["s"]} //[ "n", "e", "s", "w", "ne", "se", "nw", "sw" ]
                     // verticalCompact={false}
                     margin={[10, 10]}
                     cols={12}
@@ -314,6 +315,7 @@ export const Timeline: FC = (props: TimelineProps) => {
                     onResizeStop={handleResizeStop}
                     onLayoutChange={onLayoutChange}
                     rowHeight={70}
+                    resizeHandles={["s"]} //[ "n", "e", "s", "w", "ne", "se", "nw", "sw" ]
                     // verticalCompact={false}
                     margin={[10, 10]}
                     cols={12}
@@ -377,6 +379,7 @@ export const Timeline: FC = (props: TimelineProps) => {
                     onResizeStop={handleResizeStop}
                     onLayoutChange={onLayoutChange}
                     rowHeight={90}
+                    resizeHandles={["s"]} //[ "n", "e", "s", "w", "ne", "se", "nw", "sw" ]
                     // verticalCompact={false}
                     margin={[10, 10]}
                     cols={12}
