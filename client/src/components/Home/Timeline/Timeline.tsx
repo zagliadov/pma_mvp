@@ -18,35 +18,48 @@ type TimelineProps = {
   cols?: number;
 };
 
-const columnView = (timeline: string) => {
-  switch (timeline) {
-    case "day":
-      return `h-20`;
-    case "week":
-      return `h-40`;
-    case "month":
-      return `h-[183px]`;
-  }
-};
 interface IDateColumn {
   dates: String[];
 }
+
 const DateColumn: FC<IDateColumn> = ({ dates }) => {
   const { timeline } = useAppSelector((state: RootState) => state.diff);
 
+  const countTheDaysInAMonth = (dates: any) => {
+    const date = moment(dates, "MMM YYYY");
+    return date.daysInMonth();
+  };
+
+  const columnView = (date: string) => {
+    switch (timeline) {
+      case "day":
+        return `80px`;
+      case "week":
+        return `140px`;
+      case "month":
+        const daysInMonth = countTheDaysInAMonth(date);
+        return `${daysInMonth * 10}px`;
+      default:
+        throw new Error(`Invalid timeline: ${timeline}`);
+    }
+  };
+
   return (
     <div className="flex flex-col">
-      {dates.map((date: any) => (
-        <div
-          id={date}
-          key={date}
-          className={`${columnView(
-            timeline
-          )} text-center w-28 flex items-center justify-center bg-gray-50 border border-b-gray-100 border-t-gray-100`}
-        >
-          <span className="text-sm font-normal text-gray-400 px-4">{date}</span>
-        </div>
-      ))}
+      {dates.map((date: any) => {
+        return (
+          <div
+            id={date}
+            key={date}
+            style={{ height: columnView(date) }}
+            className={`text-center w-28 flex items-center justify-center bg-gray-50 border border-b-gray-100 border-t-gray-100`}
+          >
+            <span className={`text-sm font-normal text-gray-400 px-4`}>
+              {date}
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 };
@@ -57,9 +70,6 @@ export const Timeline: FC = (props: TimelineProps) => {
   const { timeline } = useAppSelector((state: RootState) => state.diff);
   const [datesForWeek, setDatesForWeek] = useState<string[] | []>([]);
   const [datesForYear, setDatesForYear] = useState<string[] | []>([]);
-  // get current month and year
-  const currentMonth = moment().format("MMMM");
-  const currentYear = moment().format("YYYY");
   const dayTime = timeline === "day";
   const weekTime = timeline === "week";
   const monthTime = timeline === "month";
@@ -92,7 +102,7 @@ export const Timeline: FC = (props: TimelineProps) => {
       .format("D MMMM");
     const currentDate = moment(startDate);
     const dates = [];
-    const lastDayOfMonth = moment(endDate).endOf("month");
+    const lastDayOfMonth = moment(endDate).endOf("month").add(5, "days");
     while (currentDate.isSameOrBefore(lastDayOfMonth)) {
       currentDate.add(1, "days");
       dates.push(currentDate.format("D MMMM"));
@@ -150,7 +160,15 @@ export const Timeline: FC = (props: TimelineProps) => {
       case "month":
         return getDatesForCurrentMonth(), getDatesOfTheYearByDay();
     }
-  }, [getDatesForCurrentDay, getDatesForCurrentMonth, getDatesForCurrentWeek, getDatesOfTheWeekByDay, getDatesOfTheYearByDay, tasks, timeline]);
+  }, [
+    getDatesForCurrentDay,
+    getDatesForCurrentMonth,
+    getDatesForCurrentWeek,
+    getDatesOfTheWeekByDay,
+    getDatesOfTheYearByDay,
+    tasks,
+    timeline,
+  ]);
 
   const onLayoutChange = (layout: any) => {
     // console.log("[onLayoutChange]: ", layout);
@@ -219,27 +237,20 @@ export const Timeline: FC = (props: TimelineProps) => {
       <div className="flex flex-col">
         <DateColumn dates={dates} />
       </div>
-      <div className="w-full">
-        <div
-          className={`flex flex-col w-full ${monthTime && "pt-[3px]"} ${
-            weekTime && "pt-[4px]"
-          }`}
-        >
+      <div className="w-full flex">
+        <div className={`flex flex-col w-full`}>
           {dayTime &&
             dates.map((date: any) => {
               return (
                 <div
                   key={date}
-                  className={`${columnView(
-                    timeline
-                  )} w-full border border-gray-50 rounded`}
+                  className={`h-20 w-full border border-gray-50 rounded`}
                 >
                   <ReactGridLayout
                     {...props}
                     layout={layout}
                     onResizeStop={handleResizeStop}
                     onLayoutChange={onLayoutChange}
-                    resizeHandles={["s"]} //[ "n", "e", "s", "w", "ne", "se", "nw", "sw" ]
                     rowHeight={70}
                     // verticalCompact={false}
                     margin={[10, 10]}
@@ -295,20 +306,17 @@ export const Timeline: FC = (props: TimelineProps) => {
               return (
                 <div
                   key={date}
-                  className={`h-[26px] w-full border border-gray-50 rounded`}
+                  className={`h-[20px] w-full border border-gray-50 rounded`}
                 >
-                  {date}
                   <ReactGridLayout
                     {...props}
                     layout={layout}
                     onResizeStop={handleResizeStop}
                     onLayoutChange={onLayoutChange}
                     rowHeight={70}
-                    resizeHandles={["s"]} //[ "n", "e", "s", "w", "ne", "se", "nw", "sw" ]
                     // verticalCompact={false}
-                    margin={[0, 0]}
+                    margin={[10, 10]}
                     cols={12}
-                    width={6400}
                     style={{ height: "100%" }}
                     className="layout"
                   >
@@ -360,15 +368,15 @@ export const Timeline: FC = (props: TimelineProps) => {
               return (
                 <div
                   key={date}
-                  className={`h-[6px] w-full border border-red-50 rounded`}
+                  id={date}
+                  className={`h-[10px] w-full border-b border-red-100`}
                 >
                   <ReactGridLayout
                     {...props}
                     layout={layout}
                     onResizeStop={handleResizeStop}
                     onLayoutChange={onLayoutChange}
-                    rowHeight={70}
-                    resizeHandles={["s"]} //[ "n", "e", "s", "w", "ne", "se", "nw", "sw" ]
+                    rowHeight={90}
                     // verticalCompact={false}
                     margin={[10, 10]}
                     cols={12}
@@ -386,7 +394,7 @@ export const Timeline: FC = (props: TimelineProps) => {
                       ) {
                         return (
                           <div
-                            className="rounded mt-[-5px]"
+                            className="rounded mt-[-9px]"
                             key={task.id}
                             data-grid={{}}
                             style={{
@@ -397,7 +405,16 @@ export const Timeline: FC = (props: TimelineProps) => {
                               <div className="flex items-center">
                                 <div
                                   style={{ backgroundColor: task.color }}
+                                  className={`${
+                                    (dayTime || weekTime) &&
+                                    "w-3 h-3 rounded-sm"
+                                  }`}
                                 ></div>
+                                {(dayTime || weekTime) && (
+                                  <span className="pl-1 text-xs">
+                                    {task.name}
+                                  </span>
+                                )}
                               </div>
                             </div>
                           </div>
