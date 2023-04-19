@@ -1,70 +1,24 @@
-import { FC, useCallback, useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import RGL, { WidthProvider, Layout } from "react-grid-layout";
 import * as _ from "lodash";
 import moment from "moment";
 import "./styles.css";
 import { useAppSelector } from "../../../redux/hooks";
 import { RootState } from "../../../redux/store";
-import { getTaskDuration, upgradeColor } from "../../../helpers/helpers";
+import {
+  getDatesForCurrentDay,
+  getDatesForCurrentMonth,
+  getDatesForCurrentWeek,
+  getDatesOfTheWeekByDay,
+  getDatesOfTheYearByDay,
+  getTaskDuration,
+  upgradeColor,
+} from "../../../helpers/helpers";
+import { DateColumn } from "./DateColumn/DateColumn";
 
 const ReactGridLayout = WidthProvider(RGL);
 
-type TimelineProps = {
-  isDraggable?: boolean;
-  isResizable?: boolean;
-  items?: number;
-  rowHeight?: number;
-  preventCollision?: boolean;
-  cols?: number;
-};
-
-interface IDateColumn {
-  dates: String[];
-}
-
-const DateColumn: FC<IDateColumn> = ({ dates }) => {
-  const { timeline } = useAppSelector((state: RootState) => state.diff);
-
-  const countTheDaysInAMonth = (dates: any) => {
-    const date = moment(dates, "MMM YYYY");
-    return date.daysInMonth();
-  };
-
-  const columnView = (date: string) => {
-    switch (timeline) {
-      case "day":
-        return `80px`;
-      case "week":
-        return `140px`;
-      case "month":
-        const daysInMonth = countTheDaysInAMonth(date);
-        return `${daysInMonth * 10}px`;
-      default:
-        throw new Error(`Invalid timeline: ${timeline}`);
-    }
-  };
-
-  return (
-    <div className="flex flex-col">
-      {dates.map((date: any) => {
-        return (
-          <div
-            id={date}
-            key={date}
-            style={{ height: columnView(date) }}
-            className={`text-center w-28 flex items-center justify-center bg-gray-50 border border-b-gray-100 border-t-gray-100`}
-          >
-            <span className={`text-sm font-normal text-gray-400 px-4`}>
-              {date}
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
-export const Timeline: FC = (props: TimelineProps) => {
+export const Timeline: FC = () => {
   const [dates, setDates] = useState<string[]>([]);
   const { tasks } = useAppSelector((state: RootState) => state.tasks);
   const { timeline } = useAppSelector((state: RootState) => state.diff);
@@ -74,101 +28,22 @@ export const Timeline: FC = (props: TimelineProps) => {
   const weekTime = timeline === "week";
   const monthTime = timeline === "month";
 
-  const getDatesForCurrentDay = useCallback((tasks: any) => {
-    const startDate = moment
-      .min(tasks.map((task: any) => moment(task.task_goal_start)))
-      .subtract(5, "days")
-      .format("D MMMM");
-    const endDate = moment
-      .max(tasks.map((task: any) => moment(task.task_goal_end)))
-      .add(5, "days")
-      .format("D MMMM");
-    let dates: string[] = [];
-    const currentDate = moment(startDate);
-    while (currentDate.isSameOrBefore(endDate)) {
-      currentDate.add(1, "days");
-      dates.push(currentDate.format("D MMMM"));
-    }
-    setDates(dates);
-  }, []);
-
-  const getDatesOfTheWeekByDay = useCallback((tasks: any) => {
-    const startDate = moment
-      .min(tasks.map((task: any) => moment(task.task_goal_start)))
-      .subtract(7, "days")
-      .format("D MMMM");
-    const endDate = moment
-      .max(tasks.map((task: any) => moment(task.task_goal_end)))
-      .format("D MMMM");
-    const currentDate = moment(startDate);
-    const dates = [];
-    const lastDayOfMonth = moment(endDate).endOf("month").add(5, "days");
-    while (currentDate.isSameOrBefore(lastDayOfMonth)) {
-      currentDate.add(1, "days");
-      dates.push(currentDate.format("D MMMM"));
-    }
-    return setDatesForWeek(dates);
-  }, []);
-
-  const getDatesOfTheYearByDay = useCallback(() => {
-    const dates = [];
-    const year = moment().year();
-    for (let i = 0; i < 365; i++) {
-      const date = moment(`${year}-01-01`).add(i, "days");
-      dates.push(date.format("D MMMM"));
-    }
-    setDatesForYear(dates);
-  }, []);
-
-  const getDatesForCurrentWeek = useCallback(() => {
-    const currentDate = moment();
-    const firstDayOfMonth = moment(currentDate).startOf("month");
-    const lastDayOfMonth = moment(currentDate).endOf("month");
-    const weekDates = [];
-
-    for (
-      let m = moment(firstDayOfMonth).startOf("week");
-      m.isBefore(lastDayOfMonth);
-      m.add(1, "week")
-    ) {
-      weekDates.push(
-        `${moment(m).startOf("week").format("D")}-${moment(m)
-          .endOf("week")
-          .format("D")} ${moment(m).format("MMMM")}`
-      );
-    }
-    setDates(weekDates);
-  }, []);
-
-  const getDatesForCurrentMonth = useCallback(() => {
-    const months = [];
-    for (let i = 0; i < 12; i++) {
-      const month = moment().month(i).format("MMM YYYY");
-      const monthWithYear = `${month.charAt(0).toUpperCase()}${month.slice(1)}`;
-      months.push(monthWithYear);
-    }
-
-    setDates(months);
-  }, []);
-
   useEffect(() => {
     switch (timeline) {
       case "day":
-        return getDatesForCurrentDay(tasks);
+        return getDatesForCurrentDay(tasks, setDates);
       case "week":
-        return getDatesForCurrentWeek(), getDatesOfTheWeekByDay(tasks);
+        return (
+          getDatesForCurrentWeek(setDates),
+          getDatesOfTheWeekByDay(tasks, setDatesForWeek)
+        );
       case "month":
-        return getDatesForCurrentMonth(), getDatesOfTheYearByDay();
+        return (
+          getDatesForCurrentMonth(setDates),
+          getDatesOfTheYearByDay(setDatesForYear)
+        );
     }
-  }, [
-    getDatesForCurrentDay,
-    getDatesForCurrentMonth,
-    getDatesForCurrentWeek,
-    getDatesOfTheWeekByDay,
-    getDatesOfTheYearByDay,
-    tasks,
-    timeline,
-  ]);
+  }, [tasks, timeline]);
 
   const onLayoutChange = (layout: any) => {
     // console.log("[onLayoutChange]: ", layout);
@@ -205,6 +80,7 @@ export const Timeline: FC = (props: TimelineProps) => {
     .map((task) => {
       const yDay = moment(task.task_goal_start).format("D");
       // -- calculate task position by his day of month --
+
       const taskDuration = getTaskDuration(task);
       // -- let's create a grid for each task --
       return {
@@ -219,8 +95,10 @@ export const Timeline: FC = (props: TimelineProps) => {
     .groupBy("y")
     // -- iterate over each task in one day --
     .mapValues((day: any) => {
+      console.log(day)
       // -- for each task let's set x as incremented key (so they will be in one line) --
       return day.map((day: any, key: number) => {
+        console.log(key)
         return {
           ...day,
           x: key, //key === 1 ? 2 : key, // shift to the right column key === 0 ? key : key - 1
@@ -232,6 +110,24 @@ export const Timeline: FC = (props: TimelineProps) => {
     // -- get final value with grid layout --
     .value();
 
+  const filteredTask: any = _.chain(tasks)
+    .filter((task: any) => task.start_date !== undefined)
+    .sortBy("start_date")
+    .map((task: any, index: number, arr: any) => {
+      const firstTask = arr[index];
+      const nextTask = arr[index + 1];
+      const isBetween =
+        !moment(nextTask?.start_date).isBetween(
+          moment(firstTask?.start_date),
+          moment(firstTask?.end_date)
+        ) && nextTask?.start_date !== undefined;
+      return {
+        ...task,
+        isBetween,
+      };
+    })
+    .value();
+
   return (
     <div className="flex border border-gray-50">
       <div className="flex flex-col">
@@ -240,14 +136,13 @@ export const Timeline: FC = (props: TimelineProps) => {
       <div className="w-full flex">
         <div className={`flex flex-col w-full`}>
           {dayTime &&
-            dates.map((date: any) => {
+            dates.map((date: string) => {
               return (
                 <div
                   key={date}
                   className={`h-20 w-full border border-gray-50 rounded`}
                 >
                   <ReactGridLayout
-                    {...props}
                     layout={layout}
                     onResizeStop={handleResizeStop}
                     onLayoutChange={onLayoutChange}
@@ -303,14 +198,13 @@ export const Timeline: FC = (props: TimelineProps) => {
             })}
 
           {weekTime &&
-            datesForWeek.map((date: any) => {
+            datesForWeek.map((date: string) => {
               return (
                 <div
                   key={date}
-                  className={`h-[20px] w-full border border-gray-50 rounded`}
+                  className={`h-[20px] w-full border border-green-500 rounded`}
                 >
                   <ReactGridLayout
-                    {...props}
                     layout={layout}
                     onResizeStop={handleResizeStop}
                     onLayoutChange={onLayoutChange}
@@ -366,7 +260,7 @@ export const Timeline: FC = (props: TimelineProps) => {
             })}
 
           {monthTime &&
-            datesForYear.map((date: any) => {
+            datesForYear.map((date: string) => {
               return (
                 <div
                   key={date}
@@ -374,7 +268,6 @@ export const Timeline: FC = (props: TimelineProps) => {
                   className={`h-[10px] w-full border-b border-red-100`}
                 >
                   <ReactGridLayout
-                    {...props}
                     layout={layout}
                     onResizeStop={handleResizeStop}
                     onLayoutChange={onLayoutChange}
@@ -427,7 +320,8 @@ export const Timeline: FC = (props: TimelineProps) => {
                   </ReactGridLayout>
                 </div>
               );
-            })}
+            }
+            )}
         </div>
       </div>
     </div>
@@ -487,23 +381,23 @@ export const Timeline: FC = (props: TimelineProps) => {
 //     return end.diff(start, "days") + 1;
 //   };
 
-//   const filteredTask: any = _.chain(tasks)
-//     .filter((task: any) => task.start_date !== undefined)
-//     .sortBy("start_date")
-//     .map((task: any, index: number, arr: any) => {
-//       const firstTask = arr[index];
-//       const nextTask = arr[index + 1];
-//       const isBetween =
-//         !moment(nextTask?.start_date).isBetween(
-//           moment(firstTask?.start_date),
-//           moment(firstTask?.end_date)
-//         ) && nextTask?.start_date !== undefined;
-//       return {
-//         ...task,
-//         isBetween,
-//       };
-//     })
-//     .value();
+// const filteredTask: any = _.chain(tasks)
+//   .filter((task: any) => task.start_date !== undefined)
+//   .sortBy("start_date")
+//   .map((task: any, index: number, arr: any) => {
+//     const firstTask = arr[index];
+//     const nextTask = arr[index + 1];
+//     const isBetween =
+//       !moment(nextTask?.start_date).isBetween(
+//         moment(firstTask?.start_date),
+//         moment(firstTask?.end_date)
+//       ) && nextTask?.start_date !== undefined;
+//     return {
+//       ...task,
+//       isBetween,
+//     };
+//   })
+//   .value();
 
 //   console.log(filteredTask);
 
@@ -519,45 +413,45 @@ export const Timeline: FC = (props: TimelineProps) => {
 //               key={date}
 //               className="h-20 flex w-full border border-gray-50 rounded"
 //             >
-//               <div className="flex">
-//                 {filteredTask.map((task: any, index: number) => {
-//                   const startDate = moment(task.start_date).format("D");
-//                   const currentDate = moment(date).format("D");
-//                   const currentHight = `${getTaskDuration(task) * 80 - 10}px`;
-//                   const isBetween = task?.isBetween;
-//                   if (startDate === currentDate) {
-//                     return (
-//                       <div
-//                         key={task.id}
-//                         style={{
-//                           width: "300px",
-//                           height: currentHight,
-//                           backgroundColor: upgradeColor(task.color),
-//                         }}
-//                         className={`
-//                         ${isBetween && "flex"}
-//                         flex flex-col justify-between p-3 rounded mr-2 mt-[4px] z-[1]`}
-//                       >
-//                         <div className="flex items-center">
-//                           <div
-//                             style={{ backgroundColor: task.color }}
-//                             className={`w-3 h-3 rounded-sm`}
-//                           ></div>
-//                           <span className="pl-1 text-xs">{task.name}</span>
-//                         </div>
+// <div className="flex">
+//   {filteredTask.map((task: any, index: number) => {
+//     const startDate = moment(task.start_date).format("D");
+//     const currentDate = moment(date).format("D");
+//     const currentHight = `${getTaskDuration(task) * 80 - 10}px`;
+//     const isBetween = task?.isBetween;
+//     if (startDate === currentDate) {
+//       return (
+//         <div
+//           key={task.id}
+//           style={{
+//             width: "300px",
+//             height: currentHight,
+//             backgroundColor: upgradeColor(task.color),
+//           }}
+//           className={`
+//           ${isBetween && "flex"}
+//           flex flex-col justify-between p-3 rounded mr-2 mt-[4px] z-[1]`}
+//         >
+//           <div className="flex items-center">
+//             <div
+//               style={{ backgroundColor: task.color }}
+//               className={`w-3 h-3 rounded-sm`}
+//             ></div>
+//             <span className="pl-1 text-xs">{task.name}</span>
+//           </div>
 
-//                         <div>
-//                           <div className="flex items-center pl-2">
-//                             <button className="flex items-center mt-0.5 p-1 border rounded">
-//                               <FaGitMerge />
-//                             </button>
-//                           </div>
-//                         </div>
-//                       </div>
-//                     );
-//                   }
-//                 })}
-//               </div>
+//           <div>
+//             <div className="flex items-center pl-2">
+//               <button className="flex items-center mt-0.5 p-1 border rounded">
+//                 <FaGitMerge />
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       );
+//     }
+//   })}
+// </div>
 //             </div>
 //           );
 //         })}

@@ -72,8 +72,86 @@ export const upgradeColor = (color: string) => {
   }
 };
 
-export const getTaskDuration = (task: any) => {
-  const start = moment(task.task_goal_start, "YYYY-MM-DD");
-  const end = moment(task.task_goal_end, "YYYY-MM-DD");
+//For Timeline
+export const getTaskDuration = (task: ITask): number => {
+  const start = moment(task?.task_goal_start, "YYYY-MM-DD");
+  const end = moment(task?.task_goal_end, "YYYY-MM-DD");
   return end.diff(start, "days") + 1;
+};
+
+export const getDatesForCurrentMonth = (setter: Function) => {
+  const months = [];
+  for (let i = 0; i < 12; i++) {
+    const month = moment().month(i).format("MMM YYYY");
+    const monthWithYear = `${month.charAt(0).toUpperCase()}${month.slice(1)}`;
+    months.push(monthWithYear);
+  }
+
+  setter(months);
+};
+
+export const getDatesForCurrentWeek = (setter: Function) => {
+  const currentDate = moment();
+  const firstDayOfMonth = moment(currentDate).startOf("month");
+  const lastDayOfMonth = moment(currentDate).endOf("month");
+  const weekDates = [];
+
+  for (
+    let m = moment(firstDayOfMonth).startOf("week");
+    m.isBefore(lastDayOfMonth);
+    m.add(1, "week")
+  ) {
+    weekDates.push(
+      `${moment(m).startOf("week").format("D")}-${moment(m)
+        .endOf("week")
+        .format("D")} ${moment(m).format("MMMM")}`
+    );
+  }
+  setter(weekDates);
+};
+
+export const getDatesOfTheYearByDay = (setter: Function) => {
+  const dates = [];
+  const year = moment().year();
+  for (let i = 0; i < 365; i++) {
+    const date = moment(`${year}-01-01`).add(i, "days");
+    dates.push(date.format("D MMMM"));
+  }
+  setter(dates);
+};
+
+export const getDatesOfTheWeekByDay = (tasks: ITask[], setter: Function) => {
+  const startDate = moment
+    .min(tasks.map((task: ITask) => moment(task.task_goal_start)))
+    .subtract(7, "days")
+    .format("D MMMM");
+  const endDate = moment
+    .max(tasks.map((task: ITask) => moment(task.task_goal_end)))
+    .format("D MMMM");
+  const currentDate = moment(startDate);
+  const dates = [];
+  const lastDayOfMonth = moment(endDate).endOf("month").add(5, "days");
+  while (currentDate.isSameOrBefore(lastDayOfMonth)) {
+    currentDate.add(1, "days");
+    dates.push(currentDate.format("D MMMM"));
+  }
+  return setter(dates);
+};
+
+export const getDatesForCurrentDay = (tasks: ITask[], setter: Function) => {
+  const startDate = moment
+    .min(tasks.map((task: ITask) => moment(task.task_goal_start)))
+    .subtract(5, "days")
+    .format("D MMMM");
+  const endDate = moment
+    .max(tasks.map((task: ITask) => moment(task.task_goal_end)))
+    .add(5, "days")
+    .format("D MMMM");
+  let dates: string[] = [];
+  const currentDate = moment(startDate);
+  while (currentDate.isSameOrBefore(endDate)) {
+    currentDate.add(1, "days");
+    dates.push(currentDate.format("D MMMM"));
+  }
+  setter(dates);
 };

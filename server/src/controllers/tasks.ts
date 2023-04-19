@@ -140,27 +140,31 @@ export const setTask = async (req: any, res: any) => {
     taskAssignee,
     taskBlocker,
   } = req.body;
-  const { rows } = await query(
-    `INSERT INTO tasks (name, status, color, assignee, description, project_id)
+  try {
+    const { rows } = await query(
+      `INSERT INTO tasks (name, status, color, assignee, description, project_id)
               VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
-    [taskName, status, color, taskAssignee, taskDescription, project_id]
-  );
-  const task_id = rows[0].id;
-  if (subTasks.length) {
-    subTasks.map((subTask: any) => {
-      query(
-        `INSERT INTO subtasks (name, status, color, task_id, assignee) VALUES($1, $2, $3, $4, $5)`,
-        [subTask, status, color, task_id, "{}"]
-      );
-    });
+      [taskName, status, color, taskAssignee, taskDescription, project_id]
+    );
+    const task_id = rows[0].id;
+    if (subTasks.length) {
+      subTasks.map((subTask: any) => {
+        query(
+          `INSERT INTO subtasks (name, status, color, task_id, assignee) VALUES($1, $2, $3, $4, $5)`,
+          [subTask, status, color, task_id, "{}"]
+        );
+      });
+    }
+    if (taskBlocker.length) {
+      taskBlocker.map((taskId: number) => {
+        query(`UPDATE tasks SET blocker_by = $1 WHERE id = $2`, [
+          task_id,
+          taskId,
+        ]);
+      });
+    }
+    res.status(200).json();
+  } catch (error) {
+    console.log(error);
   }
-  if (taskBlocker.length) {
-    taskBlocker.map((taskId: number) => {
-      query(`UPDATE tasks SET blocker_by = $1 WHERE id = $2`, [
-        task_id,
-        taskId,
-      ]);
-    });
-  }
-  res.status(200).json();
 };
