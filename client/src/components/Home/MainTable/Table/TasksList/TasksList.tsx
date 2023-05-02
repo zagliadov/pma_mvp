@@ -20,6 +20,7 @@ import { TaskMoreMenu } from "./TaskMoreMenu/TaskMoreMenu";
 import React from "react";
 import { TaskEndDate } from "./TaskEndDate/TaskEndDate";
 import { TaskStartDate } from "./TaskStartDate/TaskStartDate";
+import { toggleIsViewTaskOpen } from "../../../../../redux/diffSlice/diffSlice";
 
 export const TasksList: FC = () => {
   const [isOpenSubtasks, setIsOpenSubtasks] = useState<boolean>(false);
@@ -47,7 +48,16 @@ export const TasksList: FC = () => {
   // const [arrChoiceTask, setArrChoiceTask] = useState<number[]>([]);
   // const [choiceTask, setChoiceTask] = useState<number | null>(null);
 
+  useEffect(() => {
+    const everyFalse = isSelectedTask.every((element) => element === false);
+    if (everyFalse) {
+      localStorage.removeItem("task:id");
+      dispatch(toggleIsViewTaskOpen(false));
+    }
+  }, [dispatch, isSelectedTask]);
+
   const handleSelectedTask = (id: number, index: number) => {
+    localStorage.setItem("task:id", String(id));
     setIsSelectedTask((prevState: boolean[]) => {
       const newState = [...prevState];
       newState[index] = !newState[index];

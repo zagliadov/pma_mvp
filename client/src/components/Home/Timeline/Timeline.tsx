@@ -61,8 +61,6 @@ export const Timeline: FC = () => {
     xy: any,
     target: any
   ) => {
-    console.log("newItem:", newItem);
-    console.log("oldItem:", oldItem);
   };
 
   const taskDurationCalculation = (taskDuration: number, timeline: string) => {
@@ -95,10 +93,8 @@ export const Timeline: FC = () => {
     .groupBy("y")
     // -- iterate over each task in one day --
     .mapValues((day: any) => {
-      console.log(day)
       // -- for each task let's set x as incremented key (so they will be in one line) --
       return day.map((day: any, key: number) => {
-        console.log(key)
         return {
           ...day,
           x: key, //key === 1 ? 2 : key, // shift to the right column key === 0 ? key : key - 1
@@ -111,19 +107,24 @@ export const Timeline: FC = () => {
     .value();
 
   const filteredTask: any = _.chain(tasks)
+  
     .filter((task: any) => task.start_date !== undefined)
     .sortBy("start_date")
     .map((task: any, index: number, arr: any) => {
-      const firstTask = arr[index];
+      const firstTask = arr[index + 1];
       const nextTask = arr[index + 1];
       const isBetween =
         !moment(nextTask?.start_date).isBetween(
           moment(firstTask?.start_date),
           moment(firstTask?.end_date)
         ) && nextTask?.start_date !== undefined;
+      const isBefore = index !== 0 && moment(nextTask?.start_date).isBefore(firstTask?.end_date);
+      const isAfter = index !== 0 && moment(nextTask?.start_date).isBefore(firstTask?.end_date);
       return {
         ...task,
         isBetween,
+        isBefore,
+        isAfter,
       };
     })
     .value();
@@ -209,6 +210,7 @@ export const Timeline: FC = () => {
                     onResizeStop={handleResizeStop}
                     onLayoutChange={onLayoutChange}
                     rowHeight={70}
+                    useCSSTransforms={true}
                     resizeHandles={["s"]} //[ "n", "e", "s", "w", "ne", "se", "nw", "sw" ]
                     // verticalCompact={false}
                     margin={[10, 10]}
@@ -265,63 +267,39 @@ export const Timeline: FC = () => {
                 <div
                   key={date}
                   id={date}
-                  className={`h-[10px] w-full border-b border-red-100`}
+                  className={`h-[10px] flex w-full border-b border-gray-100`}
                 >
-                  <ReactGridLayout
-                    layout={layout}
-                    onResizeStop={handleResizeStop}
-                    onLayoutChange={onLayoutChange}
-                    rowHeight={90}
-                    resizeHandles={["s"]} //[ "n", "e", "s", "w", "ne", "se", "nw", "sw" ]
-                    // verticalCompact={false}
-                    margin={[10, 10]}
-                    cols={12}
-                    style={{ height: "100%" }}
-                    className="layout"
-                  >
-                    {tasks.map((task) => {
-                      const startDate = moment(task.start_date).format("D");
-                      const currentDate = moment(date).format("D");
-                      const taskMonth = moment(task.start_date).format("MMM");
-                      const currentMonth = moment(date).format("MMM");
-                      if (
-                        startDate === currentDate &&
-                        taskMonth === currentMonth
-                      ) {
-                        return (
-                          <div
-                            className="rounded mt-[-9px]"
-                            key={task.id}
-                            data-grid={{}}
-                            style={{
-                              backgroundColor: upgradeColor(task.color),
-                            }}
-                          >
-                            <div className="flex flex-col items-center py-3 px-2">
-                              <div className="flex items-center">
-                                <div
-                                  style={{ backgroundColor: task.color }}
-                                  className={`${
-                                    (dayTime || weekTime) &&
-                                    "w-3 h-3 rounded-sm"
-                                  }`}
-                                ></div>
-                                {(dayTime || weekTime) && (
-                                  <span className="pl-1 text-xs">
-                                    {task.name}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      }
-                    })}
-                  </ReactGridLayout>
+                  {filteredTask.map((task: any, index: number) => {
+                    console.log(task)
+                    const startDate = moment(task.start_date).format("D");
+                    const endDate = moment(task.end_date).format("D");
+                    const currentDate = moment(date).format("D");
+                    const taskMonth = moment(task.start_date).format("MMM");
+                    const currentMonth = moment(date).format("MMM");
+                    const taskDuration = getTaskDuration(task);
+                    if (
+                      startDate === currentDate &&
+                      taskMonth === currentMonth
+                    ) {
+                      return (
+                        <div
+                          id={task.name + task.start_date}
+                          className={`border border-green-900 flex items-center text-center`}
+                          style={{
+                            backgroundColor: upgradeColor(task.color),
+                            width: "200px",
+                            marginLeft: `${task.isBefore && "200px"}`,
+                            height: `${taskDuration * 10}px`,
+                          }}
+                        >
+                          <span className="text-[8px]">{task.name}</span>
+                        </div>
+                      );
+                    }
+                  })}
                 </div>
               );
-            }
-            )}
+            })}
         </div>
       </div>
     </div>

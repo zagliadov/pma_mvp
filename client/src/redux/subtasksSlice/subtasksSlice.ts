@@ -81,6 +81,21 @@ export const getSubtask = createAsyncThunk(
   }
 );
 
+export const deleteSubtask = createAsyncThunk(
+  "subtasks/delete_subtask",
+  async (subtaskId: number) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:9000/subtasks/delete_subtask/${subtaskId}`,
+        {}
+      );
+      return console.log(response.data, "response");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
+
 export const subtasksSlice = createSlice({
   name: "subtasks",
   initialState,

@@ -9,13 +9,18 @@ import {
   FaPriorityFlag,
 } from "../../../icons/icons";
 import { useParams } from "react-router-dom";
-import { getTasks, orderByAsc, orderByDesc } from "../../../../redux/tasksSlice/tasksSlice";
+import {
+  getTasks,
+  orderByAsc,
+  orderByDesc,
+} from "../../../../redux/tasksSlice/tasksSlice";
 import { TasksList } from "./TasksList/TasksList";
+import { ViewTask } from "./ViewTask/ViewTask";
 
 export const Table: FC = () => {
   const params = useParams();
   const dispatch = useAppDispatch();
-  const { isCreateTaskModal } = useAppSelector(
+  const { isCreateTaskModal, isViewTaskOpen } = useAppSelector(
     (state: RootState) => state.diff
   );
   const [isAdded, setIsAdded] = useState<boolean>(false);
@@ -32,13 +37,12 @@ export const Table: FC = () => {
   const handleOrderByDesc = () => {
     const project_id = Number(params.project_id);
     dispatch(orderByDesc(project_id));
-    
-  }
+  };
 
   const handleOrderByAsc = () => {
     const project_id = Number(params.project_id);
     dispatch(orderByAsc(project_id));
-  }
+  };
 
   return (
     <div className="relative overflow-x-auto bg-white h-full w-full">
@@ -60,7 +64,10 @@ export const Table: FC = () => {
               </div>
             </th>
             <th className="min-w-[60px]">
-              <button className="flex items-center" onClick={() => handleOrderByAsc()}>
+              <button
+                className="flex items-center"
+                onClick={() => handleOrderByAsc()}
+              >
                 <span className="font-medium text-gray-600 text-xs pr-2">
                   Goal start
                 </span>
@@ -68,11 +75,16 @@ export const Table: FC = () => {
               </button>
             </th>
             <th className="min-w-[70px]">
-              <button className="flex items-center" onClick={() => handleOrderByDesc()}>
+              <button
+                className="flex items-center"
+                onClick={() => handleOrderByDesc()}
+              >
                 <span className="font-medium text-gray-600 text-xs pr-2">
                   Goal end
                 </span>
-                <div className="origin-center rotate-180"><FaArrowDown /></div>
+                <div className="origin-center rotate-180">
+                  <FaArrowDown />
+                </div>
               </button>
             </th>
             <th className="min-w-[60px]">
@@ -109,7 +121,7 @@ export const Table: FC = () => {
               </div>
             </th>
           </tr>
-          <tr className="border">
+          <tr className="border"> 
             <th className="w-1/2 min-w-[500px] py-2 pr-4">
               <div className="flex items-center">
                 <span className="font-normal pl-6 text-sm">New task name</span>
@@ -154,6 +166,7 @@ export const Table: FC = () => {
           <TasksList />
         </tbody>
       </table>
+      {isViewTaskOpen && <ViewTask />}
     </div>
   );
 };

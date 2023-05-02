@@ -16,7 +16,9 @@ module.exports = {
         // => @media (min-width: 1280px) { ... }
       },
       colors: {
-
+        negative: {
+          50: "#F8E9EA",
+        },
         gray: {
           10: "#FBFCFC",
           50: "#F1F2F2",
@@ -39,10 +41,12 @@ module.exports = {
           100: "#ED7668",
           600: "#D71616",
           800: "#D71616",
+          850: "#FF0000",
           900: "#FF2B63",
         },
         green: {
           100: "#7EC770",
+          800: "#008000",
           900: "#00B050",
         },
         yellow: {
@@ -50,6 +54,7 @@ module.exports = {
         },
         orange: {
           100: "#FDAE4B",
+          800: "#FFA500",
           900: "#FF9739",
         },
         violet: {

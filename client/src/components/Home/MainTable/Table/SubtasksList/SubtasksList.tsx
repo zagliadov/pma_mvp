@@ -221,7 +221,7 @@ export const SubtasksList: FC = () => {
                         <FaMoreVertical />
                       </button>
                     )}
-                    {openMore === id && <SubtaskMoreMenu />}
+                    {openMore === id && <SubtaskMoreMenu id={id} />}
                   </div>
                 </td>
               </tr>

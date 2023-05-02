@@ -5,6 +5,8 @@ import { useAppDispatch, useAppSelector } from "../../../redux/hooks";
 import { RootState } from "../../../redux/store";
 import {
   toggleIsCreateTaskModal,
+  toggleIsFilterSidebarOpen,
+  toggleIsViewTaskOpen,
   toggleOwner,
   toggleTimeline,
 } from "../../../redux/diffSlice/diffSlice";
@@ -18,7 +20,8 @@ export const MainTableSubNavigation: FC = () => {
   const toggleIsActiveSidebar = useAppSelector(
     (state: RootState) => state.diff.isActiveSidebar
   );
-  const { timeline, ownerFilter } = useAppSelector(
+  const { isViewTaskOpen } = useAppSelector((state: RootState) => state.diff)
+  const { timeline, ownerFilter, isFilterSidebarOpen } = useAppSelector(
     (state: RootState) => state.diff
   );
   const shutdownEffect = toggleIsActiveSidebar;
@@ -33,6 +36,18 @@ export const MainTableSubNavigation: FC = () => {
   const handleChangeOwner = (owner: string) => {
     dispatch(toggleOwner(owner));
   };
+
+  const handleOpenFilterSidebar = () => {
+    dispatch(toggleIsFilterSidebarOpen(!isFilterSidebarOpen));
+  }
+
+  const handleOpenViewTask = () => {
+    const id = localStorage.getItem("task:id");
+    if (id) {
+      dispatch(toggleIsViewTaskOpen(!isViewTaskOpen));
+    }
+    
+  }
 
   return (
     <div
@@ -53,14 +68,14 @@ export const MainTableSubNavigation: FC = () => {
           <UsersListButton />
 
           <div className="flex pl-4">
-            <button className="flex items-center min-w-[110px]">
+            <button className="flex items-center min-w-[110px]" onClick={() => handleOpenViewTask()}>
               <FaEye />
               <span className="font-medium font-sm text-gray-600 pl-1 pr-4 border-r-[2px]">
                 Show me
               </span>
             </button>
 
-            <button className="flex items-center pl-4 min-w-[110px]">
+            <button className="flex items-center pl-4 min-w-[110px]" onClick={() => handleOpenFilterSidebar()}>
               <FaFilter />
               <span className="font-medium font-sm text-gray-600 pl-1 pr-4 border-r-[2px]">
                 Filter
@@ -144,3 +159,4 @@ export const MainTableSubNavigation: FC = () => {
     </div>
   );
 };
+

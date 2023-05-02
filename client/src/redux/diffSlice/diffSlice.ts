@@ -8,6 +8,8 @@ export interface diffState {
   isStatusModalOpen: boolean;
   timeline: string;
   ownerFilter: string;
+  isFilterSidebarOpen: boolean;
+  isViewTaskOpen: boolean;
 }
 
 const initialState: diffState = {
@@ -18,6 +20,8 @@ const initialState: diffState = {
   isStatusModalOpen: false,
   timeline: "day",
   ownerFilter: "none",
+  isFilterSidebarOpen: false,
+  isViewTaskOpen: false,
 };
 
 export const diffSlice = createSlice({
@@ -45,6 +49,12 @@ export const diffSlice = createSlice({
     toggleOwner: (state, action) => {
       return { ...state, ownerFilter: action.payload };
     },
+    toggleIsFilterSidebarOpen: (state, action) => {
+      return { ...state, isFilterSidebarOpen: action.payload };
+    },
+    toggleIsViewTaskOpen: (state, action) => {
+      return { ...state, isViewTaskOpen: action.payload };
+    },
   },
   extraReducers: (builder) => {},
 });
@@ -57,6 +67,8 @@ export const {
   toggleIsStatusModalOpen,
   toggleTimeline,
   toggleOwner,
+  toggleIsFilterSidebarOpen,
+  toggleIsViewTaskOpen,
 } = diffSlice.actions;
 
 export default diffSlice.reducer;

@@ -7,12 +7,16 @@ import { getTasks } from "../../../redux/tasksSlice/tasksSlice";
 import { CreateTaskModal } from "../EmptyStateTask/CreateTaskModal/CreateTaskModal";
 import { Table } from "./Table/Table";
 import { getProject } from "../../../redux/projectSlice/projectSlice";
+import { FilterSidebar } from './FilterSidebar/FilterSidebar';
 
 export const MainTable: FC = () => {
   const params = useParams();
   const dispatch = useAppDispatch();
   const isCreateTaskModal = useAppSelector(
     (state: RootState) => state.diff.isCreateTaskModal
+  );
+  const { isFilterSidebarOpen } = useAppSelector(
+    (state: RootState) => state.diff
   );
   const toggleIsActiveSidebar = useAppSelector(
     (state: RootState) => state.diff.isActiveSidebar
@@ -30,10 +34,14 @@ export const MainTable: FC = () => {
 
   return (
     <div
-      className={`w-full h-full bg-gray-10 border px-4 py-4 ${
+      className={`w-full h-full bg-gray-10 border px-4 relative py-4 ${
         shutdownEffect ? "blur-[2px] border-gray-300" : "bg-gray-10"
       }`}
     >
+      {isFilterSidebarOpen && (
+        <FilterSidebar />
+      )}
+
       {/* {isEmptyStateProject && <EmptyStateProject />} */}
       {isEmptyStateTask && !isCreateTaskModal && <EmptyStateTask />}
       {isCreateTaskModal && <CreateTaskModal />}

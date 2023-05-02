@@ -22,6 +22,31 @@ export const getSubtask = async (req: any, res: any) => {
   }
 };
 
+export const deleteSubtask = async (req: any, res: any) => {
+  const { subtaskId } = req.params;
+  try {
+    const { rows } = await query(
+      `DELETE FROM subtasks WHERE id = $1 RETURNING task_id`,
+      [subtaskId]
+    );
+    const taskId = rows[0].id;
+    const { rows: subtasks } = await query(
+      `SELECT *,
+    (SELECT (subtask_goal_end - subtask_goal_start)) AS days_between,
+    to_char(subtasks.subtask_goal_start::date, 'Month DD') AS start_date,
+    to_char(subtasks.subtask_goal_end::date, 'Month DD') AS end_date
+    FROM subtasks WHERE task_id = $1
+    GROUP BY subtasks.id
+    ORDER BY subtasks.id ASC`,
+      [taskId]
+    );
+    if (!rows.length) return res.status(200).end();
+    res.status(200).json(subtasks);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const setGoalStartDateForSubtask = async (req: any, res: any) => {
   const { date, subtaskId } = req.body;
   if (!date || !subtaskId) {
