@@ -3,11 +3,15 @@ dotenv.config();
 import jwt from "jsonwebtoken";
 import { query } from "../pool/db";
 import bcrypt from "bcrypt";
+import { handleError } from "../helpers/helpers";
 
 export const registration = async (req: any, res: any) => {
-  const { username, workspace, email, password } = req.body;
-  const bcrypt_password = await bcrypt.hash(password, Number(process.env.SALT));
   try {
+    const { username, workspace, email, password } = req.body;
+    const bcrypt_password = await bcrypt.hash(
+      password,
+      Number(process.env.SALT)
+    );
     const { rows } = await query(
       `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1 OR username = $2)`,
       [email, username]
@@ -17,10 +21,10 @@ export const registration = async (req: any, res: any) => {
         message: "User with this email address or username already exists",
       });
     } else {
+      await query(`BEGIN`);
       await query(
-        `
-       INSERT INTO Users(username, email, password)
-            VALUES($1, $2, $3)`,
+        `INSERT INTO Users(username, email, password)
+         VALUES($1, $2, $3)`,
         [username, email, bcrypt_password]
       );
 
@@ -28,16 +32,15 @@ export const registration = async (req: any, res: any) => {
         email,
       ]);
       await query(
-        `
-      INSERT INTO workspaces(user_id, name)
-        VALUES($1, $2)`,
+        `INSERT INTO workspaces(user_id, name)
+         VALUES($1, $2)`,
         [rows[0].id, workspace]
       );
+      await query(`COMMIT`);
       return res.status(201).json({ message: "User create" });
     }
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: "Internal server error" });
+    handleError(error, res);
   }
 };
 
@@ -53,24 +56,30 @@ const createJwtToken = (
   email: string,
   avatar_filename: string
 ) => {
-  const expiresIn = Math.floor(Date.now() / 1000) + 60 * 60 * 24;
-  const payload: IPayload = {
-    userId,
-    username,
-    email,
-    avatar_filename,
-  };
-  const secret = process.env.JWT_SECRET as string;
-  if (!secret) {
-    throw new Error("JWT_SECRET is not defined in environment variables.");
+  try {
+    const expiresIn = Math.floor(Date.now() / 1000) + 60 * 60 * 24;
+    const payload: IPayload = {
+      userId,
+      username,
+      email,
+      avatar_filename,
+    };
+    const secret = process.env.JWT_SECRET as string;
+    if (!secret) {
+      throw new Error("JWT_SECRET is not defined in environment variables.");
+    }
+    const token = jwt.sign(payload, secret, { expiresIn });
+    return token;
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
-  const token = jwt.sign(payload, secret, { expiresIn });
-  return token;
 };
 
 export const login = async (req: any, res: any) => {
-  const { email, password } = req.body;
   try {
+    const { email, password } = req.body;
+    await query(`BEGIN`);
     const { rows } = await query(
       `SELECT id, email, username, password, avatar_filename FROM users WHERE email = $1`,
       [email]
@@ -78,7 +87,7 @@ export const login = async (req: any, res: any) => {
 
     if (!rows || rows.length === 0) {
       return res.status(401).json({ message: "Invalid email or password" });
-    };
+    }
 
     const { rows: workspace } = await query(
       `SELECT id FROM workspaces WHERE user_id = $1 ORDER BY id LIMIT 1`,
@@ -104,18 +113,21 @@ export const login = async (req: any, res: any) => {
       rows[0].email,
       rows[0].avatar_filename
     );
-    res.json({ token, workspace_id, project_id });
+    await query(`COMMIT`);
+    res.status(200).json({ token, workspace_id, project_id });
   } catch (error) {
-    console.log(error);
+    await query(`ROLLBACK`);
+    handleError(error, res);
   }
 };
 
 export const verifyToken = async (req: any, res: any, next: any) => {
-  const authHeader = req.headers["authorization"];
-  const token: string = authHeader && authHeader.split(" ")[1];
   try {
-    if (!token)
+    const authHeader = req.headers["authorization"];
+    const token: string = authHeader && authHeader.split(" ")[1];
+    if (!token) {
       return res.status(401).json({ message: "Authentication failed" });
+    }
     const decodedToken: any = await jwt.verify(
       token,
       process.env.JWT_SECRET as string

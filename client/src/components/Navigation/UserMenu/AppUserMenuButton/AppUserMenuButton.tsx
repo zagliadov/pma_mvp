@@ -14,9 +14,9 @@ export const AppUserMenuButton: FC = () => {
 
   useEffect(() => {
     dispatch(getUser()).then(({ payload }) => {
-      setUsername(payload.email.charAt(0));
-      if (payload.avatar_filename) {
-        setBackground(payload.avatar_filename);
+      setUsername(payload?.email.charAt(0));
+      if (payload?.avatar_filename) {
+        setBackground(payload?.avatar_filename);
       }
     });
   }, [dispatch]);

@@ -293,7 +293,7 @@ export const TasksList: FC = () => {
                           <FaMoreVertical />
                         </button>
                       )}
-                      {openMore === id && <TaskMoreMenu />}
+                      {openMore === id && <TaskMoreMenu taskId={id} />}
                     </div>
                   </td>
                 </tr>

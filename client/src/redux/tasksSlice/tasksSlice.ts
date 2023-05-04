@@ -16,10 +16,12 @@ const initialState: tasksState = {
 export const getTasks = createAsyncThunk(
   "tasks/get_tasks",
   async (projectId: number) => {
-    const token: string | null = localStorage.getItem("token");
-    if (!token) return;
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No token found");
+    }
     try {
-      const tasks = await axios.post(
+      const response = await axios.post(
         "http://localhost:9000/tasks/get_tasks",
         { projectId },
         {
@@ -28,38 +30,58 @@ export const getTasks = createAsyncThunk(
           },
         }
       );
-      return tasks.data;
+      return response.data;
     } catch (error) {
       console.log(error);
+      throw error;
     }
   }
 );
 
-export const orderByDesc = createAsyncThunk("tasks/order_by_desc", async (project_id: number) => {
-  try {
-    const tasks = await axios.get(`http://localhost:9000/tasks/order_by_desc/${project_id}`);
-    return tasks.data;
-  } catch (error) {
-    console.log(error);
+export const orderByDesc = createAsyncThunk(
+  "tasks/order_by_desc",
+  async (project_id: number) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:9000/tasks/order_by_desc/${project_id}`
+      );
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
-});
+);
 
-export const orderByAsc = createAsyncThunk("tasks/order_by_asc", async (project_id: number) => {
-  try {
-    const tasks = await axios.get(`http://localhost:9000/tasks/order_by_asc/${project_id}`);
-    return tasks.data;
-  } catch (error) {
-    console.log(error);
+export const orderByAsc = createAsyncThunk(
+  "tasks/order_by_asc",
+  async (project_id: number) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:9000/tasks/order_by_asc/${project_id}`
+      );
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
-});
+);
+
+interface ISetGoalStartDate {
+  date: string | null;
+  taskId: number | null;
+}
 
 export const setGoalStartDate = createAsyncThunk(
   "tasks/set_goal_start_date",
-  async ({ date, taskId }: { date: string | null; taskId: number | null }) => {
-    const token: string | null = localStorage.getItem("token");
-    if (!token) return;
+  async ({ date, taskId }: ISetGoalStartDate) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      throw new Error("No token found");
+    }
     try {
-      const tasks = await axios.post(
+      const response = await axios.post(
         "http://localhost:9000/tasks/set_goal_start_date",
         { date, taskId },
         {
@@ -68,20 +90,26 @@ export const setGoalStartDate = createAsyncThunk(
           },
         }
       );
-      return tasks.data;
+      return response.data;
     } catch (error) {
       console.log(error);
+      throw error;
     }
   }
 );
 
+interface ISetGoalEndDateParams {
+  date: string | null;
+  taskId: number | null;
+}
+
 export const setGoalEndDate = createAsyncThunk(
   "tasks/set_goal_end_date",
-  async ({ date, taskId }: { date: string | null; taskId: number | null }) => {
-    const token: string | null = localStorage.getItem("token");
-    if (!token) return;
+  async ({ date, taskId }: ISetGoalEndDateParams) => {
+    const token = localStorage.getItem("token");
+    if (!token) throw new Error("No token found");
     try {
-      const tasks = await axios.post(
+      const response = await axios.post(
         "http://localhost:9000/tasks/set_goal_end_date",
         { date, taskId },
         {
@@ -90,9 +118,34 @@ export const setGoalEndDate = createAsyncThunk(
           },
         }
       );
-      return tasks.data;
+      return response.data;
     } catch (error) {
       console.log(error);
+      throw error;
+    }
+  }
+);
+
+export const removeTask = createAsyncThunk(
+  "tasks/remove_task",
+  async (task_id: number) => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No token found");
+      }
+      const response = await axios.delete(
+        `http://localhost:9000/tasks/remove_task/${task_id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      throw error;
     }
   }
 );
@@ -121,9 +174,11 @@ export const setTask = createAsyncThunk(
     taskBlocker,
   }: ISetTask) => {
     try {
-      const token: string | null = localStorage.getItem("token");
-      if (!token) return;
-      const tasks = await axios.post(
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("No token found");
+      }
+      const response = await axios.post(
         "http://localhost:9000/tasks/set_task",
         {
           project_id,
@@ -141,9 +196,10 @@ export const setTask = createAsyncThunk(
           },
         }
       );
-      return tasks.data;
+      return response.data;
     } catch (error) {
       console.log(error);
+      throw error;
     }
   }
 );
@@ -198,6 +254,12 @@ export const tasksSlice = createSlice({
         return { ...state, tasks: action.payload };
       })
       .addCase(orderByAsc.rejected, (state) => {});
+    builder
+      .addCase(removeTask.pending, (state, action) => {})
+      .addCase(removeTask.fulfilled, (state, action) => {
+        return { ...state, tasks: action.payload };
+      })
+      .addCase(removeTask.rejected, (state) => {});
   },
 });
 

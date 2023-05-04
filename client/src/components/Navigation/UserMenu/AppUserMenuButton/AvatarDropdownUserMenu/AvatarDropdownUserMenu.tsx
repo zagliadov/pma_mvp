@@ -42,7 +42,7 @@ export const AvatarDropdownUserMenu: FC<IProps> = ({ isOpen, avatar }) => {
         ></button>
 
         <div className="flex flex-col pl-4">
-          <span className="text-base font-medium">{user.username}</span>
+          <span className="text-base font-medium">{user?.username}</span>
           <span className="text-gray-400 text-sm font-normal">username</span>
         </div>
       </div>

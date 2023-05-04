@@ -1,49 +1,40 @@
 import dotenv from "dotenv";
 dotenv.config();
 import { query } from "../pool/db";
+import { handleError } from "../helpers/helpers";
+import { getSubtaskQueryOrderBySubtaskIdASC } from "../queries/queries";
 
 export const getSubtask = async (req: any, res: any) => {
   const { taskId } = req.params;
   try {
-    const { rows } = await query(
-      `SELECT *,
-    (SELECT (subtask_goal_end - subtask_goal_start)) AS days_between,
-    to_char(subtasks.subtask_goal_start::date, 'Month DD') AS start_date,
-    to_char(subtasks.subtask_goal_end::date, 'Month DD') AS end_date
-    FROM subtasks WHERE task_id = $1
-    GROUP BY subtasks.id
-    ORDER BY subtasks.id ASC`,
-      [taskId]
-    );
-    if (!rows.length) return res.status(200).end();
+    await query(`BEGIN`);
+    const { rows } = await query(getSubtaskQueryOrderBySubtaskIdASC, [taskId]);
+    await query(`COMMIT`);
     res.status(200).json(rows);
   } catch (error) {
-    console.log(error);
+    await query(`ROLLBACK`);
+    handleError(error, res);
   }
 };
 
 export const deleteSubtask = async (req: any, res: any) => {
   const { subtaskId } = req.params;
+  if (!subtaskId) return;
   try {
+    await query(`BEGIN`);
     const { rows } = await query(
       `DELETE FROM subtasks WHERE id = $1 RETURNING task_id`,
       [subtaskId]
     );
-    const taskId = rows[0].id;
-    const { rows: subtasks } = await query(
-      `SELECT *,
-    (SELECT (subtask_goal_end - subtask_goal_start)) AS days_between,
-    to_char(subtasks.subtask_goal_start::date, 'Month DD') AS start_date,
-    to_char(subtasks.subtask_goal_end::date, 'Month DD') AS end_date
-    FROM subtasks WHERE task_id = $1
-    GROUP BY subtasks.id
-    ORDER BY subtasks.id ASC`,
-      [taskId]
-    );
-    if (!rows.length) return res.status(200).end();
+    const taskId = rows[0].task_id;
+    const { rows: subtasks } = await query(getSubtaskQueryOrderBySubtaskIdASC, [
+      taskId,
+    ]);
+    await query(`COMMIT`);
     res.status(200).json(subtasks);
   } catch (error) {
-    console.log(error);
+    await query(`ROLLBACK`);
+    handleError(error, res);
   }
 };
 
@@ -59,23 +50,19 @@ export const setGoalStartDateForSubtask = async (req: any, res: any) => {
     return res.status(400).json({ message: "SubtaskId must be a number" });
   }
   try {
+    await query(`BEGIN`);
     const { rows } = await query(
       `UPDATE subtasks SET subtask_goal_start = $1 WHERE subtasks.id = $2 RETURNING task_id`,
       [date, subtaskId]
     );
-    const { rows: subtasks } = await query(
-      `SELECT *,
-    (SELECT (subtask_goal_end - subtask_goal_start)) AS days_between,
-    to_char(subtasks.subtask_goal_start::date, 'Month DD') AS start_date,
-    to_char(subtasks.subtask_goal_end::date, 'Month DD') AS end_date
-    FROM subtasks WHERE task_id = $1
-    GROUP BY subtasks.id
-    ORDER BY subtasks.id ASC`,
-      [rows[0].task_id]
-    );
+    const { rows: subtasks } = await query(getSubtaskQueryOrderBySubtaskIdASC, [
+      rows[0].task_id,
+    ]);
+    await query(`COMMIT`);
     res.status(200).json(subtasks);
   } catch (error) {
-    console.log(error);
+    await query(`ROLLBACK`);
+    handleError(error, res);
   }
 };
 
@@ -91,22 +78,18 @@ export const setGoalEndDateForSubtask = async (req: any, res: any) => {
     return res.status(400).json({ message: "SubtaskId must be a number" });
   }
   try {
+    await query(`BEGIN`);
     const { rows } = await query(
       `UPDATE subtasks SET subtask_goal_end = $1 WHERE subtasks.id = $2 RETURNING task_id`,
       [date, subtaskId]
     );
-    const { rows: subtasks } = await query(
-      `SELECT *,
-    (SELECT (subtask_goal_end - subtask_goal_start)) AS days_between,
-    to_char(subtasks.subtask_goal_start::date, 'Month DD') AS start_date,
-    to_char(subtasks.subtask_goal_end::date, 'Month DD') AS end_date
-    FROM subtasks WHERE task_id = $1
-    GROUP BY subtasks.id
-    ORDER BY subtasks.id ASC`,
-      [rows[0].task_id]
-    );
+    const { rows: subtasks } = await query(getSubtaskQueryOrderBySubtaskIdASC, [
+      rows[0].task_id,
+    ]);
+    await query(`COMMIT`);
     res.status(200).json(subtasks);
   } catch (error) {
-    console.log(error);
+    await query(`ROLLBACK`);
+    handleError(error, res);
   }
 };

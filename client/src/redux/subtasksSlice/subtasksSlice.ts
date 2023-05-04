@@ -89,7 +89,7 @@ export const deleteSubtask = createAsyncThunk(
         `http://localhost:9000/subtasks/delete_subtask/${subtaskId}`,
         {}
       );
-      return console.log(response.data, "response");
+      return response.data;
     } catch (error) {
       console.log(error);
     }
@@ -119,6 +119,12 @@ export const subtasksSlice = createSlice({
         return { ...state, subtasks: action.payload };
       })
       .addCase(setGoalEndDateForSubtask.rejected, (state) => {});
+    builder
+      .addCase(deleteSubtask.pending, (state, action) => {})
+      .addCase(deleteSubtask.fulfilled, (state, action) => {
+        return { ...state, subtasks: action.payload };
+      })
+      .addCase(deleteSubtask.rejected, (state) => {});
   },
 });
 
